@@ -1,0 +1,19 @@
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TACCsharp", "TACCsharp.csproj", "{AF473A3A-8407-431A-B3ED-5B5D337B36B6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+	Debug|Any CPU = Debug|Any CPU
+	ExportDebug|Any CPU = ExportDebug|Any CPU
+	ExportRelease|Any CPU = ExportRelease|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AF473A3A-8407-431A-B3ED-5B5D337B36B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF473A3A-8407-431A-B3ED-5B5D337B36B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF473A3A-8407-431A-B3ED-5B5D337B36B6}.ExportDebug|Any CPU.ActiveCfg = ExportDebug|Any CPU
+		{AF473A3A-8407-431A-B3ED-5B5D337B36B6}.ExportDebug|Any CPU.Build.0 = ExportDebug|Any CPU
+		{AF473A3A-8407-431A-B3ED-5B5D337B36B6}.ExportRelease|Any CPU.ActiveCfg = ExportRelease|Any CPU
+		{AF473A3A-8407-431A-B3ED-5B5D337B36B6}.ExportRelease|Any CPU.Build.0 = ExportRelease|Any CPU
+	EndGlobalSection
+EndGlobal

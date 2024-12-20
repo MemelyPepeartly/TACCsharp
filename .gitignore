@@ -1,0 +1,51 @@
+# Godot-specific
+.import/
+export_presets.cfg
+export/
+*.godot
+*.mono
+*.mono_debugger_path
+
+# C# Builds and Binaries
+bin/
+obj/
+*.csproj.user
+*.csproj.DotSettings.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Mono / .NET
+*.dll
+*.exe
+*.mdb
+*.pdb
+*.xlog
+*.log
+*.cache
+*.pidb
+*.tmp
+*.bak
+*.swp
+*.ide
+
+# NuGet Packages
+packages/
+*.nupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+*.snupkg
+
+# Visual Studio-specific
+.vs/
+.vscode/
+.idea/
+*.resharper
+*.DotSettings.user
+
+# OS Generated Files
+.DS_Store
+Thumbs.db
+desktop.ini

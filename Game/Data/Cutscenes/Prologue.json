@@ -1,0 +1,26 @@
+{
+  "cutscene_name": "Prologue",
+  "scenes": [
+	{
+	  "character": "Hero",
+	  "dialogue": "This world is falling apart...",
+	  "portrait": "res://Assets/Portraits/hero.png",
+	  "background": "res://Assets/Backgrounds/ruins.png",
+	  "duration": 3.5
+	},
+	{
+	  "character": "Villain",
+	  "dialogue": "You cannot stop the inevitable.",
+	  "portrait": "res://Assets/Portraits/villain.png",
+	  "background": "res://Assets/Backgrounds/lair.png",
+	  "duration": 4.0
+	},
+	{
+	  "character": "Narrator",
+	  "dialogue": "And so, the journey begins...",
+	  "portrait": null,
+	  "background": "res://Assets/Backgrounds/journey.png",
+	  "duration": 5.0
+	}
+  ]
+}

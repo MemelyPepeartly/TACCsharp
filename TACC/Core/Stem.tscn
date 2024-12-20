@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://dptcb0opu5d0k"]
+
+[ext_resource type="Script" path="res://TACC/Scripts/Stem.cs" id="1_tmk4j"]
+
+[node name="Stem" type="Node"]
+script = ExtResource("1_tmk4j")
