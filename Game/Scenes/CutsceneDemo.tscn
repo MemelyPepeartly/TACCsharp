@@ -1,0 +1,24 @@
+[gd_scene load_steps=5 format=3 uid="uid://bebje2ncbyips"]
+
+[ext_resource type="PackedScene" uid="uid://cbhaeng8o8ol8" path="res://TACC/Leaves/CutsceneLeaf.tscn" id="1_c6r7g"]
+[ext_resource type="Script" path="res://Game/Scripts/CutsceneDemo.cs" id="1_vcpmg"]
+[ext_resource type="PackedScene" uid="uid://dksyx48gytc75" path="res://Game/UI/DialogBox.tscn" id="2_48llb"]
+[ext_resource type="Texture2D" uid="uid://dh5anuj2spkwv" path="res://Game/Assets/Backgrounds/astillon.jpg" id="3_a0gu3"]
+
+[node name="CutsceneDemo" type="Node"]
+script = ExtResource("1_vcpmg")
+
+[node name="CutsceneLeaf" parent="." instance=ExtResource("1_c6r7g")]
+
+[node name="Background" type="TextureRect" parent="."]
+anchors_preset = 12
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = -1152.0
+grow_horizontal = 2
+grow_vertical = 0
+texture = ExtResource("3_a0gu3")
+expand_mode = 5
+
+[node name="DialogBox" parent="." instance=ExtResource("2_48llb")]
