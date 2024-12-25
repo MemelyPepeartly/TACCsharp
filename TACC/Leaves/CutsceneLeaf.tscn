@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://cbhaeng8o8ol8"]
 
-[ext_resource type="Script" path="res://TACC/Scripts/CutsceneLeaf.cs" id="1_7fxkv"]
+[ext_resource type="Script" path="res://TACC/Scripts/Cutscene/CutsceneLeaf.cs" id="1_he6bc"]
 
 [node name="CutsceneLeaf" type="Node2D"]
-script = ExtResource("1_7fxkv")
+script = ExtResource("1_he6bc")
