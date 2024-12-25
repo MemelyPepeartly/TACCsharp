@@ -1,24 +1,10 @@
 using Godot;
 using System;
 using Newtonsoft.Json;
+using TACCsharp.TACC.Models;
 
 public partial class CutsceneLeaf : Node
 {
-	public struct SceneData
-	{
-		public string Character { get; set; }
-		public string Dialogue { get; set; }
-		public string Portrait { get; set; }
-		public string Background { get; set; }
-		public float Duration { get; set; }
-	}
-
-	public struct CutsceneData
-	{
-		public string CutsceneName { get; set; }
-		public SceneData[] Scenes { get; set; }
-	}
-
 	public Action<string, SceneData> OnSceneChanged; // Event for when a scene changes
 	public Action OnCutsceneEnded; // Event for when the cutscene ends
 
