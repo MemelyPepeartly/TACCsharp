@@ -1,8 +1,10 @@
 ﻿using Godot;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using TACCsharp.TACC.Models;
+using FileAccess = Godot.FileAccess;
 
 public partial class MapLeaf : Node2D
 {
@@ -27,29 +29,37 @@ public partial class MapLeaf : Node2D
 
     public void LoadMap(string path)
     {
-        if (!File.Exists(path))
+        // Check file existence using Godot's FileAccess API
+        if (!FileAccess.FileExists(path))
         {
             GD.PrintErr($"Map JSON file not found: {path}");
             return;
         }
 
-        // Read and deserialize the JSON
-        string jsonContent = File.ReadAllText(path);
-        mapData = JsonConvert.DeserializeObject<MapData>(jsonContent);
-
-        // Load map texture
-        mapTexture = GD.Load<Texture2D>(mapData.ImagePath);
-        if (mapTexture == null)
+        try
         {
-            GD.PrintErr($"Map texture not found: {mapData.ImagePath}");
-            return;
+            // Read and deserialize the JSON
+            string jsonContent = FileAccess.Open(path, FileAccess.ModeFlags.Read).GetAsText();
+            mapData = JsonConvert.DeserializeObject<MapData>(jsonContent);
+
+            // Load map texture
+            mapTexture = GD.Load<Texture2D>(mapData.ImagePath);
+            if (mapTexture == null)
+            {
+                GD.PrintErr($"Map texture not found: {mapData.ImagePath}");
+                return;
+            }
+
+            // Emit a signal that the map has been loaded
+            EmitSignal(nameof(MapLoadedEventHandler), mapData.Waypoints.Count);
+
+            // Display waypoints
+            DisplayWaypoints();
         }
-
-        // Emit a signal that the map has been loaded
-        EmitSignal(nameof(MapLoadedEventHandler), mapData.Waypoints.Count);
-
-        // Display waypoints
-        DisplayWaypoints();
+        catch (Exception ex)
+        {
+            GD.PrintErr($"Failed to load map: {ex.Message}");
+        }
     }
 
     private void DisplayWaypoints()

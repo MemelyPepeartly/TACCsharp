@@ -7,8 +7,8 @@ public partial class Stem : Node
 	{
 		GD.Print("Stem is ready!");
 
-		AddLeaf("res://Leaves/CutsceneLeaf.tscn");
-		AddLeaf("res://Leaves/MapLeaf.tscn");
+		AddLeaf("res://TACC/Leaves/CutsceneLeaf.tscn");
+		AddLeaf("res://TACC/Leaves/MapLeaf.tscn");
 	}
 
 	public void AddLeaf(string leafPath)
