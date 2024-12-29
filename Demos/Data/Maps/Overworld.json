@@ -1,0 +1,19 @@
+{
+  "imagePath": "res://Demos/Assets/Backgrounds/astillon.jpg",
+  "waypoints": [
+	{
+	  "id": "snippstone",
+	  "x": 150,
+	  "y": 300,
+	  "description": "All the holiday deer live here!",
+	  "iconPath": "res://Demos/Assets/Icons/Snippstone.png"
+	},
+	{
+	  "id": "whitewater",
+	  "x": 400,
+	  "y": 200,
+	  "description": "Yarg! Traders and Sailors and Seamen galore!",
+	  "iconPath": "res://Demos/Assets/Icons/Whitewater.png"
+	}
+  ]
+}
