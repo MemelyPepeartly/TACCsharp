@@ -1,0 +1,9 @@
+[gd_scene load_steps=3 format=3 uid="uid://cstuhtgraemxq"]
+
+[ext_resource type="Script" path="res://Demos/Map Demo/Scripts/MapDemo.cs" id="1_k08qt"]
+[ext_resource type="PackedScene" uid="uid://dptcb0opu5d0k" path="res://TACC/Core/Stem.tscn" id="2_swbqk"]
+
+[node name="MapDemo" type="Node"]
+script = ExtResource("1_k08qt")
+
+[node name="Stem" parent="." instance=ExtResource("2_swbqk")]
