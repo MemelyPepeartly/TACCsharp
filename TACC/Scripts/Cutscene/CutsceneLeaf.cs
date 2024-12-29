@@ -25,7 +25,7 @@ public partial class CutsceneLeaf : Node
 	public void AdvanceScene()
 	{
 		GD.Print("AdvanceScene called!");
-		
+
 		_currentSceneIndex++;
 
 		if (_currentSceneIndex < _scenes.Length)
