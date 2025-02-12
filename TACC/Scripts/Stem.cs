@@ -9,6 +9,7 @@ public partial class Stem : Node
 
 		AddLeaf("res://TACC/Leaves/CutsceneLeaf.tscn");
 		AddLeaf("res://TACC/Leaves/MapLeaf.tscn");
+		AddLeaf("res://TACC/Leaves/MenuFactoryLeaf.tscn");
 	}
 
 	public void AddLeaf(string leafPath)

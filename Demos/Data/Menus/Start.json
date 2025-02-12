@@ -1,0 +1,16 @@
+{
+  "buttons": [
+	{
+	  "text": "Start",
+	  "action": "start_game"
+	},
+	{
+	  "text": "Options",
+	  "action": "open_options"
+	},
+	{
+	  "text": "Exit",
+	  "action": "exit_game"
+	}
+  ]
+}

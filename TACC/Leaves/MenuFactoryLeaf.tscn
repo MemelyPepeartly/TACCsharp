@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://brduw7yjp4gcl"]
+
+[ext_resource type="Script" path="res://TACC/Scripts/Menu/MenuFactoryLeaf.cs" id="1_xokyl"]
+
+[node name="MenuFactoryLeaf" type="Node2D"]
+script = ExtResource("1_xokyl")
