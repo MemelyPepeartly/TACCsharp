@@ -24,6 +24,7 @@ public partial class MapLeaf : Node2D
 	private const float maxZoom = 2.0f;
 
 	private Label mousePositionLabel;
+	private Label descriptionLabel;
 
 	[Signal]
 	public delegate void MapLoadedEventHandler(int waypointCount);
@@ -48,6 +49,13 @@ public partial class MapLeaf : Node2D
 			Position = new Vector2(10, 10)
 		};
 		uiLayer.AddChild(mousePositionLabel);
+
+		// Create and add the description label to the UI layer
+		descriptionLabel = new Label
+		{
+			Visible = false
+		};
+		uiLayer.AddChild(descriptionLabel);
 	}
 
 	public override void _Input(InputEvent @event)
@@ -81,13 +89,18 @@ public partial class MapLeaf : Node2D
 			Vector2 dragOffset = mouseMotionEvent.Position - dragStartPosition;
 			Position = mapStartPosition + dragOffset;
 		}
+	}
 
-		// Update mouse position label
-		if (@event is InputEventMouse mouseInputEvent)
+	public override void _Process(double delta)
+	{
+		Vector2 mousePosition = GetViewport().GetMousePosition();
+		Vector2 mapPosition = ToLocal(mousePosition);
+		mousePositionLabel.Text = $"Mouse Position: {mapPosition}";
+
+		// Update the position of the description label to follow the mouse
+		if (descriptionLabel.Visible)
 		{
-			Vector2 mousePosition = mouseInputEvent.Position;
-			Vector2 mapPosition = ToLocal(mousePosition);
-			mousePositionLabel.Text = $"Mouse Position: {mapPosition}";
+			descriptionLabel.Position = mousePosition + new Vector2(15, 15);
 		}
 	}
 
@@ -123,7 +136,10 @@ public partial class MapLeaf : Node2D
 		try
 		{
 			// Read and deserialize the JSON
-			string jsonContent = FileAccess.Open(path, FileAccess.ModeFlags.Read).GetAsText();
+			var file = FileAccess.Open(path, FileAccess.ModeFlags.Read);
+			string jsonContent = file.GetAsText();
+			file.Close();
+
 			mapData = JsonConvert.DeserializeObject<MapData>(jsonContent);
 
 			// Load map texture
@@ -160,52 +176,82 @@ public partial class MapLeaf : Node2D
 			// Load the waypoint icon texture
 			var iconTexture = GD.Load<Texture2D>(waypoint.IconPath);
 
-			// Create a node to represent the waypoint visually
-			var waypointNode = new Node2D
+			// Create an Area2D node to represent the waypoint
+			var waypointArea = new Area2D
 			{
 				Position = waypoint.Position
 			};
+
+			// Create a CollisionShape2D for mouse detection
+			var collisionShape = new CollisionShape2D
+			{
+				Shape = new RectangleShape2D
+				{
+					Size = iconTexture.GetSize() * 0.1f
+				}
+			};
+			waypointArea.AddChild(collisionShape);
 
 			// Create the waypoint icon
 			var icon = new Sprite2D
 			{
 				Texture = iconTexture,
-				Scale = new Vector2(0.1f, 0.1f), // Adjust the scale to make the waypoints uniform
+				Scale = new Vector2(0.1f, 0.1f),
 				Position = Vector2.Zero
 			};
-			waypointNode.AddChild(icon);
+			waypointArea.AddChild(icon);
 
-			// Calculate the scaled size of the icon
-			Vector2 iconSize = iconTexture.GetSize() * icon.Scale;
+			// Add metadata to identify the waypoint and store description
+			waypointArea.SetMeta("waypoint_id", waypoint.Id);
+			waypointArea.SetMeta("description", waypoint.Description);
 
-			// Create a white square background matching the scaled icon size
-			var background = new ColorRect
+			// Connect signals for mouse enter and exit
+			waypointArea.MouseEntered += () => OnWaypointMouseEntered(waypointArea);
+			waypointArea.MouseExited += OnWaypointMouseExited;
+
+			// Handle clicking on the waypoint using a lambda expression
+			// Handle clicking on the waypoint using a lambda expression
+			waypointArea.InputEvent += (Node viewport, InputEvent @event, long shapeIdx) =>
 			{
-				Color = new Color(1, 1, 1, 1),
-				Size = iconSize,
-				Position = -iconSize / 2
+				if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
+				{
+					string waypointId = (string)waypointArea.GetMeta("waypoint_id");
+					if (!string.IsNullOrEmpty(waypointId))
+					{
+						EmitSignal(nameof(WaypointClickedEventHandler), waypointId);
+						GD.Print($"Waypoint clicked: {waypointId}");
+					}
+				}
 			};
-			waypointNode.AddChild(background);
 
-			// Ensure the background is drawn behind the icon
-			background.ZIndex = -1;
-
-			// Add metadata to identify the waypoint
-			waypointNode.SetMeta("waypoint_id", waypoint.Id);
-
-			// Handle clicking on the waypoint
-			icon.Connect("gui_input", new Callable(this, nameof(OnWaypointClicked)));
-
-			AddChild(waypointNode);
+			AddChild(waypointArea);
 		}
 	}
 
-	private void OnWaypointClicked(InputEvent inputEvent, Node viewport)
+	private void OnWaypointMouseEntered(Area2D waypointArea)
 	{
-		if (inputEvent is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
+		string description = (string)waypointArea.GetMeta("description");
+		if (!string.IsNullOrEmpty(description))
 		{
-			// Retrieve the waypoint ID from the node's metadata
-			string waypointId = viewport.GetMeta("waypoint_id").AsString();
+			descriptionLabel.Text = description;
+			descriptionLabel.Visible = true;
+			// Position the label near the mouse position
+			Vector2 mousePosition = GetViewport().GetMousePosition();
+			descriptionLabel.Position = mousePosition + new Vector2(15, 15);
+		}
+	}
+
+	private void OnWaypointMouseExited()
+	{
+		descriptionLabel.Visible = false;
+	}
+
+	private void OnWaypointClicked(Node viewport, InputEvent @event, int shapeIdx)
+	{
+		if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
+		{
+			var waypointArea = viewport as Area2D;
+			string waypointId = (string)waypointArea.GetMeta("waypoint_id");
 			if (!string.IsNullOrEmpty(waypointId))
 			{
 				EmitSignal(nameof(WaypointClickedEventHandler), waypointId);
@@ -218,10 +264,4 @@ public partial class MapLeaf : Node2D
 	public List<Waypoint> GetWaypoints() => mapData?.Waypoints;
 
 	public Texture2D GetMapTexture() => mapTexture;
-	public override void _Process(double delta)
-	{
-		Vector2 mousePosition = GetViewport().GetMousePosition();
-		Vector2 mapPosition = ToLocal(mousePosition);
-		mousePositionLabel.Text = $"Mouse Position: {mapPosition}";
-	}
 }
