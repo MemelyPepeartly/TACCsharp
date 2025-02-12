@@ -210,7 +210,6 @@ public partial class MapLeaf : Node2D
 			waypointArea.MouseExited += OnWaypointMouseExited;
 
 			// Handle clicking on the waypoint using a lambda expression
-			// Handle clicking on the waypoint using a lambda expression
 			waypointArea.InputEvent += (Node viewport, InputEvent @event, long shapeIdx) =>
 			{
 				if (@event is InputEventMouseButton mouseEvent && mouseEvent.Pressed)
@@ -235,6 +234,7 @@ public partial class MapLeaf : Node2D
 		{
 			descriptionLabel.Text = description;
 			descriptionLabel.Visible = true;
+
 			// Position the label near the mouse position
 			Vector2 mousePosition = GetViewport().GetMousePosition();
 			descriptionLabel.Position = mousePosition + new Vector2(15, 15);
