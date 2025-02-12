@@ -3,15 +3,15 @@
   "waypoints": [
 	{
 	  "id": "snippstone",
-	  "x": 150,
-	  "y": 300,
+	  "x": -361,
+	  "y": 1200,
 	  "description": "All the holiday deer live here!",
 	  "iconPath": "res://Demos/Assets/Icons/Snippstone.png"
 	},
 	{
 	  "id": "whitewater",
-	  "x": 400,
-	  "y": 200,
+	  "x": -776,
+	  "y": 1200,
 	  "description": "Yarg! Traders and Sailors and Seamen galore!",
 	  "iconPath": "res://Demos/Assets/Icons/Whitewater.png"
 	}
