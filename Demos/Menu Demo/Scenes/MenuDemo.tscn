@@ -1,7 +1,9 @@
-[gd_scene load_steps=2 format=3 uid="uid://dn6n50micew7u"]
+[gd_scene load_steps=3 format=3 uid="uid://dn6n50micew7u"]
 
 [ext_resource type="PackedScene" uid="uid://dptcb0opu5d0k" path="res://TACC/Core/Stem.tscn" id="1_jdq4h"]
+[ext_resource type="Script" path="res://Demos/Menu Demo/Scripts/MenuDemo.cs" id="1_q44pv"]
 
 [node name="MenuDemo" type="Node"]
+script = ExtResource("1_q44pv")
 
 [node name="Stem" parent="." instance=ExtResource("1_jdq4h")]
