@@ -3,7 +3,7 @@ using System;
 
 public partial class MapDemo : Node
 {
-private Stem stem;
+	private Stem stem;
 
 	public override void _Ready()
 	{
