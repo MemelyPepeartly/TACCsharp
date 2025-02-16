@@ -1,10 +1,13 @@
 using Godot;
 using System;
+using TACCsharp.Demos.Menu_Demo.Scripts;
 
 public partial class MenuDemo : Node
 {
 	private Stem _stem;
 	private MenuFactoryLeaf _menuFactory;
+	private MapHelper _mapHelper;
+	private CutsceneHelper _cutsceneHelper;
 
 	public override void _Ready()
 	{
@@ -19,19 +22,12 @@ public partial class MenuDemo : Node
 			return;
 		}
 
-		// Connect and retrieve the MenuFactoryLeaf
-		ConnectMenuLeaf();
+		// Retrieve and configure the MenuFactoryLeaf
+		ConfigureMenu();
 	}
 
-	private void ConnectMenuLeaf()
+	private void ConfigureMenu()
 	{
-		if (!IsInstanceValid(_stem))
-		{
-			GD.PrintErr("ERROR: Stem is invalid.");
-			return;
-		}
-
-		// Retrieve MenuFactoryLeaf
 		_menuFactory = _stem.GetNodeOrNull<MenuFactoryLeaf>("CanvasLayer/MenuFactoryLeaf");
 
 		if (_menuFactory == null)
@@ -41,7 +37,6 @@ public partial class MenuDemo : Node
 		}
 
 		// Load the menu
-		GD.Print("Loading menu from JSON...");
 		_menuFactory.LoadMenu("res://Demos/Data/Menus/Start.json");
 
 		// Register actions
@@ -52,17 +47,60 @@ public partial class MenuDemo : Node
 
 	private void StartMapDemo()
 	{
-		GD.Print("Map Demo started.");
+		GD.Print("Initializing Map Demo...");
+
+		// Hide the menu
+		if (_menuFactory != null)
+		{
+			_menuFactory.Visible = false;
+		}
+
+		// Ensure only one instance of MapHelper is created
+		if (_mapHelper == null)
+		{
+			_mapHelper = new MapHelper(_stem);
+			AddChild(_mapHelper);
+		}
 	}
 
 	private void StartCutsceneDemo()
 	{
-		GD.Print("Cutscene Demo started.");
+		GD.Print("Initializing Cutscene Demo...");
+
+		// Hide the menu
+		if (_menuFactory != null)
+		{
+			_menuFactory.Visible = false;
+		}
+
+		// Ensure only one instance of CutsceneHelper is created
+		if (_cutsceneHelper == null)
+		{
+			_cutsceneHelper = new CutsceneHelper(_stem);
+			AddChild(_cutsceneHelper);
+		}
 	}
 
 	private void ExitGame()
 	{
 		GD.Print("Exiting game...");
 		GetTree().Quit();
+	}
+
+	public override void _Input(InputEvent @event)
+	{
+		// Check if the Escape key is pressed
+		if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape)
+		{
+			ToggleMenu();
+		}
+	}
+
+	private void ToggleMenu()
+	{
+		if (_menuFactory != null)
+		{
+			_menuFactory.Visible = !_menuFactory.Visible;
+		}
 	}
 }
