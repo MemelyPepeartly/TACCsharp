@@ -3,97 +3,104 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 
-public partial class MenuFactoryLeaf : Node2D
+public partial class MenuFactoryLeaf : Control
 {
-	[Export] public string JsonPath { get; set; }
-
-	private Dictionary<string, Action> actions = new Dictionary<string, Action>();
+	private VBoxContainer _vbox;
+	private Dictionary<string, Action> _actions = new Dictionary<string, Action>();
 
 	public override void _Ready()
 	{
-		if (!string.IsNullOrEmpty(JsonPath))
+		_vbox = GetNodeOrNull<VBoxContainer>("CenterContainer/VBoxContainer");
+
+		if (_vbox == null)
 		{
-			LoadMenu(JsonPath);
+			GD.PrintErr("ERROR: VBoxContainer not found.");
+			return;
 		}
+
+		// Ensure VBoxContainer expands properly
+		_vbox.SizeFlagsVertical = SizeFlags.ExpandFill;
+		_vbox.SizeFlagsHorizontal = SizeFlags.ExpandFill;
+		_vbox.Visible = true;
 	}
 
-	public void LoadMenu(string path)
+	// Load and build the menu dynamically from JSON
+	public void LoadMenu(string jsonPath)
 	{
-		// Check if the file exists
-		if (!FileAccess.FileExists(path))
+		if (!FileAccess.FileExists(jsonPath))
 		{
-			GD.PrintErr($"Menu JSON file not found: {path}");
+			GD.PrintErr($"ERROR: Menu JSON file not found: {jsonPath}");
 			return;
 		}
 
 		try
 		{
-			// Read and deserialize the JSON
-			using var file = FileAccess.Open(path, FileAccess.ModeFlags.Read);
+			using var file = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Read);
 			string jsonContent = file.GetAsText();
 
 			var menuData = JsonConvert.DeserializeObject<MenuData>(jsonContent);
 
-			// Build the menu
+			if (menuData?.Buttons == null || menuData.Buttons.Count == 0)
+			{
+				GD.PrintErr("ERROR: No valid buttons found in JSON.");
+				return;
+			}
+
 			BuildMenu(menuData);
 		}
 		catch (Exception ex)
 		{
-			GD.PrintErr($"Failed to load menu: {ex.Message}");
+			GD.PrintErr($"ERROR: Failed to load menu: {ex.Message}");
 		}
 	}
 
 	private void BuildMenu(MenuData menuData)
 	{
-		// Create a vertical container for buttons
-		var vbox = new VBoxContainer
+		if (_vbox == null)
 		{
-			AnchorLeft = 0.5f,
-			AnchorRight = 0.5f,
-			AnchorTop = 0.5f,
-			AnchorBottom = 0.5f,
-			PivotOffset = new Vector2(0.5f, 0.5f),
-			SizeFlagsHorizontal = Control.SizeFlags.ShrinkCenter,
-			SizeFlagsVertical = Control.SizeFlags.ShrinkCenter
-		};
-		AddChild(vbox);
+			GD.PrintErr("ERROR: VBoxContainer is NULL, cannot add buttons.");
+			return;
+		}
+
+		// Clear existing buttons before adding new ones
+		foreach (Node child in _vbox.GetChildren())
+		{
+			child.QueueFree();
+		}
 
 		foreach (var buttonData in menuData.Buttons)
 		{
 			var button = new Button
 			{
 				Text = buttonData.Text,
-				SizeFlagsHorizontal = Control.SizeFlags.Expand | Control.SizeFlags.Fill
+				CustomMinimumSize = new Vector2(200, 50),
+				SizeFlagsHorizontal = SizeFlags.ExpandFill
 			};
 
-			button.FocusMode = Control.FocusModeEnum.All;
-
 			button.Pressed += () => OnButtonPressed(buttonData.Action);
-
-			vbox.AddChild(button);
+			_vbox.AddChild(button);
 		}
 	}
 
 	private void OnButtonPressed(string actionName)
 	{
-		if (actions.TryGetValue(actionName, out var action))
+		if (_actions.TryGetValue(actionName, out var action))
 		{
 			action?.Invoke();
 		}
 		else
 		{
-			GD.PrintErr($"No action found for: {actionName}");
+			GD.PrintErr($"ERROR: No action found for '{actionName}'.");
 		}
 	}
 
-	// Method to register actions
 	public void RegisterAction(string actionName, Action action)
 	{
-		actions[actionName] = action;
+		_actions[actionName] = action;
 	}
 }
 
-// Data classes for deserialization
+// Data Classes
 public class MenuData
 {
 	[JsonProperty("buttons")]
