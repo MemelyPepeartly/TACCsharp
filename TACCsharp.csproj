@@ -6,6 +6,15 @@
     <EnableDynamicLoading>true</EnableDynamicLoading>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="Demos\Data\Cutscenes\Prologue.json" />
+    <Content Include="Demos\Data\Maps\Overworld.json" />
+    <Content Include="Demos\Data\Menus\Start.json" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Demos\Data\Maps\Ove8F8A.tmp" />
+    <None Include="Demos\Data\Maps\OveE188.tmp" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
   </ItemGroup>
 </Project>
