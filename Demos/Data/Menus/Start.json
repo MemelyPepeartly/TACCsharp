@@ -1,12 +1,12 @@
 {
   "buttons": [
 	{
-	  "text": "Start",
-	  "action": "start_game"
+	  "text": "Start Map Demo",
+	  "action": "start_map_demo"
 	},
 	{
-	  "text": "Options",
-	  "action": "open_options"
+	  "text": "Start Cutscene Demo",
+	  "action": "start_cutscene_demo"
 	},
 	{
 	  "text": "Exit",
