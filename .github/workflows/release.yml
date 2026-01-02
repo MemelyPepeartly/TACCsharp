@@ -11,7 +11,10 @@ permissions:
 
 jobs:
   build-windows:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: true
       DOTNET_NOLOGO: true
@@ -25,15 +28,22 @@ jobs:
 
       - name: Verify export preset
         run: |
-          if (!(Test-Path "export_presets.cfg")) { throw "Missing export_presets.cfg in repo." }
-          $preset = Get-Content export_presets.cfg
-          $preset | Select-String -Pattern "name=|platform=|export_path="
-          if ($preset -match 'export_path=""') { throw "export_path is empty in export_presets.cfg." }
+          test -f export_presets.cfg || { echo "Missing export_presets.cfg in repo."; exit 1; }
+          grep -E "name=|platform=|export_path=" export_presets.cfg || true
+          if grep -q 'export_path=""' export_presets.cfg; then
+            echo "export_path is empty in export_presets.cfg."
+            exit 1
+          fi
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "6.0.x"
+
+      - name: Install export dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libx11-6 libxcursor1 libxrandr2 libxi6 libxinerama1 libgl1 libglu1-mesa xvfb zip
 
       - name: Setup Godot
         uses: chickensoft-games/setup-godot@v2
@@ -44,81 +54,83 @@ jobs:
 
       - name: Resolve Godot binary
         run: |
-          $godot = $env:GODOT4
-          if (-not $godot) { $godot = $env:GODOT }
-          if (-not $godot) { $godot = "godot" }
-          "GODOT_BIN=$godot" | Out-File -FilePath $env:GITHUB_ENV -Append
+          if [ -n "${GODOT4:-}" ]; then
+            echo "GODOT_BIN=$GODOT4" >> "$GITHUB_ENV"
+          elif [ -n "${GODOT:-}" ]; then
+            echo "GODOT_BIN=$GODOT" >> "$GITHUB_ENV"
+          else
+            echo "GODOT_BIN=godot" >> "$GITHUB_ENV"
+          fi
 
       - name: Verify Godot (.NET)
         run: |
-          $version = & $env:GODOT_BIN --version
-          $version
-          if ($version -notmatch "mono") { throw "Godot .NET build not detected: $version" }
+          version="$($GODOT_BIN --version)"
+          echo "$version"
+          echo "$version" | grep -qi mono || { echo "Godot .NET build not detected: $version"; exit 1; }
 
       - name: Verify export templates
         run: |
-          $templatesRoot = Join-Path $env:APPDATA "Godot\export_templates"
-          if (!(Test-Path $templatesRoot)) { throw "Missing export templates directory: $templatesRoot" }
-          Get-ChildItem -Path $templatesRoot -Directory
-          $windowsTemplate = Get-ChildItem -Path $templatesRoot -Recurse -Filter "windows_release_x86_64*.exe" | Select-Object -First 1
-          if (-not $windowsTemplate) { throw "Missing Windows export template (windows_release_x86_64*.exe)." }
-          $windowsTemplate.FullName
+          templates_root="$HOME/.local/share/godot/export_templates"
+          test -d "$templates_root" || { echo "Missing export templates directory: $templates_root"; exit 1; }
+          find "$templates_root" -maxdepth 2 -type d -print
+          template_exe="$(find "$templates_root" -name 'windows_release_x86_64*.exe' | head -n 1)"
+          test -n "$template_exe" || { echo "Missing Windows export template (windows_release_x86_64*.exe)."; exit 1; }
+          echo "$template_exe"
 
       - name: Generate C# bindings
         run: |
-          & $env:GODOT_BIN --headless --path . --build-solutions --quit
+          xvfb-run -a "$GODOT_BIN" --headless --path . --build-solutions --quit
 
       - name: Restore dependencies
         run: dotnet restore
 
       - name: Build C# assemblies
-        run: dotnet build .\TACCsharp.csproj --configuration Release
+        run: dotnet build ./TACCsharp.csproj --configuration Release
 
       - name: Export Windows release
         run: |
-          $buildDir = Join-Path $pwd "build"
-          New-Item -ItemType Directory -Path $buildDir -Force | Out-Null
-          $logPath = Join-Path $buildDir "godot-export.log"
-          $outputExe = Join-Path $buildDir "TACCsharp.exe"
-          $outputPack = Join-Path $buildDir "TACCsharp.pck"
+          mkdir -p build
+          log_path="build/godot-export.log"
 
-          $global:LASTEXITCODE = 0
-          & $env:GODOT_BIN --headless --verbose --log-file $logPath --path . --export-release "Windows Desktop" $outputExe
-          $godotOk = $?
-          $exitCode = $LASTEXITCODE
-          if ($exitCode -eq $null) { $exitCode = 0 }
-          Write-Host "Godot exit code: $exitCode"
-          if (Test-Path $logPath) { Get-Content $logPath -Tail 200 }
+          set +e
+          xvfb-run -a "$GODOT_BIN" --headless --verbose --path . --export-release "Windows Desktop" "build/TACCsharp.exe" 2>&1 | tee "$log_path"
+          export_exit=${PIPESTATUS[0]}
+          set -e
 
-          $exeFiles = Get-ChildItem -Path $buildDir -Filter *.exe -Recurse
-          if ($godotOk -and $exitCode -eq 0 -and $exeFiles) {
-            Get-ChildItem -Path $buildDir -Recurse
-            return
-          }
+          if [ $export_exit -ne 0 ]; then
+            echo "Godot export-release failed with exit code $export_exit"
+            exit $export_exit
+          fi
 
-          Write-Host "Export-release did not emit an .exe. Falling back to export-pack + template exe."
-          $global:LASTEXITCODE = 0
-          & $env:GODOT_BIN --headless --verbose --log-file $logPath --path . --export-pack "Windows Desktop" $outputPack
-          $packOk = $?
-          $packExit = $LASTEXITCODE
-          if ($packExit -eq $null) { $packExit = 0 }
-          if (Test-Path $logPath) { Get-Content $logPath -Tail 200 }
-          if (-not $packOk -or $packExit -ne 0) { throw "Godot export-pack failed with exit code $packExit" }
-          if (!(Test-Path $outputPack)) { throw "Missing build/TACCsharp.pck after export-pack." }
+          if [ -f build/TACCsharp.exe ]; then
+            ls -la build
+            exit 0
+          fi
 
-          $templatesRoot = Join-Path $env:APPDATA "Godot\export_templates"
-          $templateExe = Get-ChildItem -Path $templatesRoot -Recurse -Filter "windows_release_x86_64*.exe" | Select-Object -First 1
-          if (-not $templateExe) { throw "Missing Windows export template (windows_release_x86_64*.exe)." }
-          Copy-Item -Path $templateExe.FullName -Destination $outputExe -Force
-          if (!(Test-Path $outputExe)) { throw "Missing build/TACCsharp.exe after copying template." }
-          Get-ChildItem -Path $buildDir -Recurse
+          echo "Export-release did not emit an .exe. Falling back to export-pack + template exe."
+          set +e
+          xvfb-run -a "$GODOT_BIN" --headless --verbose --path . --export-pack "Windows Desktop" "build/TACCsharp.pck" 2>&1 | tee -a "$log_path"
+          pack_exit=${PIPESTATUS[0]}
+          set -e
+
+          if [ $pack_exit -ne 0 ]; then
+            echo "Godot export-pack failed with exit code $pack_exit"
+            exit $pack_exit
+          fi
+          test -f build/TACCsharp.pck || { echo "Missing build/TACCsharp.pck after export-pack."; exit 1; }
+
+          template_exe="$(find "$HOME/.local/share/godot/export_templates" -name 'windows_release_x86_64*.exe' | head -n 1)"
+          test -n "$template_exe" || { echo "Missing Windows export template (windows_release_x86_64*.exe)."; exit 1; }
+          cp "$template_exe" "build/TACCsharp.exe"
+          test -f build/TACCsharp.exe || { echo "Missing build/TACCsharp.exe after copying template."; exit 1; }
+          ls -la build
 
       - name: Package artifact
         run: |
-          New-Item -ItemType Directory -Path dist -Force | Out-Null
-          Compress-Archive -Path build/* -DestinationPath dist/TACCsharp-Windows.zip -Force
-          Get-ChildItem -Path dist
-          if (!(Test-Path "dist/TACCsharp-Windows.zip")) { throw "Missing dist/TACCsharp-Windows.zip after packaging." }
+          mkdir -p dist
+          zip -r dist/TACCsharp-Windows.zip build/*
+          ls -la dist
+          test -f dist/TACCsharp-Windows.zip || { echo "Missing dist/TACCsharp-Windows.zip after packaging."; exit 1; }
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
