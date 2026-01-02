@@ -9,12 +9,32 @@ public partial class CutsceneHelper : Node
 	private Stem _stem;
 	private CutsceneLeaf _cutsceneLeaf;
 	private DialogBox _dialogBox;
-	private TextureRect _background;
+	private Sprite2D _background;
 
 	public CutsceneHelper(Stem stem)
 	{
 		_stem = stem;
 		InitializeCutscene();
+	}
+
+	public override void _Ready()
+	{
+		var viewport = GetViewport();
+		if (viewport != null)
+		{
+			viewport.SizeChanged += OnViewportSizeChanged;
+		}
+
+		UpdateBackgroundLayout();
+	}
+
+	public override void _ExitTree()
+	{
+		var viewport = GetViewport();
+		if (viewport != null)
+		{
+			viewport.SizeChanged -= OnViewportSizeChanged;
+		}
 	}
 
 	private void InitializeCutscene()
@@ -51,18 +71,16 @@ public partial class CutsceneHelper : Node
 			GD.PrintErr($"Background texture not found: {BackgroundTexturePath}");
 		}
 
-		_background = new TextureRect
+		_background = new Sprite2D
 		{
 			Name = "Background",
 			Texture = backgroundTexture,
-			ExpandMode = TextureRect.ExpandModeEnum.FitHeightProportional,
-			GrowHorizontal = Control.GrowDirection.Both,
-			GrowVertical = Control.GrowDirection.Begin
+			Centered = true,
+			ZIndex = -10
 		};
-		_background.SetAnchorsPreset(Control.LayoutPreset.BottomWide);
-		_background.OffsetTop = -1152.0f;
 
 		_stem.AddChild(_background);
+		UpdateBackgroundLayout();
 	}
 
 	private void EnsureDialogBox()
@@ -117,6 +135,37 @@ public partial class CutsceneHelper : Node
 		}
 
 		_background.Texture = backgroundTexture;
+		UpdateBackgroundLayout();
+	}
+
+	private void UpdateBackgroundLayout()
+	{
+		if (_background == null || _background.Texture == null)
+		{
+			return;
+		}
+
+		var viewport = GetViewport();
+		if (viewport == null)
+		{
+			return;
+		}
+
+		Vector2 viewportSize = viewport.GetVisibleRect().Size;
+		Vector2 textureSize = _background.Texture.GetSize();
+		if (textureSize == Vector2.Zero)
+		{
+			return;
+		}
+
+		float scale = Mathf.Max(viewportSize.X / textureSize.X, viewportSize.Y / textureSize.Y);
+		_background.Scale = new Vector2(scale, scale);
+		_background.Position = viewportSize / 2.0f;
+	}
+
+	private void OnViewportSizeChanged()
+	{
+		UpdateBackgroundLayout();
 	}
 
 	public void StartCutscene(string cutscenePath)
@@ -160,7 +209,12 @@ public partial class CutsceneHelper : Node
 			portrait = GD.Load<Texture2D>(sceneData.Portrait);
 		}
 
-		_dialogBox.UpdateDialogue(sceneData.Character, sceneData.Dialogue, portrait);
+		_dialogBox.UpdateDialogue(
+			sceneData.Character,
+			sceneData.Dialogue,
+			portrait,
+			sceneData.PortraitWidth,
+			sceneData.PortraitHeight);
 	}
 
 	private void OnCutsceneEnded()
