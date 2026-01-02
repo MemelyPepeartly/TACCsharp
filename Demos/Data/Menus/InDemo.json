@@ -1,0 +1,12 @@
+{
+  "buttons": [
+    {
+      "text": "Back to Main Menu",
+      "action": "back_to_main_menu"
+    },
+    {
+      "text": "Exit",
+      "action": "exit_game"
+    }
+  ]
+}
