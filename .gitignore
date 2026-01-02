@@ -1,6 +1,5 @@
 # Godot-specific
 .import/
-export_presets.cfg
 export/
 *.mono
 *.mono_debugger_path
