@@ -3,7 +3,6 @@ using TACCsharp.TACC.Models;
 
 public partial class CutsceneHelper : Node
 {
-	private const string CutscenePath = "res://Demos/Data/Cutscenes/Prologue.json";
 	private const string DialogBoxScenePath = "res://Demos/Cutscene Demo/UI/DialogBox.tscn";
 	private const string BackgroundTexturePath = "res://Demos/Assets/Backgrounds/astillon.jpg";
 
@@ -31,10 +30,7 @@ public partial class CutsceneHelper : Node
 
 			EnsureBackground();
 			EnsureDialogBox();
-			SetCutsceneVisible(true);
-
-			// Start the cutscene
-			_cutsceneLeaf.LoadCutscene(CutscenePath);
+			SetCutsceneVisible(false);
 		}
 		else
 		{
@@ -101,6 +97,27 @@ public partial class CutsceneHelper : Node
 		}
 	}
 
+	public void StartCutscene(string cutscenePath)
+	{
+		if (_cutsceneLeaf == null)
+		{
+			GD.PrintErr("CutsceneLeaf is not initialized.");
+			return;
+		}
+
+		if (string.IsNullOrEmpty(cutscenePath))
+		{
+			GD.PrintErr("Cutscene path is empty.");
+			return;
+		}
+
+		EnsureBackground();
+		EnsureDialogBox();
+		SetCutsceneVisible(true);
+
+		_cutsceneLeaf.LoadCutscene(cutscenePath);
+	}
+
 	private void OnSceneChanged(string sceneName, SceneData sceneData)
 	{
 		GD.Print($"Scene changed: {sceneName}");
@@ -133,7 +150,7 @@ public partial class CutsceneHelper : Node
 		if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Enter)
 		{
 			GD.Print("Enter key pressed!");
-			_cutsceneLeaf.AdvanceScene();
+			_cutsceneLeaf?.AdvanceScene();
 		}
 	}
 }
