@@ -1,20 +1,20 @@
 {
   "buttons": [
-    {
-      "text": "Cutscene 1: Prologue",
-      "action": "start_cutscene_prologue"
-    },
-    {
-      "text": "Cutscene 2: Interlude",
-      "action": "start_cutscene_interlude"
-    },
-    {
-      "text": "Cutscene 3: Finale",
-      "action": "start_cutscene_finale"
-    },
-    {
-      "text": "Back",
-      "action": "back_to_main_menu"
-    }
+	{
+	  "text": "Cutscene 1: Prologue",
+	  "action": "start_cutscene_prologue"
+	},
+	{
+	  "text": "Cutscene 2: Interlude",
+	  "action": "start_cutscene_interlude"
+	},
+	{
+	  "text": "Cutscene 3: Finale",
+	  "action": "start_cutscene_finale"
+	},
+	{
+	  "text": "Back",
+	  "action": "back_to_main_menu"
+	}
   ]
 }
