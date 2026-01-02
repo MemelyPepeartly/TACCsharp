@@ -48,13 +48,13 @@ Used by: `CutsceneLeaf.LoadCutscene(jsonPath)`
 Example:
 ```json
 {
-  "cutsceneName": "Prologue",
+  "cutscene_name": "Prologue",
   "scenes": [
     {
       "character": "Swift Sail",
       "dialogue": "Fortuna...",
       "portrait": "res://Demos/Assets/Portraits/sleepy-swift.png",
-      "background": "res://Demos/Assets/Backgrounds/astillon.png",
+      "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
       "duration": 3.5
     }
   ]
@@ -63,5 +63,5 @@ Example:
 Full example: `Demos/Data/Cutscenes/Prologue.json`
 
 Notes:
-- The demo JSON uses `cutscene_name`. The code currently expects `cutsceneName` (or `CutsceneName`) unless you add a `JsonProperty` attribute or a snake_case naming strategy.
-- `background` is part of the data model but is not currently used by the demo scripts.
+- The demo JSON uses `cutscene_name` and the model maps it via `JsonProperty`.
+- `background` updates the cutscene background texture in the demo scripts.
