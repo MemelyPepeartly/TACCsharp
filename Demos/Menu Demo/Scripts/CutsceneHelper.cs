@@ -97,6 +97,28 @@ public partial class CutsceneHelper : Node
 		}
 	}
 
+	private void UpdateBackground(string backgroundPath)
+	{
+		if (_background == null)
+		{
+			return;
+		}
+
+		if (string.IsNullOrEmpty(backgroundPath))
+		{
+			return;
+		}
+
+		var backgroundTexture = GD.Load<Texture2D>(backgroundPath);
+		if (backgroundTexture == null)
+		{
+			GD.PrintErr($"Background texture not found: {backgroundPath}");
+			return;
+		}
+
+		_background.Texture = backgroundTexture;
+	}
+
 	public void StartCutscene(string cutscenePath)
 	{
 		if (_cutsceneLeaf == null)
@@ -128,6 +150,8 @@ public partial class CutsceneHelper : Node
 			GD.PrintErr("DialogBox is not initialized.");
 			return;
 		}
+
+		UpdateBackground(sceneData.Background);
 
 		// Update the dialog box
 		Texture2D portrait = null;
