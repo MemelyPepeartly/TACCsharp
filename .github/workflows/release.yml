@@ -26,7 +26,9 @@ jobs:
       - name: Verify export preset
         run: |
           if (!(Test-Path "export_presets.cfg")) { throw "Missing export_presets.cfg in repo." }
-          Get-Content export_presets.cfg | Select-String -Pattern "name=|platform=|export_path="
+          $preset = Get-Content export_presets.cfg
+          $preset | Select-String -Pattern "name=|platform=|export_path="
+          if ($preset -match 'export_path=""') { throw "export_path is empty in export_presets.cfg." }
 
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
@@ -53,6 +55,15 @@ jobs:
           $version
           if ($version -notmatch "mono") { throw "Godot .NET build not detected: $version" }
 
+      - name: Verify export templates
+        run: |
+          $templatesRoot = Join-Path $env:APPDATA "Godot\export_templates"
+          if (!(Test-Path $templatesRoot)) { throw "Missing export templates directory: $templatesRoot" }
+          Get-ChildItem -Path $templatesRoot -Directory
+          $windowsTemplate = Get-ChildItem -Path $templatesRoot -Recurse -Filter "windows_release_x86_64*.exe" | Select-Object -First 1
+          if (-not $windowsTemplate) { throw "Missing Windows export template (windows_release_x86_64*.exe)." }
+          $windowsTemplate.FullName
+
       - name: Generate C# bindings
         run: |
           & $env:GODOT_BIN --headless --path . --build-solutions --quit
@@ -67,15 +78,21 @@ jobs:
         run: |
           New-Item -ItemType Directory -Path build -Force | Out-Null
           $global:LASTEXITCODE = 0
-          & $env:GODOT_BIN --headless --verbose --path . --export-release "Windows Desktop"
+          $logPath = Join-Path $pwd "build\godot-export.log"
+          $outputPath = Join-Path $pwd "build\TACCsharp.exe"
+          & $env:GODOT_BIN --headless --verbose --log-file $logPath --path . --export-release "Windows Desktop" $outputPath
           $godotOk = $?
           $exitCode = $LASTEXITCODE
           if ($exitCode -eq $null) { $exitCode = 0 }
           Write-Host "Godot exit code: $exitCode"
+          if (Test-Path $logPath) { Get-Content $logPath -Tail 200 }
           if (-not $godotOk -or $exitCode -ne 0) { throw "Godot export failed with exit code $exitCode" }
           Get-ChildItem -Path build -Recurse
           $exeFiles = Get-ChildItem -Path build -Filter *.exe -Recurse
-          if (-not $exeFiles) { throw "Missing .exe output in build/ after export." }
+          if (-not $exeFiles) {
+            Get-ChildItem -Path . -Filter "TACCsharp*.exe" -Recurse
+            throw "Missing .exe output in build/ after export."
+          }
 
       - name: Package artifact
         run: |
