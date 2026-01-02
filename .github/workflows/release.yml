@@ -76,23 +76,42 @@ jobs:
 
       - name: Export Windows release
         run: |
-          New-Item -ItemType Directory -Path build -Force | Out-Null
+          $buildDir = Join-Path $pwd "build"
+          New-Item -ItemType Directory -Path $buildDir -Force | Out-Null
+          $logPath = Join-Path $buildDir "godot-export.log"
+          $outputExe = Join-Path $buildDir "TACCsharp.exe"
+          $outputPack = Join-Path $buildDir "TACCsharp.pck"
+
           $global:LASTEXITCODE = 0
-          $logPath = Join-Path $pwd "build\godot-export.log"
-          $outputPath = Join-Path $pwd "build\TACCsharp.exe"
-          & $env:GODOT_BIN --headless --verbose --log-file $logPath --path . --export-release "Windows Desktop" $outputPath
+          & $env:GODOT_BIN --headless --verbose --log-file $logPath --path . --export-release "Windows Desktop" $outputExe
           $godotOk = $?
           $exitCode = $LASTEXITCODE
           if ($exitCode -eq $null) { $exitCode = 0 }
           Write-Host "Godot exit code: $exitCode"
           if (Test-Path $logPath) { Get-Content $logPath -Tail 200 }
-          if (-not $godotOk -or $exitCode -ne 0) { throw "Godot export failed with exit code $exitCode" }
-          Get-ChildItem -Path build -Recurse
-          $exeFiles = Get-ChildItem -Path build -Filter *.exe -Recurse
-          if (-not $exeFiles) {
-            Get-ChildItem -Path . -Filter "TACCsharp*.exe" -Recurse
-            throw "Missing .exe output in build/ after export."
+
+          $exeFiles = Get-ChildItem -Path $buildDir -Filter *.exe -Recurse
+          if ($godotOk -and $exitCode -eq 0 -and $exeFiles) {
+            Get-ChildItem -Path $buildDir -Recurse
+            return
           }
+
+          Write-Host "Export-release did not emit an .exe. Falling back to export-pack + template exe."
+          $global:LASTEXITCODE = 0
+          & $env:GODOT_BIN --headless --verbose --log-file $logPath --path . --export-pack "Windows Desktop" $outputPack
+          $packOk = $?
+          $packExit = $LASTEXITCODE
+          if ($packExit -eq $null) { $packExit = 0 }
+          if (Test-Path $logPath) { Get-Content $logPath -Tail 200 }
+          if (-not $packOk -or $packExit -ne 0) { throw "Godot export-pack failed with exit code $packExit" }
+          if (!(Test-Path $outputPack)) { throw "Missing build/TACCsharp.pck after export-pack." }
+
+          $templatesRoot = Join-Path $env:APPDATA "Godot\export_templates"
+          $templateExe = Get-ChildItem -Path $templatesRoot -Recurse -Filter "windows_release_x86_64*.exe" | Select-Object -First 1
+          if (-not $templateExe) { throw "Missing Windows export template (windows_release_x86_64*.exe)." }
+          Copy-Item -Path $templateExe.FullName -Destination $outputExe -Force
+          if (!(Test-Path $outputExe)) { throw "Missing build/TACCsharp.exe after copying template." }
+          Get-ChildItem -Path $buildDir -Recurse
 
       - name: Package artifact
         run: |
