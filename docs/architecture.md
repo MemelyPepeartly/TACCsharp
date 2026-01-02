@@ -61,5 +61,5 @@ Cutscene demo (`Demos/Cutscene Demo/Scenes/CutsceneDemo.tscn`, `Demos/Cutscene D
 JSON -> `TACC/Models/*` -> Leaf logic -> signals/events -> demo or game code -> UI updates.
 
 ## Notes
-- The demo cutscene JSON uses `cutscene_name`. `CutsceneData.CutsceneName` is not annotated with `JsonProperty`, so the default deserializer expects `cutsceneName` (or `CutsceneName`). Either update the JSON or add a naming strategy/attribute if you want snake_case.
+- The demo cutscene JSON uses `cutscene_name` and the model maps it via `JsonProperty`.
 - Asset paths are `res://` and must exist in the project.
