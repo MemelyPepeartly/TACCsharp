@@ -61,9 +61,13 @@ jobs:
       - name: Export Windows release
         run: |
           New-Item -ItemType Directory -Path build -Force | Out-Null
+          $global:LASTEXITCODE = 0
           & $env:GODOT_BIN --headless --verbose --path . --export-release "Windows Desktop" "build/TACCsharp.exe"
+          $godotOk = $?
           $exitCode = $LASTEXITCODE
-          if ($exitCode -ne 0) { throw "Godot export failed with exit code $exitCode" }
+          if ($exitCode -eq $null) { $exitCode = 0 }
+          Write-Host "Godot exit code: $exitCode"
+          if (-not $godotOk -or $exitCode -ne 0) { throw "Godot export failed with exit code $exitCode" }
           Get-ChildItem -Path build -Recurse
           $exeFiles = Get-ChildItem -Path build -Filter *.exe -Recurse
           if (-not $exeFiles) { throw "Missing .exe output in build/ after export." }
