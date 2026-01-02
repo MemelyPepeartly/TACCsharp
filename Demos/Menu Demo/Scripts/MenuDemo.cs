@@ -4,6 +4,12 @@ using TACCsharp.Demos.Menu_Demo.Scripts;
 
 public partial class MenuDemo : Node
 {
+	private const string MainMenuPath = "res://Demos/Data/Menus/Start.json";
+	private const string CutsceneMenuPath = "res://Demos/Data/Menus/CutsceneSelect.json";
+	private const string CutsceneProloguePath = "res://Demos/Data/Cutscenes/Prologue.json";
+	private const string CutsceneInterludePath = "res://Demos/Data/Cutscenes/Interlude.json";
+	private const string CutsceneFinalePath = "res://Demos/Data/Cutscenes/Finale.json";
+
 	private Stem _stem;
 	private MenuFactoryLeaf _menuFactory;
 	private MapHelper _mapHelper;
@@ -23,10 +29,11 @@ public partial class MenuDemo : Node
 		}
 
 		// Retrieve and configure the MenuFactoryLeaf
-		ConfigureMenu();
+		ConfigureMenuFactory();
+		ShowMainMenu();
 	}
 
-	private void ConfigureMenu()
+	private void ConfigureMenuFactory()
 	{
 		_menuFactory = _stem.GetNodeOrNull<MenuFactoryLeaf>("CanvasLayer/MenuFactoryLeaf");
 
@@ -35,14 +42,35 @@ public partial class MenuDemo : Node
 			GD.PrintErr("ERROR: MenuFactoryLeaf not found in Stem.");
 			return;
 		}
+	}
 
-		// Load the menu
-		_menuFactory.LoadMenu("res://Demos/Data/Menus/Start.json");
+	private void ShowMainMenu()
+	{
+		if (_menuFactory == null)
+		{
+			return;
+		}
 
-		// Register actions
+		_menuFactory.LoadMenu(MainMenuPath);
 		_menuFactory.RegisterAction("start_map_demo", StartMapDemo);
-		_menuFactory.RegisterAction("start_cutscene_demo", StartCutsceneDemo);
+		_menuFactory.RegisterAction("start_cutscene_demo", ShowCutsceneMenu);
 		_menuFactory.RegisterAction("exit_game", ExitGame);
+		_menuFactory.Visible = true;
+	}
+
+	private void ShowCutsceneMenu()
+	{
+		if (_menuFactory == null)
+		{
+			return;
+		}
+
+		_menuFactory.LoadMenu(CutsceneMenuPath);
+		_menuFactory.RegisterAction("start_cutscene_prologue", () => StartCutscene(CutsceneProloguePath));
+		_menuFactory.RegisterAction("start_cutscene_interlude", () => StartCutscene(CutsceneInterludePath));
+		_menuFactory.RegisterAction("start_cutscene_finale", () => StartCutscene(CutsceneFinalePath));
+		_menuFactory.RegisterAction("back_to_main_menu", ShowMainMenu);
+		_menuFactory.Visible = true;
 	}
 
 	private void StartMapDemo()
@@ -63,7 +91,7 @@ public partial class MenuDemo : Node
 		}
 	}
 
-	private void StartCutsceneDemo()
+	private void StartCutscene(string cutscenePath)
 	{
 		GD.Print("Initializing Cutscene Demo...");
 
@@ -79,6 +107,8 @@ public partial class MenuDemo : Node
 			_cutsceneHelper = new CutsceneHelper(_stem);
 			AddChild(_cutsceneHelper);
 		}
+
+		_cutsceneHelper.StartCutscene(cutscenePath);
 	}
 
 	private void ExitGame()
