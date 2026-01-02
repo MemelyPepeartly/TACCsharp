@@ -1,0 +1,53 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+      DOTNET_NOLOGO: true
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: "6.0.x"
+
+      - name: Setup Godot
+        uses: chickensoft-games/setup-godot@v2
+        with:
+          version: "4.3.0"
+          use-dotnet: true
+          include-templates: true
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Export Windows release
+        run: |
+          New-Item -ItemType Directory -Path build -Force | Out-Null
+          godot --headless --path . --export-release "Windows Desktop" "build/TACCsharp.exe"
+
+      - name: Package artifact
+        run: |
+          New-Item -ItemType Directory -Path dist -Force | Out-Null
+          Compress-Archive -Path build/* -DestinationPath dist/TACCsharp-Windows.zip -Force
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/TACCsharp-Windows.zip

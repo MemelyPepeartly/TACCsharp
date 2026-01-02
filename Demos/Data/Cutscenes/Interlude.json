@@ -1,0 +1,23 @@
+{
+  "cutscene_name": "Interlude",
+  "scenes": [
+	{
+	  "character": "Nikky",
+	  "dialogue": "We made it to the isle. Keep your voice down.",
+	  "portrait": "res://Demos/Assets/Portraits/nikky_token_2.png",
+	  "portrait_width": 256,
+	  "portrait_height": 256,
+	  "background": "res://Demos/Assets/Backgrounds/crimin-isle.png",
+	  "duration": 3.0
+	},
+	{
+	  "character": "Righty",
+	  "dialogue": "Too late. The bandit already heard us.",
+	  "portrait": "res://Demos/Assets/Portraits/righty_token_2.png",
+	  "portrait_width": 256,
+	  "portrait_height": 256,
+	  "background": "res://Demos/Assets/Backgrounds/uninspired.png",
+	  "duration": 3.0
+	}
+  ]
+}

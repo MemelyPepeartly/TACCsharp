@@ -48,5 +48,16 @@ namespace TACCsharp.Demos.Menu_Demo.Scripts
         {
             GD.Print($"Waypoint clicked: {waypointId}");
         }
+
+        public void SetMapActive(bool isActive)
+        {
+            if (_mapLeaf == null)
+            {
+                return;
+            }
+
+            _mapLeaf.Visible = isActive;
+            _mapLeaf.ProcessMode = isActive ? Node.ProcessModeEnum.Inherit : Node.ProcessModeEnum.Disabled;
+        }
     }
 }

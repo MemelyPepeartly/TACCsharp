@@ -18,6 +18,14 @@ public partial class CutsceneLeaf : Node
 
 		GD.Print($"Loaded cutscene: {cutscene.CutsceneName}");
 		_scenes = cutscene.Scenes;
+		_currentSceneIndex = -1;
+
+		if (_scenes == null || _scenes.Length == 0)
+		{
+			GD.PrintErr("Cutscene has no scenes to play.");
+			OnCutsceneEnded?.Invoke();
+			return;
+		}
 
 		AdvanceScene(); // Start the cutscene
 	}

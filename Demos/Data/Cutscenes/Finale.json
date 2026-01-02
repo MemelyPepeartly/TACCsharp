@@ -1,0 +1,23 @@
+{
+  "cutscene_name": "Finale",
+  "scenes": [
+	{
+	  "character": "Elobona",
+	  "dialogue": "The dunes are quiet tonight.",
+	  "portrait": "res://Demos/Assets/Portraits/elobona_token.png",
+	  "portrait_width": 256,
+	  "portrait_height": 256,
+	  "background": "res://Demos/Assets/Backgrounds/no-manes-land.png",
+	  "duration": 3.5
+	},
+	{
+	  "character": "Thumbtack",
+	  "dialogue": "Quiet enough to hear the signal.",
+	  "portrait": "res://Demos/Assets/Portraits/thumbtack_token.png",
+	  "portrait_width": 256,
+	  "portrait_height": 256,
+	  "background": "res://Demos/Assets/Backgrounds/no-manes-land.png",
+	  "duration": 3.5
+	}
+  ]
+}

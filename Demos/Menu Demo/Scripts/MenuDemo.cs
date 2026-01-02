@@ -4,10 +4,25 @@ using TACCsharp.Demos.Menu_Demo.Scripts;
 
 public partial class MenuDemo : Node
 {
+	private const string MainMenuPath = "res://Demos/Data/Menus/Start.json";
+	private const string CutsceneMenuPath = "res://Demos/Data/Menus/CutsceneSelect.json";
+	private const string InDemoMenuPath = "res://Demos/Data/Menus/InDemo.json";
+	private const string CutsceneProloguePath = "res://Demos/Data/Cutscenes/Prologue.json";
+	private const string CutsceneInterludePath = "res://Demos/Data/Cutscenes/Interlude.json";
+	private const string CutsceneFinalePath = "res://Demos/Data/Cutscenes/Finale.json";
+
+	private enum DemoState
+	{
+		None,
+		Map,
+		Cutscene
+	}
+
 	private Stem _stem;
 	private MenuFactoryLeaf _menuFactory;
 	private MapHelper _mapHelper;
 	private CutsceneHelper _cutsceneHelper;
+	private DemoState _activeDemo = DemoState.None;
 
 	public override void _Ready()
 	{
@@ -23,10 +38,11 @@ public partial class MenuDemo : Node
 		}
 
 		// Retrieve and configure the MenuFactoryLeaf
-		ConfigureMenu();
+		ConfigureMenuFactory();
+		ShowMainMenu();
 	}
 
-	private void ConfigureMenu()
+	private void ConfigureMenuFactory()
 	{
 		_menuFactory = _stem.GetNodeOrNull<MenuFactoryLeaf>("CanvasLayer/MenuFactoryLeaf");
 
@@ -35,14 +51,35 @@ public partial class MenuDemo : Node
 			GD.PrintErr("ERROR: MenuFactoryLeaf not found in Stem.");
 			return;
 		}
+	}
 
-		// Load the menu
-		_menuFactory.LoadMenu("res://Demos/Data/Menus/Start.json");
+	private void ShowMainMenu()
+	{
+		if (_menuFactory == null)
+		{
+			return;
+		}
 
-		// Register actions
+		_menuFactory.LoadMenu(MainMenuPath);
 		_menuFactory.RegisterAction("start_map_demo", StartMapDemo);
-		_menuFactory.RegisterAction("start_cutscene_demo", StartCutsceneDemo);
+		_menuFactory.RegisterAction("start_cutscene_demo", ShowCutsceneMenu);
 		_menuFactory.RegisterAction("exit_game", ExitGame);
+		_menuFactory.Visible = true;
+	}
+
+	private void ShowCutsceneMenu()
+	{
+		if (_menuFactory == null)
+		{
+			return;
+		}
+
+		_menuFactory.LoadMenu(CutsceneMenuPath);
+		_menuFactory.RegisterAction("start_cutscene_prologue", () => StartCutscene(CutsceneProloguePath));
+		_menuFactory.RegisterAction("start_cutscene_interlude", () => StartCutscene(CutsceneInterludePath));
+		_menuFactory.RegisterAction("start_cutscene_finale", () => StartCutscene(CutsceneFinalePath));
+		_menuFactory.RegisterAction("back_to_main_menu", ShowMainMenu);
+		_menuFactory.Visible = true;
 	}
 
 	private void StartMapDemo()
@@ -61,9 +98,13 @@ public partial class MenuDemo : Node
 			_mapHelper = new MapHelper(_stem);
 			AddChild(_mapHelper);
 		}
+
+		_activeDemo = DemoState.Map;
+		_cutsceneHelper?.SetCutsceneActive(false);
+		_mapHelper.SetMapActive(true);
 	}
 
-	private void StartCutsceneDemo()
+	private void StartCutscene(string cutscenePath)
 	{
 		GD.Print("Initializing Cutscene Demo...");
 
@@ -73,12 +114,17 @@ public partial class MenuDemo : Node
 			_menuFactory.Visible = false;
 		}
 
+		_mapHelper?.SetMapActive(false);
+
 		// Ensure only one instance of CutsceneHelper is created
 		if (_cutsceneHelper == null)
 		{
 			_cutsceneHelper = new CutsceneHelper(_stem);
 			AddChild(_cutsceneHelper);
 		}
+
+		_activeDemo = DemoState.Cutscene;
+		_cutsceneHelper.StartCutscene(cutscenePath);
 	}
 
 	private void ExitGame()
@@ -92,8 +138,57 @@ public partial class MenuDemo : Node
 		// Check if the Escape key is pressed
 		if (@event is InputEventKey keyEvent && keyEvent.Pressed && keyEvent.Keycode == Key.Escape)
 		{
-			ToggleMenu();
+			if (_activeDemo == DemoState.None)
+			{
+				ToggleMenu();
+			}
+			else
+			{
+				ToggleDemoMenu();
+			}
 		}
+	}
+
+	private void ShowInDemoMenu()
+	{
+		if (_menuFactory == null)
+		{
+			return;
+		}
+
+		_menuFactory.LoadMenu(InDemoMenuPath);
+		_menuFactory.RegisterAction("back_to_main_menu", ReturnToMainMenu);
+		_menuFactory.RegisterAction("exit_game", ExitGame);
+		_menuFactory.Visible = true;
+	}
+
+	private void ReturnToMainMenu()
+	{
+		StopActiveDemo();
+		ShowMainMenu();
+	}
+
+	private void StopActiveDemo()
+	{
+		_mapHelper?.SetMapActive(false);
+		_cutsceneHelper?.SetCutsceneActive(false);
+		_activeDemo = DemoState.None;
+	}
+
+	private void ToggleDemoMenu()
+	{
+		if (_menuFactory == null)
+		{
+			return;
+		}
+
+		if (_menuFactory.Visible)
+		{
+			_menuFactory.Visible = false;
+			return;
+		}
+
+		ShowInDemoMenu();
 	}
 
 	private void ToggleMenu()
