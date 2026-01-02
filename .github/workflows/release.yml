@@ -37,17 +37,33 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
+      - name: Verify Godot
+        run: godot --version
+
       - name: Export Windows release
         run: |
           New-Item -ItemType Directory -Path build -Force | Out-Null
-          godot --headless --path . --export-release "Windows Desktop" "build/TACCsharp.exe"
+          $godot = $env:GODOT4
+          if (-not $godot) { $godot = "godot" }
+          & $godot --headless --path . --export-release "Windows Desktop" "build/TACCsharp.exe"
+          Get-ChildItem -Path build
+          if (!(Test-Path "build/TACCsharp.exe")) { throw "Missing build/TACCsharp.exe after export." }
 
       - name: Package artifact
         run: |
           New-Item -ItemType Directory -Path dist -Force | Out-Null
           Compress-Archive -Path build/* -DestinationPath dist/TACCsharp-Windows.zip -Force
+          Get-ChildItem -Path dist
+          if (!(Test-Path "dist/TACCsharp-Windows.zip")) { throw "Missing dist/TACCsharp-Windows.zip after packaging." }
+
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TACCsharp-Windows
+          path: dist/TACCsharp-Windows.zip
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: dist/TACCsharp-Windows.zip
+          fail_on_unmatched_files: true
