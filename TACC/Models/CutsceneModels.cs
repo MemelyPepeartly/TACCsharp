@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 namespace TACCsharp.TACC.Models
 {
@@ -17,6 +18,7 @@ namespace TACCsharp.TACC.Models
 
     public struct CutsceneData
     {
+        [JsonProperty("cutscene_name")]
         public string CutsceneName { get; set; }
         public SceneData[] Scenes { get; set; }
     }
