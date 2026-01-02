@@ -5,77 +5,77 @@
 	  "character": "Swift Sail",
 	  "dialogue": "Fortuna...",
 	  "portrait": "res://Demos/Assets/Portraits/sleepy-swift.png",
-	  "background": "res://Demos/Assets/Backgrounds/astillon.png",
+	  "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
 	  "duration": 3.5
 	},
 	{
 	  "character": "Fortuna",
 	  "dialogue": "What? What did I do?",
 	  "portrait": "res://Demos/Assets/Portraits/fortuna-happy.png",
-	  "background": "res://Demos/Assets/Backgrounds/astillon.png",
+	  "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
 	  "duration": 2
 	},
 	{
 	  "character": "Swift Sail",
-	  "dialogue": "It’s 4AM. What is that *noise*?",
+	  "dialogue": "Itâ€™s 4AM. What is that *noise*?",
 	  "portrait": "res://Demos/Assets/Portraits/sleepy-swift.png",
-	  "background": "res://Demos/Assets/Backgrounds/astillon.png",
+	  "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
 	  "duration": 3.5
 	},
 	{
 	  "character": "Fortuna",
-	  "dialogue": "Oh, that? I was just testing my new invention—a portable gong! Great for emergencies!",
+	  "dialogue": "Oh, that? I was just testing my new inventionâ€”a portable gong! Great for emergencies!",
 	  "portrait": "res://Demos/Assets/Portraits/fortuna-happy.png",
-	  "background": "res://Demos/Assets/Backgrounds/astillon.png",
+	  "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
 	  "duration": 4
 	},
 	{
 	  "character": "Swift Sail",
-	  "dialogue": "Portable… You’re hitting a *gong* at 4AM?",
+	  "dialogue": "Portableâ€¦ Youâ€™re hitting a *gong* at 4AM?",
 	  "portrait": "res://Demos/Assets/Portraits/sleepy-swift.png",
-	  "background": "res://Demos/Assets/Backgrounds/astillon.png",
+	  "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
 	  "duration": 3.5
 	},
 	{
 	  "character": "Fortuna",
-	  "dialogue": "Well, it’s portable, so you can take the noise anywhere! Neat, huh?",
+	  "dialogue": "Well, itâ€™s portable, so you can take the noise anywhere! Neat, huh?",
 	  "portrait": "res://Demos/Assets/Portraits/fortuna-happy.png",
-	  "background": "res://Demos/Assets/Backgrounds/astillon.png",
+	  "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
 	  "duration": 4
 	},
 	{
 	  "character": "Swift Sail",
-	  "dialogue": "Neat? It’s a war crime against sleep! I was *dreaming* about winning a regatta...",
+	  "dialogue": "Neat? Itâ€™s a war crime against sleep! I was *dreaming* about winning a regatta...",
 	  "portrait": "res://Demos/Assets/Portraits/sleepy-swift.png",
-	  "background": "res://Demos/Assets/Backgrounds/astillon.png",
+	  "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
 	  "duration": 4
 	},
 	{
 	  "character": "Fortuna",
 	  "dialogue": "Ooh, exciting! Did you win?",
 	  "portrait": "res://Demos/Assets/Portraits/fortuna-happy.png",
-	  "background": "res://Demos/Assets/Backgrounds/astillon.png",
+	  "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
 	  "duration": 2.5
 	},
 	{
 	  "character": "Swift Sail",
 	  "dialogue": "No, because some lunatic woke me up by pretending to be Big Ben!",
 	  "portrait": "res://Demos/Assets/Portraits/sleepy-swift.png",
-	  "background": "res://Demos/Assets/Backgrounds/astillon.png",
+	  "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
 	  "duration": 4
 	},
 	{
 	  "character": "Fortuna",
-	  "dialogue": "Oh, Big Ben! Good idea. I’ll paint the gong to match!",
+	  "dialogue": "Oh, Big Ben! Good idea. Iâ€™ll paint the gong to match!",
 	  "portrait": "res://Demos/Assets/Portraits/fortuna-happy.png",
-	  "background": "res://Demos/Assets/Backgrounds/astillon.png",
+	  "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
 	  "duration": 3.5
 	},
 	{
 	  "character": "Swift Sail",
-	  "dialogue": "*Fortuna,* if you don’t stop, I will personally throw that gong into the ocean.",
+	  "dialogue": "*Fortuna,* if you donâ€™t stop, I will personally throw that gong into the ocean.",
 	  "portrait": "res://Demos/Assets/Portraits/sleepy-swift.png",
-	  "background": "res://Demos/Assets/Backgrounds/astillon.png",
+	  "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
 	  "duration": 3.5
 	}
   ]

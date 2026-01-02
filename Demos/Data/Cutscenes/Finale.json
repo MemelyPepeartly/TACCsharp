@@ -2,17 +2,17 @@
   "cutscene_name": "Finale",
   "scenes": [
     {
-      "character": "Fortuna",
-      "dialogue": "Okay, final test: a gentle chime. No gong.",
-      "portrait": "res://Demos/Assets/Portraits/fortuna-happy.png",
-      "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
+      "character": "Elobona",
+      "dialogue": "The dunes are quiet tonight.",
+      "portrait": "res://Demos/Assets/Portraits/elobona_token.png",
+      "background": "res://Demos/Assets/Backgrounds/no-manes-land.png",
       "duration": 3.5
     },
     {
-      "character": "Swift Sail",
-      "dialogue": "If that's gentle, I can finally sleep.",
-      "portrait": "res://Demos/Assets/Portraits/sleepy-swift.png",
-      "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
+      "character": "Thumbtack",
+      "dialogue": "Quiet enough to hear the signal.",
+      "portrait": "res://Demos/Assets/Portraits/thumbtack_token.png",
+      "background": "res://Demos/Assets/Backgrounds/no-manes-land.png",
       "duration": 3.5
     }
   ]

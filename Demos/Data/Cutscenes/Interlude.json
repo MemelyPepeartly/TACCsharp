@@ -2,17 +2,17 @@
   "cutscene_name": "Interlude",
   "scenes": [
     {
-      "character": "Swift Sail",
-      "dialogue": "About that gong... let's table it for now.",
-      "portrait": "res://Demos/Assets/Portraits/sleepy-swift.png",
-      "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
+      "character": "Nikky",
+      "dialogue": "We made it to the isle. Keep your voice down.",
+      "portrait": "res://Demos/Assets/Portraits/nikky_token_2.png",
+      "background": "res://Demos/Assets/Backgrounds/crimin-isle.png",
       "duration": 3.0
     },
     {
-      "character": "Fortuna",
-      "dialogue": "Deal. But you owe me one test run.",
-      "portrait": "res://Demos/Assets/Portraits/fortuna-happy.png",
-      "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
+      "character": "Righty",
+      "dialogue": "Too late. The bandit already heard us.",
+      "portrait": "res://Demos/Assets/Portraits/righty_token_2.png",
+      "background": "res://Demos/Assets/Backgrounds/uninspired.png",
       "duration": 3.0
     }
   ]
