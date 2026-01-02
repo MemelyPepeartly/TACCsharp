@@ -89,6 +89,8 @@ public partial class MenuDemo : Node
 			_mapHelper = new MapHelper(_stem);
 			AddChild(_mapHelper);
 		}
+
+		_mapHelper.SetMapActive(true);
 	}
 
 	private void StartCutscene(string cutscenePath)
@@ -100,6 +102,8 @@ public partial class MenuDemo : Node
 		{
 			_menuFactory.Visible = false;
 		}
+
+		_mapHelper?.SetMapActive(false);
 
 		// Ensure only one instance of CutsceneHelper is created
 		if (_cutsceneHelper == null)
