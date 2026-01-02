@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -34,20 +35,38 @@ jobs:
           use-dotnet: true
           include-templates: true
 
+      - name: Resolve Godot binary
+        run: |
+          $godot = $env:GODOT4
+          if (-not $godot) { $godot = $env:GODOT }
+          if (-not $godot) { $godot = "godot" }
+          "GODOT_BIN=$godot" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Verify Godot (.NET)
+        run: |
+          $version = & $env:GODOT_BIN --version
+          $version
+          if ($version -notmatch "mono") { throw "Godot .NET build not detected: $version" }
+
+      - name: Generate C# bindings
+        run: |
+          & $env:GODOT_BIN --headless --path . --build-solutions --quit
+
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Verify Godot
-        run: godot --version
+      - name: Build C# assemblies
+        run: dotnet build --configuration Release
 
       - name: Export Windows release
         run: |
           New-Item -ItemType Directory -Path build -Force | Out-Null
-          $godot = $env:GODOT4
-          if (-not $godot) { $godot = "godot" }
-          & $godot --headless --path . --export-release "Windows Desktop" "build/TACCsharp.exe"
-          Get-ChildItem -Path build
-          if (!(Test-Path "build/TACCsharp.exe")) { throw "Missing build/TACCsharp.exe after export." }
+          & $env:GODOT_BIN --headless --verbose --path . --export-release "Windows Desktop" "build/TACCsharp.exe"
+          $exitCode = $LASTEXITCODE
+          if ($exitCode -ne 0) { throw "Godot export failed with exit code $exitCode" }
+          Get-ChildItem -Path build -Recurse
+          $exeFiles = Get-ChildItem -Path build -Filter *.exe -Recurse
+          if (-not $exeFiles) { throw "Missing .exe output in build/ after export." }
 
       - name: Package artifact
         run: |
