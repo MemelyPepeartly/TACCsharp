@@ -12,6 +12,10 @@ namespace TACCsharp.TACC.Models
         public string Character { get; set; }
         public string Dialogue { get; set; }
         public string Portrait { get; set; }
+        [JsonProperty("portrait_width")]
+        public float PortraitWidth { get; set; }
+        [JsonProperty("portrait_height")]
+        public float PortraitHeight { get; set; }
         public string Background { get; set; }
         public float Duration { get; set; }
     }
