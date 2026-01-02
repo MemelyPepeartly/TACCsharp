@@ -56,7 +56,7 @@ jobs:
         run: dotnet restore
 
       - name: Build C# assemblies
-        run: dotnet build --configuration Release
+        run: dotnet build .\TACCsharp.csproj --configuration Release
 
       - name: Export Windows release
         run: |
