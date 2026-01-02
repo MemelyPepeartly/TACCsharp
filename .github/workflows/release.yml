@@ -128,7 +128,7 @@ jobs:
       - name: Package artifact
         run: |
           mkdir -p dist
-          zip -r dist/TACCsharp-Windows.zip build/*
+          (cd build && zip -r ../dist/TACCsharp-Windows.zip .)
           ls -la dist
           test -f dist/TACCsharp-Windows.zip || { echo "Missing dist/TACCsharp-Windows.zip after packaging."; exit 1; }
 
