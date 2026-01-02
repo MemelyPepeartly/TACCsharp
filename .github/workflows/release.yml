@@ -23,6 +23,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Verify export preset
+        run: |
+          if (!(Test-Path "export_presets.cfg")) { throw "Missing export_presets.cfg in repo." }
+          Get-Content export_presets.cfg | Select-String -Pattern "name=|platform=|export_path="
+
       - name: Setup .NET SDK
         uses: actions/setup-dotnet@v4
         with:
@@ -62,7 +67,7 @@ jobs:
         run: |
           New-Item -ItemType Directory -Path build -Force | Out-Null
           $global:LASTEXITCODE = 0
-          & $env:GODOT_BIN --headless --verbose --path . --export-release "Windows Desktop" "build/TACCsharp.exe"
+          & $env:GODOT_BIN --headless --verbose --path . --export-release "Windows Desktop"
           $godotOk = $?
           $exitCode = $LASTEXITCODE
           if ($exitCode -eq $null) { $exitCode = 0 }
