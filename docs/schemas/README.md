@@ -54,6 +54,8 @@ Example:
       "character": "Swift Sail",
       "dialogue": "Fortuna...",
       "portrait": "res://Demos/Assets/Portraits/sleepy-swift.png",
+      "portrait_width": 256,
+      "portrait_height": 256,
       "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
       "duration": 3.5
     }
@@ -65,3 +67,4 @@ Full example: `Demos/Data/Cutscenes/Prologue.json`
 Notes:
 - The demo JSON uses `cutscene_name` and the model maps it via `JsonProperty`.
 - `background` updates the cutscene background texture in the demo scripts.
+- `portrait_width` and `portrait_height` set an explicit render box for the portrait; if omitted, the dialog uses its default size.
