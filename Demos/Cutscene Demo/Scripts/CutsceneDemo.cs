@@ -29,6 +29,8 @@ public partial class CutsceneDemo : Node
 		GD.Print($"Scene changed: {sceneName}");
 		GD.Print($"Character: {sceneData.Character}, Dialogue: {sceneData.Dialogue}");
 
+		UpdateBackground(sceneData.Background);
+
 		// Update the dialog box
 		Texture2D portrait = null;
 		if (!string.IsNullOrEmpty(sceneData.Portrait))
@@ -37,6 +39,28 @@ public partial class CutsceneDemo : Node
 		}
 
 		_dialogBox.UpdateDialogue(sceneData.Character, sceneData.Dialogue, portrait);
+	}
+
+	private void UpdateBackground(string backgroundPath)
+	{
+		if (_background == null)
+		{
+			return;
+		}
+
+		if (string.IsNullOrEmpty(backgroundPath))
+		{
+			return;
+		}
+
+		var backgroundTexture = GD.Load<Texture2D>(backgroundPath);
+		if (backgroundTexture == null)
+		{
+			GD.PrintErr($"Background texture not found: {backgroundPath}");
+			return;
+		}
+
+		_background.Texture = backgroundTexture;
 	}
 
 	private void OnCutsceneEnded()
