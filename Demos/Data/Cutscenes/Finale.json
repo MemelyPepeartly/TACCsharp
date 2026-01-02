@@ -1,0 +1,19 @@
+{
+  "cutscene_name": "Finale",
+  "scenes": [
+    {
+      "character": "Fortuna",
+      "dialogue": "Okay, final test: a gentle chime. No gong.",
+      "portrait": "res://Demos/Assets/Portraits/fortuna-happy.png",
+      "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
+      "duration": 3.5
+    },
+    {
+      "character": "Swift Sail",
+      "dialogue": "If that's gentle, I can finally sleep.",
+      "portrait": "res://Demos/Assets/Portraits/sleepy-swift.png",
+      "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
+      "duration": 3.5
+    }
+  ]
+}

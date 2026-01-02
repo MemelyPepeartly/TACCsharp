@@ -1,0 +1,19 @@
+{
+  "cutscene_name": "Interlude",
+  "scenes": [
+    {
+      "character": "Swift Sail",
+      "dialogue": "About that gong... let's table it for now.",
+      "portrait": "res://Demos/Assets/Portraits/sleepy-swift.png",
+      "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
+      "duration": 3.0
+    },
+    {
+      "character": "Fortuna",
+      "dialogue": "Deal. But you owe me one test run.",
+      "portrait": "res://Demos/Assets/Portraits/fortuna-happy.png",
+      "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
+      "duration": 3.0
+    }
+  ]
+}
