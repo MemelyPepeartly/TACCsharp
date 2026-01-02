@@ -115,6 +115,18 @@ public partial class CutsceneHelper : Node
 		}
 	}
 
+	public void SetCutsceneActive(bool isActive)
+	{
+		if (isActive)
+		{
+			EnsureBackground();
+			EnsureDialogBox();
+		}
+
+		ProcessMode = isActive ? Node.ProcessModeEnum.Inherit : Node.ProcessModeEnum.Disabled;
+		SetCutsceneVisible(isActive);
+	}
+
 	private void UpdateBackground(string backgroundPath)
 	{
 		if (_background == null)
@@ -182,9 +194,7 @@ public partial class CutsceneHelper : Node
 			return;
 		}
 
-		EnsureBackground();
-		EnsureDialogBox();
-		SetCutsceneVisible(true);
+		SetCutsceneActive(true);
 
 		_cutsceneLeaf.LoadCutscene(cutscenePath);
 	}
