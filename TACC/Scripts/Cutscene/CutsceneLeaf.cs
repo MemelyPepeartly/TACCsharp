@@ -51,10 +51,27 @@ public partial class CutsceneLeaf : Node, ILeafStateSource
 	{
 		GD.Print("AdvanceScene called!");
 
-		_currentSceneIndex++;
-
-		if (_currentSceneIndex < _scenes.Length)
+		if (_scenes == null || _scenes.Length == 0)
 		{
+			if (!_cutsceneEnded)
+			{
+				_cutsceneEnded = true;
+				OnCutsceneEnded?.Invoke(); // Notify listeners
+				EmitStateChanged();
+			}
+			return;
+		}
+
+		if (_cutsceneEnded)
+		{
+			return;
+		}
+
+		int nextIndex = _currentSceneIndex + 1;
+
+		if (nextIndex < _scenes.Length)
+		{
+			_currentSceneIndex = nextIndex;
 			var currentScene = _scenes[_currentSceneIndex];
 			_currentScene = currentScene;
 			OnSceneChanged?.Invoke($"Scene {_currentSceneIndex + 1}", currentScene); // Notify listeners
@@ -62,6 +79,7 @@ public partial class CutsceneLeaf : Node, ILeafStateSource
 		else
 		{
 			GD.Print("Cutscene ended.");
+			_currentSceneIndex = _scenes.Length - 1;
 			_currentScene = null;
 			_cutsceneEnded = true;
 			OnCutsceneEnded?.Invoke(); // Notify listeners

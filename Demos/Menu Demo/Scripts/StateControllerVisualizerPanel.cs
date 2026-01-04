@@ -146,7 +146,7 @@ public partial class StateControllerVisualizerPanel : PanelContainer
 		if (_controller == null)
 		{
 			sb.AppendLine("StateControllerLeaf not found.");
-			_report.Text = sb.ToString();
+			SetReportText(sb.ToString());
 			return;
 		}
 
@@ -184,7 +184,21 @@ public partial class StateControllerVisualizerPanel : PanelContainer
 			sb.AppendLine("  (no data)");
 		}
 
-		_report.Text = sb.ToString();
+		SetReportText(sb.ToString());
+	}
+
+	private void SetReportText(string text)
+	{
+		if (_report == null)
+		{
+			return;
+		}
+
+		double scroll = _report.ScrollVertical;
+		_report.Text = text;
+
+		double maxScroll = Math.Max(0, _report.GetLineCount() - 1);
+		_report.ScrollVertical = Math.Min(scroll, maxScroll);
 	}
 
 	private void AppendHudState(StringBuilder sb, HudStateSnapshot state)
