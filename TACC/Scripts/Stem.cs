@@ -9,6 +9,7 @@ public partial class Stem : Node
 
 		AddLeaf("res://TACC/Leaves/CutsceneLeaf.tscn");
 		AddLeaf("res://TACC/Leaves/MapLeaf.tscn");
+		AddLeafAsUI("res://TACC/Leaves/HudOverlayLeaf.tscn");
 		AddLeafAsUI("res://TACC/Leaves/MenuFactoryLeaf.tscn");
 	}
 
@@ -28,24 +29,26 @@ public partial class Stem : Node
 	}
 
 	// Method to add UI leaves inside a CanvasLayer
-	  public void AddLeafAsUI(string leafPath)
+	public void AddLeafAsUI(string leafPath, string canvasLayerName = "CanvasLayer", int layer = 1)
 	{
 		PackedScene leafScene = GD.Load<PackedScene>(leafPath);
 		if (leafScene != null)
 		{
 			Node leafInstance = leafScene.Instantiate();
-			leafInstance.Name = "MenuFactoryLeaf";
-
-			var canvasLayer = new CanvasLayer
+			var canvasLayer = GetNodeOrNull<CanvasLayer>(canvasLayerName);
+			if (canvasLayer == null)
 			{
-				Name = "CanvasLayer",
-				Layer = 1
-			};
+				canvasLayer = new CanvasLayer
+				{
+					Name = canvasLayerName,
+					Layer = layer
+				};
+				AddChild(canvasLayer);
+			}
 
 			canvasLayer.AddChild(leafInstance);
-			AddChild(canvasLayer);
 
-			GD.Print($"UI Leaf {leafInstance.Name} added to Stem inside CanvasLayer.");
+			GD.Print($"UI Leaf {leafInstance.Name} added to Stem inside {canvasLayer.Name}.");
 		}
 		else
 		{

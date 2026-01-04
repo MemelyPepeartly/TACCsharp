@@ -20,6 +20,7 @@ Toolkit for Assembling Custom Content (TACC) for Godot 4.3 (C#).
 
 ## Leaves
 - `MenuFactoryLeaf` builds a menu UI from JSON and maps button actions to registered callbacks.
+- `HudOverlayLeaf` builds a persistent HUD from JSON and exposes setters for updating elements by id.
 - `MapLeaf` loads a map image and waypoints, supports pan/zoom, hover tooltips, and click signals.
 - `CutsceneLeaf` loads a sequence of scenes and emits scene-changed and end events.
 
