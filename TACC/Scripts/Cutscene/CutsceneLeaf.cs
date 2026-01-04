@@ -88,6 +88,16 @@ public partial class CutsceneLeaf : Node, ILeafStateSource
 		EmitStateChanged();
 	}
 
+	public void ClearCutsceneState()
+	{
+		_cutsceneName = null;
+		_scenes = null;
+		_currentSceneIndex = -1;
+		_currentScene = null;
+		_cutsceneEnded = false;
+		EmitStateChanged();
+	}
+
 	public LeafStateSnapshot GetStateSnapshot()
 	{
 		return new CutsceneStateSnapshot
