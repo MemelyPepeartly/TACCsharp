@@ -72,6 +72,60 @@ public partial class HudOverlayLeaf : Control
 		_icons.Clear();
 	}
 
+	public bool EnsureLabel(string elementId, string anchor, string text = null)
+	{
+		if (string.IsNullOrWhiteSpace(elementId))
+		{
+			GD.PrintErr("HUD element id is required.");
+			return false;
+		}
+
+		if (_labels.TryGetValue(elementId, out var existingLabel))
+		{
+			if (text != null)
+			{
+				existingLabel.Text = text;
+			}
+			return true;
+		}
+
+		if (_elements.ContainsKey(elementId))
+		{
+			GD.PrintErr($"HUD element '{elementId}' already exists and is not a label.");
+			return false;
+		}
+
+		bool usedDefault;
+		var slot = GetAnchorSlot(anchor, out usedDefault);
+		if (usedDefault && !string.IsNullOrWhiteSpace(anchor))
+		{
+			GD.PrintErr($"HUD element '{elementId}' has invalid anchor '{anchor}', defaulting to top_left.");
+		}
+
+		var elementData = new HudElementData
+		{
+			Id = elementId,
+			Type = "label",
+			Anchor = anchor,
+			Text = text ?? string.Empty,
+			Visible = true
+		};
+
+		var control = CreateElementControl(elementData);
+		if (control == null)
+		{
+			return false;
+		}
+
+		control.Name = elementId;
+		control.Visible = true;
+
+		slot.AddChild(control);
+		_elements[elementId] = control;
+
+		return true;
+	}
+
 	public void SetText(string elementId, string text)
 	{
 		if (_labels.TryGetValue(elementId, out var label))
