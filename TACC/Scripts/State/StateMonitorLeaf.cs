@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using TACCsharp.TACC.State;
 
-public partial class StateControllerLeaf : Node
+public partial class StateMonitorLeaf : Node
 {
 	public event Action<LeafStateSnapshot> StateUpdated;
 

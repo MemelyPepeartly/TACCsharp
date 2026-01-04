@@ -9,8 +9,8 @@
 	  "action": "start_cutscene_demo"
 	},
 	{
-	  "text": "State Controller Demos",
-	  "action": "start_state_controller_demo"
+	  "text": "State Monitor Demos",
+	  "action": "start_state_monitor_demo"
 	},
 	{
 	  "text": "Start HUD Demo",

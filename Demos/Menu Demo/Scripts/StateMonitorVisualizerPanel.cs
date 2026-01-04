@@ -5,7 +5,7 @@ using TACCsharp.TACC.State;
 
 namespace TACCsharp.Demos.Menu_Demo.Scripts
 {
-public partial class StateControllerVisualizerPanel : PanelContainer
+public partial class StateMonitorVisualizerPanel : PanelContainer
 {
 	private const float PanelWidth = 420f;
 	private const float PanelHeight = 520f;
@@ -13,7 +13,7 @@ public partial class StateControllerVisualizerPanel : PanelContainer
 
 	private TextEdit _report;
 	private Label _status;
-	private StateControllerLeaf _controller;
+	private StateMonitorLeaf _controller;
 
 	public override void _Ready()
 	{
@@ -27,7 +27,7 @@ public partial class StateControllerVisualizerPanel : PanelContainer
 		DetachController();
 	}
 
-	public void AttachController(StateControllerLeaf controller)
+	public void AttachController(StateMonitorLeaf controller)
 	{
 		if (_controller == controller)
 		{
@@ -80,7 +80,7 @@ public partial class StateControllerVisualizerPanel : PanelContainer
 
 		var title = new Label
 		{
-			Text = "State Controller Visualizer",
+			Text = "State Monitor Visualizer",
 			SizeFlagsHorizontal = SizeFlags.ExpandFill
 		};
 		header.AddChild(title);
@@ -145,7 +145,7 @@ public partial class StateControllerVisualizerPanel : PanelContainer
 		var sb = new StringBuilder();
 		if (_controller == null)
 		{
-			sb.AppendLine("StateControllerLeaf not found.");
+			sb.AppendLine("StateMonitorLeaf not found.");
 			SetReportText(sb.ToString());
 			return;
 		}

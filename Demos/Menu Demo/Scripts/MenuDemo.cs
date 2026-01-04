@@ -6,7 +6,7 @@ public partial class MenuDemo : Node
 {
 	private const string MainMenuPath = "res://Demos/Data/Menus/Start.json";
 	private const string CutsceneMenuPath = "res://Demos/Data/Menus/CutsceneSelect.json";
-	private const string StateControllerMenuPath = "res://Demos/Data/Menus/StateControllerDemos.json";
+	private const string StateMonitorMenuPath = "res://Demos/Data/Menus/StateMonitorDemos.json";
 	private const string InDemoMenuPath = "res://Demos/Data/Menus/InDemo.json";
 	private const string CutsceneProloguePath = "res://Demos/Data/Cutscenes/Prologue.json";
 	private const string CutsceneInterludePath = "res://Demos/Data/Cutscenes/Interlude.json";
@@ -25,7 +25,7 @@ public partial class MenuDemo : Node
 	private MapHelper _mapHelper;
 	private CutsceneHelper _cutsceneHelper;
 	private HudHelper _hudHelper;
-	private StateControllerVisualizerPanel _stateVisualizer;
+	private StateMonitorVisualizerPanel _stateMonitorVisualizer;
 	private DemoState _activeDemo = DemoState.None;
 
 	public override void _Ready()
@@ -68,7 +68,7 @@ public partial class MenuDemo : Node
 		_menuFactory.RegisterAction("start_map_demo", StartMapDemo);
 		_menuFactory.RegisterAction("start_cutscene_demo", ShowCutsceneMenu);
 		_menuFactory.RegisterAction("start_hud_demo", StartHudDemo);
-		_menuFactory.RegisterAction("start_state_controller_demo", ShowStateControllerMenu);
+		_menuFactory.RegisterAction("start_state_monitor_demo", ShowStateMonitorMenu);
 		_menuFactory.RegisterAction("exit_game", ExitGame);
 		_menuFactory.Visible = true;
 	}
@@ -88,45 +88,45 @@ public partial class MenuDemo : Node
 		_menuFactory.Visible = true;
 	}
 
-	private void ShowStateControllerMenu()
+	private void ShowStateMonitorMenu()
 	{
 		if (_menuFactory == null)
 		{
 			return;
 		}
 
-		_menuFactory.LoadMenu(StateControllerMenuPath);
-		_menuFactory.RegisterAction("open_state_visualizer", OpenStateControllerVisualizer);
+		_menuFactory.LoadMenu(StateMonitorMenuPath);
+		_menuFactory.RegisterAction("open_state_visualizer", OpenStateMonitorVisualizer);
 		_menuFactory.RegisterAction("back_to_main_menu", ShowMainMenu);
 		_menuFactory.Visible = true;
 	}
 
-	private void OpenStateControllerVisualizer()
+	private void OpenStateMonitorVisualizer()
 	{
 		if (_stem == null)
 		{
 			return;
 		}
 
-		if (_stateVisualizer == null || !_stateVisualizer.IsInsideTree())
+		if (_stateMonitorVisualizer == null || !_stateMonitorVisualizer.IsInsideTree())
 		{
-			_stateVisualizer = new StateControllerVisualizerPanel();
+			_stateMonitorVisualizer = new StateMonitorVisualizerPanel();
 
 			var canvasLayer = _stem.GetNodeOrNull<CanvasLayer>("CanvasLayer");
 			if (canvasLayer != null)
 			{
-				canvasLayer.AddChild(_stateVisualizer);
+				canvasLayer.AddChild(_stateMonitorVisualizer);
 			}
 			else
 			{
-				_stem.AddChild(_stateVisualizer);
+				_stem.AddChild(_stateMonitorVisualizer);
 			}
 
-			var controller = _stem.GetNodeOrNull<StateControllerLeaf>("StateControllerLeaf");
-			_stateVisualizer.AttachController(controller);
+			var controller = _stem.GetNodeOrNull<StateMonitorLeaf>("StateMonitorLeaf");
+			_stateMonitorVisualizer.AttachController(controller);
 		}
 
-		_stateVisualizer.Visible = true;
+		_stateMonitorVisualizer.Visible = true;
 		if (_menuFactory != null)
 		{
 			_menuFactory.Visible = false;
