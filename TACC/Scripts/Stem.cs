@@ -11,6 +11,7 @@ public partial class Stem : Node
 		AddLeaf("res://TACC/Leaves/MapLeaf.tscn");
 		AddLeafAsUI("res://TACC/Leaves/HudOverlayLeaf.tscn");
 		AddLeafAsUI("res://TACC/Leaves/MenuFactoryLeaf.tscn");
+		AddLeaf("res://TACC/Leaves/StateControllerLeaf.tscn");
 	}
 
 	public void AddLeaf(string leafPath)

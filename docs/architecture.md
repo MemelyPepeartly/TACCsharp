@@ -24,6 +24,7 @@ MenuDemo (Node)
 - Stem (Node)
   - CutsceneLeaf (Node2D)
   - MapLeaf (Node2D)
+  - StateControllerLeaf (Node)
   - CanvasLayer
     - HudOverlayLeaf (Control)
     - MenuFactoryLeaf (Control)
@@ -49,6 +50,10 @@ CutsceneLeaf (`TACC/Leaves/CutsceneLeaf.tscn`, `TACC/Scripts/Cutscene/CutsceneLe
 - `LoadCutscene(jsonPath)` loads a scene list.
 - `AdvanceScene()` progresses and fires `OnSceneChanged`.
 - `OnCutsceneEnded` fires when scenes are exhausted.
+
+StateControllerLeaf (`TACC/Leaves/StateControllerLeaf.tscn`, `TACC/Scripts/State/StateControllerLeaf.cs`):
+- Aggregates state snapshots from leaves implementing `ILeafStateSource`.
+- Emits `StateUpdated` when any leaf state changes.
 
 ## Demos and wiring
 Menu demo (`Demos/Menu Demo/Scenes/MenuDemo.tscn`, `Demos/Menu Demo/Scripts/MenuDemo.cs`):
