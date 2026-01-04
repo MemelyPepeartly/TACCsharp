@@ -9,6 +9,7 @@
     <Content Include="Demos\Data\Cutscenes\Finale.json" />
     <Content Include="Demos\Data\Cutscenes\Interlude.json" />
     <Content Include="Demos\Data\Cutscenes\Prologue.json" />
+    <Content Include="Demos\Data\Hud\HudDemo.json" />
     <Content Include="Demos\Data\Maps\Overworld.json" />
     <Content Include="Demos\Data\Menus\CutsceneSelect.json" />
     <Content Include="Demos\Data\Menus\Start.json" />
