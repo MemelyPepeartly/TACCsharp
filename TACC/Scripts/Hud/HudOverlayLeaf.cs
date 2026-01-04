@@ -356,13 +356,13 @@ public partial class HudOverlayLeaf : Control
 			bottomRow.MouseFilter = Control.MouseFilterEnum.Ignore;
 		}
 
-		RegisterSlot(topRow, "TopLeft", "top_left", BoxContainer.AlignMode.Begin);
-		RegisterSlot(topRow, "TopCenter", "top_center", BoxContainer.AlignMode.Center);
-		RegisterSlot(topRow, "TopRight", "top_right", BoxContainer.AlignMode.End);
+		RegisterSlot(topRow, "TopLeft", "top_left", BoxContainer.AlignmentMode.Begin);
+		RegisterSlot(topRow, "TopCenter", "top_center", BoxContainer.AlignmentMode.Center);
+		RegisterSlot(topRow, "TopRight", "top_right", BoxContainer.AlignmentMode.End);
 
-		RegisterSlot(bottomRow, "BottomLeft", "bottom_left", BoxContainer.AlignMode.Begin);
-		RegisterSlot(bottomRow, "BottomCenter", "bottom_center", BoxContainer.AlignMode.Center);
-		RegisterSlot(bottomRow, "BottomRight", "bottom_right", BoxContainer.AlignMode.End);
+		RegisterSlot(bottomRow, "BottomLeft", "bottom_left", BoxContainer.AlignmentMode.Begin);
+		RegisterSlot(bottomRow, "BottomCenter", "bottom_center", BoxContainer.AlignmentMode.Center);
+		RegisterSlot(bottomRow, "BottomRight", "bottom_right", BoxContainer.AlignmentMode.End);
 	}
 
 	private HBoxContainer CreateRow(string name)
@@ -376,7 +376,7 @@ public partial class HudOverlayLeaf : Control
 		};
 	}
 
-	private void RegisterSlot(HBoxContainer row, string name, string key, BoxContainer.AlignMode align)
+	private void RegisterSlot(HBoxContainer row, string name, string key, BoxContainer.AlignmentMode align)
 	{
 		var slot = row.GetNodeOrNull<VBoxContainer>(name);
 		if (slot == null)
@@ -387,9 +387,9 @@ public partial class HudOverlayLeaf : Control
 				Alignment = align,
 				SizeFlagsHorizontal = Control.SizeFlags.ExpandFill,
 				SizeFlagsVertical = Control.SizeFlags.Fill,
-				Separation = DefaultSeparation,
 				MouseFilter = Control.MouseFilterEnum.Ignore
 			};
+			slot.AddThemeConstantOverride("separation", DefaultSeparation);
 			row.AddChild(slot);
 		}
 		else
@@ -398,6 +398,7 @@ public partial class HudOverlayLeaf : Control
 			slot.MouseFilter = Control.MouseFilterEnum.Ignore;
 		}
 
+		slot.AddThemeConstantOverride("separation", DefaultSeparation);
 		_anchorSlots[key] = slot;
 	}
 }
