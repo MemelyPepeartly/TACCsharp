@@ -173,6 +173,7 @@ public partial class MenuDemo : Node
 		if (_cutsceneHelper == null)
 		{
 			_cutsceneHelper = new CutsceneHelper(_stem);
+			_cutsceneHelper.CutsceneFinished += OnCutsceneDemoEnded;
 			AddChild(_cutsceneHelper);
 		}
 
@@ -201,6 +202,12 @@ public partial class MenuDemo : Node
 
 		_activeDemo = DemoState.Hud;
 		_hudHelper.SetHudActive(true);
+	}
+
+	private void OnCutsceneDemoEnded()
+	{
+		StopActiveDemo();
+		ShowCutsceneMenu();
 	}
 
 	private void ExitGame()
