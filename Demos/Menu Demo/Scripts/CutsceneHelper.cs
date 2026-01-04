@@ -125,6 +125,10 @@ public partial class CutsceneHelper : Node
 			EnsureBackground();
 			EnsureDialogBox();
 		}
+		else
+		{
+			_cutsceneLeaf?.ClearCutsceneState();
+		}
 
 		ProcessMode = isActive ? Node.ProcessModeEnum.Inherit : Node.ProcessModeEnum.Disabled;
 		SetCutsceneVisible(isActive);
