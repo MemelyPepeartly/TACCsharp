@@ -14,6 +14,7 @@
     <Content Include="Demos\Data\Maps\Overworld.json" />
     <Content Include="Demos\Data\Menus\CutsceneSelect.json" />
     <Content Include="Demos\Data\Menus\Start.json" />
+    <Content Include="Demos\Data\Menus\StateControllerDemos.json" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Demos\Data\Maps\Ove8F8A.tmp" />
