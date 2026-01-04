@@ -18,6 +18,7 @@ public partial class MapLeaf : Node2D, ILeafStateSource
 	private MapData mapData;
 	private Sprite2D mapSprite;
 
+	private bool _stateActive = true;
 	private string _mapPath;
 	private int _waypointCount;
 	private string _lastWaypointId;
@@ -276,6 +277,18 @@ public partial class MapLeaf : Node2D, ILeafStateSource
 
 	public LeafStateSnapshot GetStateSnapshot()
 	{
+		if (!_stateActive)
+		{
+			return new MapStateSnapshot
+			{
+				MapPath = null,
+				WaypointCount = 0,
+				LastWaypointId = null,
+				ZoomLevel = 1.0f,
+				MapPosition = Vector2.Zero
+			};
+		}
+
 		return new MapStateSnapshot
 		{
 			MapPath = _mapPath ?? JsonPath,
@@ -284,6 +297,26 @@ public partial class MapLeaf : Node2D, ILeafStateSource
 			ZoomLevel = zoomLevel,
 			MapPosition = Position
 		};
+	}
+
+	public void SetStateActive(bool isActive)
+	{
+		_stateActive = isActive;
+
+		if (!isActive)
+		{
+			ResetMapView();
+			_lastWaypointId = null;
+		}
+
+		EmitStateChanged();
+	}
+
+	private void ResetMapView()
+	{
+		zoomLevel = 1.0f;
+		Scale = Vector2.One;
+		Position = Vector2.Zero;
 	}
 
 	private void EmitStateChanged()

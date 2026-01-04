@@ -70,6 +70,7 @@ public partial class HudOverlayLeaf : Control, ILeafStateSource
 
 	public void ClearHud()
 	{
+		_loadedHudPath = null;
 		ClearHudInternal();
 		EmitStateChanged();
 	}
