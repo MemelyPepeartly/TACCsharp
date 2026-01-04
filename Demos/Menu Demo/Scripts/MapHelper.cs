@@ -89,12 +89,15 @@ namespace TACCsharp.Demos.Menu_Demo.Scripts
                 }
                 else
                 {
-                    _hudLeaf.SetVisible(MousePositionHudId, false);
+                    _hudLeaf.ClearHud();
+                    _hudLeaf.Visible = false;
+                    _hudLeaf.ProcessMode = Node.ProcessModeEnum.Disabled;
                 }
             }
 
             _mapLeaf.Visible = isActive;
             _mapLeaf.ProcessMode = isActive ? Node.ProcessModeEnum.Inherit : Node.ProcessModeEnum.Disabled;
+            _mapLeaf.SetStateActive(isActive);
             ProcessMode = isActive ? Node.ProcessModeEnum.Inherit : Node.ProcessModeEnum.Disabled;
         }
     }
