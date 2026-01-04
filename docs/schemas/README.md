@@ -16,6 +16,24 @@ Example:
 ```
 Full example: `Demos/Data/Menus/Start.json`
 
+## HUD (HudOverlayLeaf)
+Schema: `docs/schemas/hud.schema.json`  
+Used by: `HudOverlayLeaf.LoadHud(jsonPath)`
+
+Example:
+```json
+{
+  "elements": [
+    { "id": "player_name", "type": "label", "anchor": "top_left", "text": "Swift Sail" },
+    { "id": "health", "type": "progress", "anchor": "top_left", "text": "HP", "min": 0, "max": 100, "value": 75, "minWidth": 220 },
+    { "id": "gold", "type": "label", "anchor": "top_right", "text": "Gold: 120" },
+    { "id": "prompt", "type": "label", "anchor": "bottom_center", "text": "Press E to interact", "visible": false }
+  ]
+}
+```
+Notes:
+- Anchors supported: `top_left`, `top_center`, `top_right`, `bottom_left`, `bottom_center`, `bottom_right`.
+
 ## Map (MapLeaf)
 Schema: `docs/schemas/map.schema.json`  
 Used by: `MapLeaf.LoadMap(path)`

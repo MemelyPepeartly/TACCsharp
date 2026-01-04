@@ -9,7 +9,7 @@ TACCsharp uses a "Stem + Leaves" composition model.
 ## Runtime flow
 1. A demo scene loads (for example, `Demos/Menu Demo/Scenes/MenuDemo.tscn`).
 2. The scene instances `TACC/Core/Stem.tscn`.
-3. `Stem._Ready` loads leaf scenes (cutscene, map, menu UI).
+3. `Stem._Ready` loads leaf scenes (cutscene, map, HUD, menu UI).
 4. Demo scripts find leaves and wire signals/events.
 5. Leaves load JSON and emit signals as the user interacts.
 
@@ -25,6 +25,7 @@ MenuDemo (Node)
   - CutsceneLeaf (Node2D)
   - MapLeaf (Node2D)
   - CanvasLayer
+    - HudOverlayLeaf (Control)
     - MenuFactoryLeaf (Control)
 ```
 
@@ -33,6 +34,11 @@ MenuFactoryLeaf (`TACC/Leaves/MenuFactoryLeaf.tscn`, `TACC/Scripts/Menu/MenuFact
 - `LoadMenu(jsonPath)` builds buttons from JSON.
 - `RegisterAction(actionName, Action)` binds button actions.
 - Expects `CenterContainer/VBoxContainer` in the leaf scene.
+
+HudOverlayLeaf (`TACC/Leaves/HudOverlayLeaf.tscn`, `TACC/Scripts/Hud/HudOverlayLeaf.cs`):
+- `LoadHud(jsonPath)` builds a persistent HUD from JSON.
+- `SetText`, `SetValue`, and `SetIcon` update elements by id.
+- Anchors elements to top/bottom slots (left, center, right).
 
 MapLeaf (`TACC/Leaves/MapLeaf.tscn`, `TACC/Scripts/Map/MapLeaf.cs`):
 - `LoadMap(jsonPath)` loads a background image and waypoints.
