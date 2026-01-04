@@ -59,6 +59,10 @@ namespace TACCsharp.Demos.Menu_Demo.Scripts
 				_hudLeaf.LoadHud(HudPath);
 				UpdateHud();
 			}
+			else
+			{
+				_hudLeaf.ClearHud();
+			}
 
 			_hudLeaf.Visible = isActive;
 			_hudLeaf.ProcessMode = isActive ? Node.ProcessModeEnum.Inherit : Node.ProcessModeEnum.Disabled;
