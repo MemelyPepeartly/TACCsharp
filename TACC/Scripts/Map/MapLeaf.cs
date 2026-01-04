@@ -4,15 +4,23 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using TACCsharp.TACC.Models;
+using TACCsharp.TACC.State;
 using FileAccess = Godot.FileAccess;
 
-public partial class MapLeaf : Node2D
+public partial class MapLeaf : Node2D, ILeafStateSource
 {
 	[Export] public string JsonPath { get; set; }
+
+	public string StateKey => LeafStateKeys.Map;
+	public event Action<LeafStateSnapshot> StateChanged;
 
 	private Texture2D mapTexture;
 	private MapData mapData;
 	private Sprite2D mapSprite;
+
+	private string _mapPath;
+	private int _waypointCount;
+	private string _lastWaypointId;
 
 	private bool isDragging = false;
 	private Vector2 dragStartPosition;
@@ -33,6 +41,8 @@ public partial class MapLeaf : Node2D
 
 	public override void _Ready()
 	{
+		AddToGroup(LeafStateGroups.LeafStateSourceGroup);
+
 		if (!string.IsNullOrEmpty(JsonPath))
 		{
 			LoadMap(JsonPath);
@@ -122,6 +132,9 @@ public partial class MapLeaf : Node2D
 			return;
 		}
 
+		_mapPath = path;
+		_lastWaypointId = null;
+
 		try
 		{
 			// Read and deserialize the JSON
@@ -130,6 +143,7 @@ public partial class MapLeaf : Node2D
 			file.Close();
 
 			mapData = JsonConvert.DeserializeObject<MapData>(jsonContent);
+			_waypointCount = mapData?.Waypoints?.Count ?? 0;
 
 			// Load map texture
 			mapTexture = GD.Load<Texture2D>(mapData.ImagePath);
@@ -147,10 +161,11 @@ public partial class MapLeaf : Node2D
 			AddChild(mapSprite);
 
 			// Emit a signal that the map has been loaded
-			EmitSignal(nameof(MapLoadedEventHandler), mapData.Waypoints.Count);
+			EmitSignal(nameof(MapLoadedEventHandler), _waypointCount);
 
 			// Display waypoints
 			DisplayWaypoints();
+			EmitStateChanged();
 		}
 		catch (Exception ex)
 		{
@@ -207,6 +222,11 @@ public partial class MapLeaf : Node2D
 					if (!string.IsNullOrEmpty(waypointId))
 					{
 						EmitSignal(nameof(WaypointClickedEventHandler), waypointId);
+						if (_lastWaypointId != waypointId)
+						{
+							_lastWaypointId = waypointId;
+							EmitStateChanged();
+						}
 						GD.Print($"Waypoint clicked: {waypointId}");
 					}
 				}
@@ -244,9 +264,31 @@ public partial class MapLeaf : Node2D
 			if (!string.IsNullOrEmpty(waypointId))
 			{
 				EmitSignal(nameof(WaypointClickedEventHandler), waypointId);
+				if (_lastWaypointId != waypointId)
+				{
+					_lastWaypointId = waypointId;
+					EmitStateChanged();
+				}
 				GD.Print($"Waypoint clicked: {waypointId}");
 			}
 		}
+	}
+
+	public LeafStateSnapshot GetStateSnapshot()
+	{
+		return new MapStateSnapshot
+		{
+			MapPath = _mapPath ?? JsonPath,
+			WaypointCount = _waypointCount,
+			LastWaypointId = _lastWaypointId,
+			ZoomLevel = zoomLevel,
+			MapPosition = Position
+		};
+	}
+
+	private void EmitStateChanged()
+	{
+		StateChanged?.Invoke(GetStateSnapshot());
 	}
 
 	// Accessor for game logic
