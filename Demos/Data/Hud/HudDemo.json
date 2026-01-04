@@ -1,0 +1,47 @@
+{
+  "elements": [
+	{
+	  "id": "player_name",
+	  "type": "label",
+	  "anchor": "top_left",
+	  "text": "Swift Sail"
+	},
+	{
+	  "id": "health",
+	  "type": "progress",
+	  "anchor": "top_left",
+	  "text": "HP",
+	  "min": 0,
+	  "max": 100,
+	  "value": 100,
+	  "minWidth": 220
+	},
+	{
+	  "id": "badge",
+	  "type": "icon",
+	  "anchor": "top_right",
+	  "iconPath": "res://Demos/Assets/Icons/Whitewater.png",
+	  "minWidth": 48,
+	  "minHeight": 48
+	},
+	{
+	  "id": "gold",
+	  "type": "label",
+	  "anchor": "top_right",
+	  "text": "Gold: 120"
+	},
+	{
+	  "id": "status",
+	  "type": "label",
+	  "anchor": "bottom_left",
+	  "text": "Status: Exploring"
+	},
+	{
+	  "id": "prompt",
+	  "type": "label",
+	  "anchor": "bottom_center",
+	  "text": "Press E to interact",
+	  "visible": false
+	}
+  ]
+}
