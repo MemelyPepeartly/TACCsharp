@@ -1,0 +1,12 @@
+{
+  "buttons": [
+    {
+      "text": "Open Visualizer",
+      "action": "open_state_visualizer"
+    },
+    {
+      "text": "Back",
+      "action": "back_to_main_menu"
+    }
+  ]
+}
