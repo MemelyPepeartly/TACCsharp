@@ -1,4 +1,5 @@
 using Godot;
+using System;
 using TACCsharp.TACC.Models;
 
 public partial class CutsceneHelper : Node
@@ -10,6 +11,8 @@ public partial class CutsceneHelper : Node
 	private CutsceneLeaf _cutsceneLeaf;
 	private DialogBox _dialogBox;
 	private Sprite2D _background;
+
+	public event Action CutsceneFinished;
 
 	public CutsceneHelper(Stem stem)
 	{
@@ -230,7 +233,8 @@ public partial class CutsceneHelper : Node
 	private void OnCutsceneEnded()
 	{
 		GD.Print("Cutscene finished.");
-		SetCutsceneVisible(false);
+		SetCutsceneActive(false);
+		CutsceneFinished?.Invoke();
 	}
 
 	public override void _Input(InputEvent @event)
