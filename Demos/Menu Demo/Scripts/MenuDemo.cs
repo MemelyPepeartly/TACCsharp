@@ -122,8 +122,8 @@ public partial class MenuDemo : Node
 				_stem.AddChild(_stateMonitorVisualizer);
 			}
 
-			var controller = _stem.GetNodeOrNull<StateMonitorLeaf>("StateMonitorLeaf");
-			_stateMonitorVisualizer.AttachController(controller);
+			var monitor = _stem.GetNodeOrNull<StateMonitorLeaf>("StateMonitorLeaf");
+			_stateMonitorVisualizer.AttachMonitor(monitor);
 		}
 
 		_stateMonitorVisualizer.Visible = true;

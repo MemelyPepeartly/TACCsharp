@@ -13,7 +13,7 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 
 	private TextEdit _report;
 	private Label _status;
-	private StateMonitorLeaf _controller;
+	private StateMonitorLeaf _monitor;
 
 	public override void _Ready()
 	{
@@ -24,33 +24,33 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 
 	public override void _ExitTree()
 	{
-		DetachController();
+		DetachMonitor();
 	}
 
-	public void AttachController(StateMonitorLeaf controller)
+	public void AttachMonitor(StateMonitorLeaf monitor)
 	{
-		if (_controller == controller)
+		if (_monitor == monitor)
 		{
 			return;
 		}
 
-		DetachController();
-		_controller = controller;
+		DetachMonitor();
+		_monitor = monitor;
 
-		if (_controller != null)
+		if (_monitor != null)
 		{
-			_controller.StateUpdated += OnStateUpdated;
+			_monitor.StateUpdated += OnStateUpdated;
 		}
 
 		RefreshReport();
 	}
 
-	private void DetachController()
+	private void DetachMonitor()
 	{
-		if (_controller != null)
+		if (_monitor != null)
 		{
-			_controller.StateUpdated -= OnStateUpdated;
-			_controller = null;
+			_monitor.StateUpdated -= OnStateUpdated;
+			_monitor = null;
 		}
 	}
 
@@ -143,14 +143,14 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 		_status.Text = DateTime.Now.ToString("HH:mm:ss");
 
 		var sb = new StringBuilder();
-		if (_controller == null)
+		if (_monitor == null)
 		{
 			sb.AppendLine("StateMonitorLeaf not found.");
 			SetReportText(sb.ToString());
 			return;
 		}
 
-		if (_controller.TryGetState<HudStateSnapshot>(LeafStateKeys.Hud, out var hudState))
+		if (_monitor.TryGetState<HudStateSnapshot>(LeafStateKeys.Hud, out var hudState))
 		{
 			AppendHudState(sb, hudState);
 		}
@@ -162,7 +162,7 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 
 		sb.AppendLine();
 
-		if (_controller.TryGetState<CutsceneStateSnapshot>(LeafStateKeys.Cutscene, out var cutsceneState))
+		if (_monitor.TryGetState<CutsceneStateSnapshot>(LeafStateKeys.Cutscene, out var cutsceneState))
 		{
 			AppendCutsceneState(sb, cutsceneState);
 		}
@@ -174,7 +174,7 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 
 		sb.AppendLine();
 
-		if (_controller.TryGetState<MapStateSnapshot>(LeafStateKeys.Map, out var mapState))
+		if (_monitor.TryGetState<MapStateSnapshot>(LeafStateKeys.Map, out var mapState))
 		{
 			AppendMapState(sb, mapState);
 		}
