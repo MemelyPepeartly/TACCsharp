@@ -11,11 +11,36 @@ namespace TACCsharp.Demos.Menu_Demo.Scripts
     {
         private Stem _stem;
         private MapLeaf _mapLeaf;
+        private HudOverlayLeaf _hudLeaf;
+        private const string MousePositionHudId = "map_mouse_position";
+        private const string MousePositionHudAnchor = "top_left";
+        private bool _mapHudActive = false;
 
         public MapHelper(Stem stem)
         {
             _stem = stem;
+            _hudLeaf = _stem.GetNodeOrNull<HudOverlayLeaf>("CanvasLayer/HudOverlayLeaf");
+            if (_hudLeaf == null)
+            {
+                GD.PrintErr("HudOverlayLeaf not found in Stem.");
+            }
             ConnectMapLeafSignals();
+        }
+
+        public override void _Process(double delta)
+        {
+            if (!_mapHudActive || _hudLeaf == null || _mapLeaf == null)
+            {
+                return;
+            }
+
+            Vector2 mousePosition = GetViewport().GetMousePosition();
+            Vector2 mapPosition = _mapLeaf.ToLocal(mousePosition);
+
+            if (_hudLeaf.EnsureLabel(MousePositionHudId, MousePositionHudAnchor))
+            {
+                _hudLeaf.SetText(MousePositionHudId, $"Mouse Position: {mapPosition}");
+            }
         }
 
         private void ConnectMapLeafSignals()
@@ -56,8 +81,26 @@ namespace TACCsharp.Demos.Menu_Demo.Scripts
                 return;
             }
 
+            _mapHudActive = isActive;
+            if (_hudLeaf != null)
+            {
+                if (isActive)
+                {
+                    _hudLeaf.Visible = true;
+                    if (_hudLeaf.EnsureLabel(MousePositionHudId, MousePositionHudAnchor, "Mouse Position:"))
+                    {
+                        _hudLeaf.SetVisible(MousePositionHudId, true);
+                    }
+                }
+                else
+                {
+                    _hudLeaf.SetVisible(MousePositionHudId, false);
+                }
+            }
+
             _mapLeaf.Visible = isActive;
             _mapLeaf.ProcessMode = isActive ? Node.ProcessModeEnum.Inherit : Node.ProcessModeEnum.Disabled;
+            ProcessMode = isActive ? Node.ProcessModeEnum.Inherit : Node.ProcessModeEnum.Disabled;
         }
     }
 }
