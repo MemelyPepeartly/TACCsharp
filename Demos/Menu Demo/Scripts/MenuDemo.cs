@@ -15,13 +15,15 @@ public partial class MenuDemo : Node
 	{
 		None,
 		Map,
-		Cutscene
+		Cutscene,
+		Hud
 	}
 
 	private Stem _stem;
 	private MenuFactoryLeaf _menuFactory;
 	private MapHelper _mapHelper;
 	private CutsceneHelper _cutsceneHelper;
+	private HudHelper _hudHelper;
 	private DemoState _activeDemo = DemoState.None;
 
 	public override void _Ready()
@@ -63,6 +65,7 @@ public partial class MenuDemo : Node
 		_menuFactory.LoadMenu(MainMenuPath);
 		_menuFactory.RegisterAction("start_map_demo", StartMapDemo);
 		_menuFactory.RegisterAction("start_cutscene_demo", ShowCutsceneMenu);
+		_menuFactory.RegisterAction("start_hud_demo", StartHudDemo);
 		_menuFactory.RegisterAction("exit_game", ExitGame);
 		_menuFactory.Visible = true;
 	}
@@ -100,6 +103,7 @@ public partial class MenuDemo : Node
 		}
 
 		_activeDemo = DemoState.Map;
+		_hudHelper?.SetHudActive(false);
 		_cutsceneHelper?.SetCutsceneActive(false);
 		_mapHelper.SetMapActive(true);
 	}
@@ -115,6 +119,7 @@ public partial class MenuDemo : Node
 		}
 
 		_mapHelper?.SetMapActive(false);
+		_hudHelper?.SetHudActive(false);
 
 		// Ensure only one instance of CutsceneHelper is created
 		if (_cutsceneHelper == null)
@@ -125,6 +130,29 @@ public partial class MenuDemo : Node
 
 		_activeDemo = DemoState.Cutscene;
 		_cutsceneHelper.StartCutscene(cutscenePath);
+	}
+
+	private void StartHudDemo()
+	{
+		GD.Print("Initializing HUD Demo...");
+
+		// Hide the menu
+		if (_menuFactory != null)
+		{
+			_menuFactory.Visible = false;
+		}
+
+		_mapHelper?.SetMapActive(false);
+		_cutsceneHelper?.SetCutsceneActive(false);
+
+		if (_hudHelper == null)
+		{
+			_hudHelper = new HudHelper(_stem);
+			AddChild(_hudHelper);
+		}
+
+		_activeDemo = DemoState.Hud;
+		_hudHelper.SetHudActive(true);
 	}
 
 	private void ExitGame()
@@ -172,6 +200,7 @@ public partial class MenuDemo : Node
 	{
 		_mapHelper?.SetMapActive(false);
 		_cutsceneHelper?.SetCutsceneActive(false);
+		_hudHelper?.SetHudActive(false);
 		_activeDemo = DemoState.None;
 	}
 
