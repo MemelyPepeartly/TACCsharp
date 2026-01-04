@@ -6,8 +6,8 @@ public partial class MapDemo : Node
 	private Stem stem;
 	private MapLeaf _mapLeaf;
 	private HudOverlayLeaf _hudLeaf;
+	private const string MapHudPath = "res://Demos/Data/Hud/MapHud.json";
 	private const string MousePositionHudId = "map_mouse_position";
-	private const string MousePositionHudAnchor = "top_left";
 
 	public override void _Ready()
 	{
@@ -25,10 +25,7 @@ public partial class MapDemo : Node
 		Vector2 mousePosition = GetViewport().GetMousePosition();
 		Vector2 mapPosition = _mapLeaf.ToLocal(mousePosition);
 
-		if (_hudLeaf.EnsureLabel(MousePositionHudId, MousePositionHudAnchor))
-		{
-			_hudLeaf.SetText(MousePositionHudId, $"Mouse Position: {mapPosition}");
-		}
+		_hudLeaf.SetText(MousePositionHudId, $"Mouse Position: {mapPosition}");
 	}
 
 	private void ConnectMapLeafSignals()
@@ -60,10 +57,9 @@ public partial class MapDemo : Node
 			return;
 		}
 
-		if (_hudLeaf.EnsureLabel(MousePositionHudId, MousePositionHudAnchor, "Mouse Position:"))
-		{
-			_hudLeaf.SetVisible(MousePositionHudId, true);
-		}
+		_hudLeaf.Visible = true;
+		_hudLeaf.LoadHud(MapHudPath);
+		_hudLeaf.SetVisible(MousePositionHudId, true);
 	}
 
 	private void OnMapLoaded(int waypointCount)

@@ -12,8 +12,8 @@ namespace TACCsharp.Demos.Menu_Demo.Scripts
         private Stem _stem;
         private MapLeaf _mapLeaf;
         private HudOverlayLeaf _hudLeaf;
+        private const string MapHudPath = "res://Demos/Data/Hud/MapHud.json";
         private const string MousePositionHudId = "map_mouse_position";
-        private const string MousePositionHudAnchor = "top_left";
         private bool _mapHudActive = false;
 
         public MapHelper(Stem stem)
@@ -37,10 +37,7 @@ namespace TACCsharp.Demos.Menu_Demo.Scripts
             Vector2 mousePosition = GetViewport().GetMousePosition();
             Vector2 mapPosition = _mapLeaf.ToLocal(mousePosition);
 
-            if (_hudLeaf.EnsureLabel(MousePositionHudId, MousePositionHudAnchor))
-            {
-                _hudLeaf.SetText(MousePositionHudId, $"Mouse Position: {mapPosition}");
-            }
+            _hudLeaf.SetText(MousePositionHudId, $"Mouse Position: {mapPosition}");
         }
 
         private void ConnectMapLeafSignals()
@@ -87,10 +84,8 @@ namespace TACCsharp.Demos.Menu_Demo.Scripts
                 if (isActive)
                 {
                     _hudLeaf.Visible = true;
-                    if (_hudLeaf.EnsureLabel(MousePositionHudId, MousePositionHudAnchor, "Mouse Position:"))
-                    {
-                        _hudLeaf.SetVisible(MousePositionHudId, true);
-                    }
+                    _hudLeaf.LoadHud(MapHudPath);
+                    _hudLeaf.SetVisible(MousePositionHudId, true);
                 }
                 else
                 {

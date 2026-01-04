@@ -1,0 +1,10 @@
+{
+  "elements": [
+	{
+	  "id": "map_mouse_position",
+	  "type": "label",
+	  "anchor": "top_left",
+	  "text": "Mouse Position:"
+	}
+  ]
+}
