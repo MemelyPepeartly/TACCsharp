@@ -3,23 +3,31 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using TACCsharp.TACC.Models;
+using TACCsharp.TACC.State;
 using FileAccess = Godot.FileAccess;
 
-public partial class HudOverlayLeaf : Control
+public partial class HudOverlayLeaf : Control, ILeafStateSource
 {
 	[Export] public string JsonPath { get; set; }
+
+	public string StateKey => LeafStateKeys.Hud;
+	public event Action<LeafStateSnapshot> StateChanged;
 
 	private const int DefaultMargin = 12;
 	private const int DefaultSeparation = 6;
 
 	private readonly Dictionary<string, Control> _elements = new Dictionary<string, Control>();
+	private readonly Dictionary<string, HudElementState> _elementStates = new Dictionary<string, HudElementState>();
 	private readonly Dictionary<string, Label> _labels = new Dictionary<string, Label>();
 	private readonly Dictionary<string, ProgressBar> _progressBars = new Dictionary<string, ProgressBar>();
 	private readonly Dictionary<string, TextureRect> _icons = new Dictionary<string, TextureRect>();
 	private readonly Dictionary<string, VBoxContainer> _anchorSlots = new Dictionary<string, VBoxContainer>();
+	private string _loadedHudPath;
 
 	public override void _Ready()
 	{
+		AddToGroup(LeafStateGroups.LeafStateSourceGroup);
+
 		MouseFilter = Control.MouseFilterEnum.Ignore;
 		EnsureLayout();
 
@@ -36,6 +44,8 @@ public partial class HudOverlayLeaf : Control
 			GD.PrintErr($"HUD JSON file not found: {jsonPath}");
 			return;
 		}
+
+		_loadedHudPath = jsonPath;
 
 		try
 		{
@@ -60,6 +70,12 @@ public partial class HudOverlayLeaf : Control
 
 	public void ClearHud()
 	{
+		ClearHudInternal();
+		EmitStateChanged();
+	}
+
+	private void ClearHudInternal()
+	{
 		foreach (var element in _elements.Values)
 		{
 			element.GetParent()?.RemoveChild(element);
@@ -67,6 +83,7 @@ public partial class HudOverlayLeaf : Control
 		}
 
 		_elements.Clear();
+		_elementStates.Clear();
 		_labels.Clear();
 		_progressBars.Clear();
 		_icons.Clear();
@@ -84,7 +101,17 @@ public partial class HudOverlayLeaf : Control
 		{
 			if (text != null)
 			{
-				existingLabel.Text = text;
+				string resolvedText = text ?? string.Empty;
+				if (existingLabel.Text != resolvedText)
+				{
+					existingLabel.Text = resolvedText;
+				}
+
+				if (_elementStates.TryGetValue(elementId, out var existingState) && existingState.Text != resolvedText)
+				{
+					existingState.Text = resolvedText;
+					EmitStateChanged();
+				}
 			}
 			return true;
 		}
@@ -122,6 +149,8 @@ public partial class HudOverlayLeaf : Control
 
 		slot.AddChild(control);
 		_elements[elementId] = control;
+		_elementStates[elementId] = CreateElementState(elementData);
+		EmitStateChanged();
 
 		return true;
 	}
@@ -130,7 +159,17 @@ public partial class HudOverlayLeaf : Control
 	{
 		if (_labels.TryGetValue(elementId, out var label))
 		{
-			label.Text = text ?? string.Empty;
+			string resolvedText = text ?? string.Empty;
+			if (label.Text != resolvedText)
+			{
+				label.Text = resolvedText;
+			}
+
+			if (_elementStates.TryGetValue(elementId, out var state) && state.Text != resolvedText)
+			{
+				state.Text = resolvedText;
+				EmitStateChanged();
+			}
 		}
 		else
 		{
@@ -142,7 +181,16 @@ public partial class HudOverlayLeaf : Control
 	{
 		if (_progressBars.TryGetValue(elementId, out var bar))
 		{
-			bar.Value = value;
+			if (Math.Abs(bar.Value - value) > double.Epsilon)
+			{
+				bar.Value = value;
+			}
+
+			if (_elementStates.TryGetValue(elementId, out var state) && state.Value != value)
+			{
+				state.Value = value;
+				EmitStateChanged();
+			}
 		}
 		else
 		{
@@ -162,6 +210,11 @@ public partial class HudOverlayLeaf : Control
 		if (texture != null)
 		{
 			icon.Texture = texture;
+			if (_elementStates.TryGetValue(elementId, out var state) && state.IconPath != texturePath)
+			{
+				state.IconPath = texturePath;
+				EmitStateChanged();
+			}
 		}
 	}
 
@@ -169,7 +222,16 @@ public partial class HudOverlayLeaf : Control
 	{
 		if (_elements.TryGetValue(elementId, out var element))
 		{
-			element.Visible = visible;
+			if (element.Visible != visible)
+			{
+				element.Visible = visible;
+			}
+
+			if (_elementStates.TryGetValue(elementId, out var state) && state.Visible != visible)
+			{
+				state.Visible = visible;
+				EmitStateChanged();
+			}
 		}
 		else
 		{
@@ -177,10 +239,35 @@ public partial class HudOverlayLeaf : Control
 		}
 	}
 
+	public LeafStateSnapshot GetStateSnapshot()
+	{
+		return BuildHudSnapshot();
+	}
+
+	private HudStateSnapshot BuildHudSnapshot()
+	{
+		var snapshot = new HudStateSnapshot
+		{
+			HudPath = _loadedHudPath ?? JsonPath
+		};
+
+		foreach (var pair in _elementStates)
+		{
+			snapshot.Elements[pair.Key] = pair.Value.Clone();
+		}
+
+		return snapshot;
+	}
+
+	private void EmitStateChanged()
+	{
+		StateChanged?.Invoke(BuildHudSnapshot());
+	}
+
 	private void BuildHud(HudData hudData)
 	{
 		EnsureLayout();
-		ClearHud();
+		ClearHudInternal();
 
 		foreach (var elementData in hudData.Elements)
 		{
@@ -215,7 +302,10 @@ public partial class HudOverlayLeaf : Control
 
 			slot.AddChild(control);
 			_elements[elementData.Id] = control;
+			_elementStates[elementData.Id] = CreateElementState(elementData);
 		}
+
+		EmitStateChanged();
 	}
 
 	private Control CreateElementControl(HudElementData elementData)
@@ -266,6 +356,35 @@ public partial class HudOverlayLeaf : Control
 				GD.PrintErr($"Unknown HUD element type '{elementData.Type}' for '{elementData.Id}'.");
 				return null;
 		}
+	}
+
+	private HudElementState CreateElementState(HudElementData elementData)
+	{
+		string type = NormalizeType(elementData.Type);
+		string anchor = NormalizeAnchor(elementData.Anchor) ?? "top_left";
+
+		var state = new HudElementState
+		{
+			Id = elementData.Id,
+			Type = type,
+			Anchor = anchor,
+			Text = elementData.Text ?? string.Empty,
+			IconPath = elementData.IconPath,
+			Visible = elementData.Visible ?? true
+		};
+
+		if (type == "progress")
+		{
+			double min = elementData.Min ?? 0;
+			double max = elementData.Max ?? 100;
+			double value = elementData.Value ?? min;
+
+			state.Min = min;
+			state.Max = max;
+			state.Value = value;
+		}
+
+		return state;
 	}
 
 	private void ApplyMinimumSize(Control control, HudElementData elementData)
