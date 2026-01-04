@@ -9,6 +9,10 @@
 	  "action": "start_cutscene_demo"
 	},
 	{
+	  "text": "Start HUD Demo",
+	  "action": "start_hud_demo"
+	},
+	{
 	  "text": "Exit",
 	  "action": "exit_game"
 	}
