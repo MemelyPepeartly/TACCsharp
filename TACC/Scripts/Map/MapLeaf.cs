@@ -23,7 +23,6 @@ public partial class MapLeaf : Node2D
 	private const float minZoom = 0.5f;
 	private const float maxZoom = 2.0f;
 
-	private Label mousePositionLabel;
 	private Label descriptionLabel;
 
 	[Signal]
@@ -42,13 +41,6 @@ public partial class MapLeaf : Node2D
 		// Create a CanvasLayer for UI elements
 		var uiLayer = new CanvasLayer();
 		AddChild(uiLayer);
-
-		// Create and add the mouse position label to the UI layer
-		mousePositionLabel = new Label
-		{
-			Position = new Vector2(10, 10)
-		};
-		uiLayer.AddChild(mousePositionLabel);
 
 		// Create and add the description label to the UI layer
 		descriptionLabel = new Label
@@ -93,13 +85,10 @@ public partial class MapLeaf : Node2D
 
 	public override void _Process(double delta)
 	{
-		Vector2 mousePosition = GetViewport().GetMousePosition();
-		Vector2 mapPosition = ToLocal(mousePosition);
-		mousePositionLabel.Text = $"Mouse Position: {mapPosition}";
-
 		// Update the position of the description label to follow the mouse
 		if (descriptionLabel.Visible)
 		{
+			Vector2 mousePosition = GetViewport().GetMousePosition();
 			descriptionLabel.Position = mousePosition + new Vector2(15, 15);
 		}
 	}
