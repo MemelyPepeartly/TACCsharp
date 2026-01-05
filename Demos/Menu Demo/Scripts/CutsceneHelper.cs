@@ -5,12 +5,12 @@ using TACCsharp.TACC.Models;
 public partial class CutsceneHelper : Node
 {
 	private const string DialogBoxScenePath = "res://Demos/Cutscene Demo/UI/DialogBox.tscn";
-	private const string BackgroundTexturePath = "res://Demos/Assets/Backgrounds/astillon.jpg";
+	private const string DefaultBackgroundPath = "res://Demos/Assets/Backgrounds/astillon.jpg";
 
 	private Stem _stem;
 	private CutsceneLeaf _cutsceneLeaf;
 	private DialogBox _dialogBox;
-	private Sprite2D _background;
+	private BackgroundLeaf _backgroundLeaf;
 
 	public event Action CutsceneFinished;
 
@@ -18,26 +18,6 @@ public partial class CutsceneHelper : Node
 	{
 		_stem = stem;
 		InitializeCutscene();
-	}
-
-	public override void _Ready()
-	{
-		var viewport = GetViewport();
-		if (viewport != null)
-		{
-			viewport.SizeChanged += OnViewportSizeChanged;
-		}
-
-		UpdateBackgroundLayout();
-	}
-
-	public override void _ExitTree()
-	{
-		var viewport = GetViewport();
-		if (viewport != null)
-		{
-			viewport.SizeChanged -= OnViewportSizeChanged;
-		}
 	}
 
 	private void InitializeCutscene()
@@ -51,7 +31,7 @@ public partial class CutsceneHelper : Node
 			_cutsceneLeaf.OnSceneChanged += OnSceneChanged;
 			_cutsceneLeaf.OnCutsceneEnded += OnCutsceneEnded;
 
-			EnsureBackground();
+			EnsureBackgroundLeaf();
 			EnsureDialogBox();
 			SetCutsceneVisible(false);
 		}
@@ -61,29 +41,22 @@ public partial class CutsceneHelper : Node
 		}
 	}
 
-	private void EnsureBackground()
+	private void EnsureBackgroundLeaf()
 	{
-		if (_background != null)
+		if (_backgroundLeaf != null)
 		{
 			return;
 		}
 
-		var backgroundTexture = GD.Load<Texture2D>(BackgroundTexturePath);
-		if (backgroundTexture == null)
+		_backgroundLeaf = _stem.GetNodeOrNull<BackgroundLeaf>("BackgroundLeaf");
+		if (_backgroundLeaf == null)
 		{
-			GD.PrintErr($"Background texture not found: {BackgroundTexturePath}");
+			GD.PrintErr("BackgroundLeaf not found in Stem.");
+			return;
 		}
 
-		_background = new Sprite2D
-		{
-			Name = "Background",
-			Texture = backgroundTexture,
-			Centered = true,
-			ZIndex = -10
-		};
-
-		_stem.AddChild(_background);
-		UpdateBackgroundLayout();
+		_backgroundLeaf.SetStaticBackground(DefaultBackgroundPath);
+		_backgroundLeaf.SetBackgroundVisible(false);
 	}
 
 	private void EnsureDialogBox()
@@ -107,10 +80,7 @@ public partial class CutsceneHelper : Node
 
 	private void SetCutsceneVisible(bool isVisible)
 	{
-		if (_background != null)
-		{
-			_background.Visible = isVisible;
-		}
+		_backgroundLeaf?.SetBackgroundVisible(isVisible);
 
 		if (_dialogBox != null)
 		{
@@ -122,7 +92,7 @@ public partial class CutsceneHelper : Node
 	{
 		if (isActive)
 		{
-			EnsureBackground();
+			EnsureBackgroundLeaf();
 			EnsureDialogBox();
 		}
 		else
@@ -136,7 +106,7 @@ public partial class CutsceneHelper : Node
 
 	private void UpdateBackground(string backgroundPath)
 	{
-		if (_background == null)
+		if (_backgroundLeaf == null)
 		{
 			return;
 		}
@@ -146,45 +116,7 @@ public partial class CutsceneHelper : Node
 			return;
 		}
 
-		var backgroundTexture = GD.Load<Texture2D>(backgroundPath);
-		if (backgroundTexture == null)
-		{
-			GD.PrintErr($"Background texture not found: {backgroundPath}");
-			return;
-		}
-
-		_background.Texture = backgroundTexture;
-		UpdateBackgroundLayout();
-	}
-
-	private void UpdateBackgroundLayout()
-	{
-		if (_background == null || _background.Texture == null)
-		{
-			return;
-		}
-
-		var viewport = GetViewport();
-		if (viewport == null)
-		{
-			return;
-		}
-
-		Vector2 viewportSize = viewport.GetVisibleRect().Size;
-		Vector2 textureSize = _background.Texture.GetSize();
-		if (textureSize == Vector2.Zero)
-		{
-			return;
-		}
-
-		float scale = Mathf.Max(viewportSize.X / textureSize.X, viewportSize.Y / textureSize.Y);
-		_background.Scale = new Vector2(scale, scale);
-		_background.Position = viewportSize / 2.0f;
-	}
-
-	private void OnViewportSizeChanged()
-	{
-		UpdateBackgroundLayout();
+		_backgroundLeaf.SetStaticBackground(backgroundPath);
 	}
 
 	public void StartCutscene(string cutscenePath)
