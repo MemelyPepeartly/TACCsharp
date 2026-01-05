@@ -174,6 +174,18 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 
 		sb.AppendLine();
 
+		if (_monitor.TryGetState<BackgroundStateSnapshot>(LeafStateKeys.Background, out var backgroundState))
+		{
+			AppendBackgroundState(sb, backgroundState);
+		}
+		else
+		{
+			sb.AppendLine("Background:");
+			sb.AppendLine("  (no data)");
+		}
+
+		sb.AppendLine();
+
 		if (_monitor.TryGetState<MapStateSnapshot>(LeafStateKeys.Map, out var mapState))
 		{
 			AppendMapState(sb, mapState);
@@ -254,6 +266,30 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 		sb.AppendLine($"  LastWaypoint: {state.LastWaypointId ?? "(none)"}");
 		sb.AppendLine($"  Zoom: {state.ZoomLevel:0.00}");
 		sb.AppendLine($"  Position: {state.MapPosition}");
+	}
+
+	private void AppendBackgroundState(StringBuilder sb, BackgroundStateSnapshot state)
+	{
+		sb.AppendLine("Background:");
+		sb.AppendLine($"  Mode: {state.Mode ?? "(none)"}");
+		sb.AppendLine($"  Source: {state.BackgroundPath ?? "(none)"}");
+		sb.AppendLine($"  StaticImage: {state.StaticImagePath ?? "(none)"}");
+		sb.AppendLine($"  ScrollOffset: {state.ScrollOffset}");
+		sb.AppendLine($"  ScrollBaseOffset: {state.ScrollBaseOffset}");
+		sb.AppendLine($"  ScrollBaseScale: {state.ScrollBaseScale}");
+		sb.AppendLine($"  IgnoreCameraZoom: {state.IgnoreCameraZoom}");
+		sb.AppendLine($"  Layers: {state.Layers.Count}");
+
+		foreach (var layer in state.Layers)
+		{
+			sb.AppendLine($"  - {layer.Index} {layer.Name ?? "Layer"}");
+			sb.AppendLine($"      image: {layer.ImagePath ?? "(none)"}");
+			sb.AppendLine($"      motionScale: {layer.MotionScale}");
+			sb.AppendLine($"      motionOffset: {layer.MotionOffset}");
+			sb.AppendLine($"      motionMirroring: {layer.MotionMirroring}");
+			sb.AppendLine($"      scale: {layer.Scale}");
+			sb.AppendLine($"      zIndex: {layer.ZIndex}");
+		}
 	}
 }
 }
