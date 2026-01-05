@@ -7,17 +7,23 @@ public partial class MenuDemo : Node
 	private const string MainMenuPath = "res://Demos/Data/Menus/Start.json";
 	private const string CutsceneMenuPath = "res://Demos/Data/Menus/CutsceneSelect.json";
 	private const string StateMonitorMenuPath = "res://Demos/Data/Menus/StateMonitorDemos.json";
+	private const string BackgroundMenuPath = "res://Demos/Data/Menus/BackgroundTests.json";
 	private const string InDemoMenuPath = "res://Demos/Data/Menus/InDemo.json";
 	private const string CutsceneProloguePath = "res://Demos/Data/Cutscenes/Prologue.json";
 	private const string CutsceneInterludePath = "res://Demos/Data/Cutscenes/Interlude.json";
 	private const string CutsceneFinalePath = "res://Demos/Data/Cutscenes/Finale.json";
+	private const string StaticBackgroundPath = "res://Demos/Data/Backgrounds/StaticBackground.json";
+	private const string ParallaxClouds1Path = "res://Demos/Data/Backgrounds/ParallaxClouds1.json";
+	private const string ParallaxClouds2Path = "res://Demos/Data/Backgrounds/ParallaxClouds2.json";
+	private const string ParallaxClouds3Path = "res://Demos/Data/Backgrounds/ParallaxClouds3.json";
 
 	private enum DemoState
 	{
 		None,
 		Map,
 		Cutscene,
-		Hud
+		Hud,
+		Background
 	}
 
 	private Stem _stem;
@@ -25,6 +31,7 @@ public partial class MenuDemo : Node
 	private MapHelper _mapHelper;
 	private CutsceneHelper _cutsceneHelper;
 	private HudHelper _hudHelper;
+	private BackgroundLeaf _backgroundLeaf;
 	private StateMonitorVisualizerPanel _stateMonitorVisualizer;
 	private DemoState _activeDemo = DemoState.None;
 
@@ -43,6 +50,7 @@ public partial class MenuDemo : Node
 
 		// Retrieve and configure the MenuFactoryLeaf
 		ConfigureMenuFactory();
+		ConfigureBackgroundLeaf();
 		ShowMainMenu();
 	}
 
@@ -57,6 +65,16 @@ public partial class MenuDemo : Node
 		}
 	}
 
+	private void ConfigureBackgroundLeaf()
+	{
+		_backgroundLeaf = _stem.GetNodeOrNull<BackgroundLeaf>("BackgroundLeaf");
+
+		if (_backgroundLeaf == null)
+		{
+			GD.PrintErr("ERROR: BackgroundLeaf not found in Stem.");
+		}
+	}
+
 	private void ShowMainMenu()
 	{
 		if (_menuFactory == null)
@@ -68,8 +86,25 @@ public partial class MenuDemo : Node
 		_menuFactory.RegisterAction("start_map_demo", StartMapDemo);
 		_menuFactory.RegisterAction("start_cutscene_demo", ShowCutsceneMenu);
 		_menuFactory.RegisterAction("start_hud_demo", StartHudDemo);
+		_menuFactory.RegisterAction("start_background_demo", ShowBackgroundMenu);
 		_menuFactory.RegisterAction("start_state_monitor_demo", ShowStateMonitorMenu);
 		_menuFactory.RegisterAction("exit_game", ExitGame);
+		_menuFactory.Visible = true;
+	}
+
+	private void ShowBackgroundMenu()
+	{
+		if (_menuFactory == null)
+		{
+			return;
+		}
+
+		_menuFactory.LoadMenu(BackgroundMenuPath);
+		_menuFactory.RegisterAction("test_background_static", StartStaticBackgroundTest);
+		_menuFactory.RegisterAction("test_parallax_clouds_1", StartParallaxClouds1Test);
+		_menuFactory.RegisterAction("test_parallax_clouds_2", StartParallaxClouds2Test);
+		_menuFactory.RegisterAction("test_parallax_clouds_3", StartParallaxClouds3Test);
+		_menuFactory.RegisterAction("back_to_main_menu", ShowMainMenu);
 		_menuFactory.Visible = true;
 	}
 
@@ -152,6 +187,7 @@ public partial class MenuDemo : Node
 
 		_activeDemo = DemoState.Map;
 		_hudHelper?.SetHudActive(false);
+		_backgroundLeaf?.SetBackgroundVisible(false);
 		_cutsceneHelper?.SetCutsceneActive(false);
 		_mapHelper.SetMapActive(true);
 	}
@@ -168,6 +204,7 @@ public partial class MenuDemo : Node
 
 		_mapHelper?.SetMapActive(false);
 		_hudHelper?.SetHudActive(false);
+		_backgroundLeaf?.SetBackgroundVisible(false);
 
 		// Ensure only one instance of CutsceneHelper is created
 		if (_cutsceneHelper == null)
@@ -193,6 +230,7 @@ public partial class MenuDemo : Node
 
 		_mapHelper?.SetMapActive(false);
 		_cutsceneHelper?.SetCutsceneActive(false);
+		_backgroundLeaf?.SetBackgroundVisible(false);
 
 		if (_hudHelper == null)
 		{
@@ -202,6 +240,54 @@ public partial class MenuDemo : Node
 
 		_activeDemo = DemoState.Hud;
 		_hudHelper.SetHudActive(true);
+	}
+
+	private void StartStaticBackgroundTest()
+	{
+		StartBackgroundTest(StaticBackgroundPath);
+	}
+
+	private void StartParallaxClouds1Test()
+	{
+		StartBackgroundTest(ParallaxClouds1Path);
+	}
+
+	private void StartParallaxClouds2Test()
+	{
+		StartBackgroundTest(ParallaxClouds2Path);
+	}
+
+	private void StartParallaxClouds3Test()
+	{
+		StartBackgroundTest(ParallaxClouds3Path);
+	}
+
+	private void StartBackgroundTest(string backgroundPath)
+	{
+		GD.Print("Initializing Background Test...");
+
+		if (_menuFactory != null)
+		{
+			_menuFactory.Visible = false;
+		}
+
+		_mapHelper?.SetMapActive(false);
+		_cutsceneHelper?.SetCutsceneActive(false);
+		_hudHelper?.SetHudActive(false);
+
+		if (_backgroundLeaf == null)
+		{
+			ConfigureBackgroundLeaf();
+		}
+
+		if (_backgroundLeaf == null)
+		{
+			return;
+		}
+
+		_backgroundLeaf.LoadBackground(backgroundPath);
+		_backgroundLeaf.SetBackgroundVisible(true);
+		_activeDemo = DemoState.Background;
 	}
 
 	private void OnCutsceneDemoEnded()
@@ -256,6 +342,8 @@ public partial class MenuDemo : Node
 		_mapHelper?.SetMapActive(false);
 		_cutsceneHelper?.SetCutsceneActive(false);
 		_hudHelper?.SetHudActive(false);
+		_backgroundLeaf?.SetBackgroundVisible(false);
+		_backgroundLeaf?.ClearBackground();
 		_activeDemo = DemoState.None;
 	}
 
