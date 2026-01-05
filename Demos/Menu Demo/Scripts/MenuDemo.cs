@@ -16,6 +16,10 @@ public partial class MenuDemo : Node
 	private const string ParallaxClouds1Path = "res://Demos/Data/Backgrounds/ParallaxClouds1.json";
 	private const string ParallaxClouds2Path = "res://Demos/Data/Backgrounds/ParallaxClouds2.json";
 	private const string ParallaxClouds3Path = "res://Demos/Data/Backgrounds/ParallaxClouds3.json";
+	private const float ParallaxMouseMaxOffsetX = 200f;
+	private const float ParallaxMouseMaxOffsetY = 0f;
+	private const float ParallaxMouseSmoothing = 8f;
+	private const float ParallaxTrackerSize = 8f;
 
 	private enum DemoState
 	{
@@ -32,6 +36,8 @@ public partial class MenuDemo : Node
 	private CutsceneHelper _cutsceneHelper;
 	private HudHelper _hudHelper;
 	private BackgroundLeaf _backgroundLeaf;
+	private ColorRect _parallaxTracker;
+	private Vector2 _parallaxOffset = Vector2.Zero;
 	private StateMonitorVisualizerPanel _stateMonitorVisualizer;
 	private DemoState _activeDemo = DemoState.None;
 
@@ -287,6 +293,8 @@ public partial class MenuDemo : Node
 
 		_backgroundLeaf.LoadBackground(backgroundPath);
 		_backgroundLeaf.SetBackgroundVisible(true);
+		ResetParallaxOffset();
+		HideParallaxTracker();
 		_activeDemo = DemoState.Background;
 	}
 
@@ -318,6 +326,11 @@ public partial class MenuDemo : Node
 		}
 	}
 
+	public override void _Process(double delta)
+	{
+		UpdateParallaxMouse((float)delta);
+	}
+
 	private void ShowInDemoMenu()
 	{
 		if (_menuFactory == null)
@@ -344,6 +357,8 @@ public partial class MenuDemo : Node
 		_hudHelper?.SetHudActive(false);
 		_backgroundLeaf?.SetBackgroundVisible(false);
 		_backgroundLeaf?.ClearBackground();
+		ResetParallaxOffset();
+		HideParallaxTracker();
 		_activeDemo = DemoState.None;
 	}
 
@@ -369,5 +384,121 @@ public partial class MenuDemo : Node
 		{
 			_menuFactory.Visible = !_menuFactory.Visible;
 		}
+	}
+
+	private void UpdateParallaxMouse(float delta)
+	{
+		if (_activeDemo != DemoState.Background)
+		{
+			ResetParallaxOffset();
+			HideParallaxTracker();
+			return;
+		}
+
+		if (_backgroundLeaf == null)
+		{
+			ConfigureBackgroundLeaf();
+		}
+
+		if (_backgroundLeaf == null || !_backgroundLeaf.IsParallaxActive)
+		{
+			ResetParallaxOffset();
+			HideParallaxTracker();
+			return;
+		}
+
+		var viewport = GetViewport();
+		if (viewport == null)
+		{
+			ResetParallaxOffset();
+			HideParallaxTracker();
+			return;
+		}
+
+		Vector2 viewportSize = viewport.GetVisibleRect().Size;
+		if (viewportSize.X <= 0 || viewportSize.Y <= 0)
+		{
+			ResetParallaxOffset();
+			HideParallaxTracker();
+			return;
+		}
+
+		Vector2 mousePosition = viewport.GetMousePosition();
+		float normalizedX = (mousePosition.X / viewportSize.X - 0.5f) * 2f;
+		float normalizedY = (mousePosition.Y / viewportSize.Y - 0.5f) * 2f;
+
+		var targetOffset = new Vector2(
+			normalizedX * ParallaxMouseMaxOffsetX,
+			normalizedY * ParallaxMouseMaxOffsetY);
+
+		float smoothing = 1f - Mathf.Exp(-ParallaxMouseSmoothing * delta);
+		_parallaxOffset = _parallaxOffset.Lerp(targetOffset, smoothing);
+		_backgroundLeaf.SetParallaxScrollOffset(_parallaxOffset);
+
+		EnsureParallaxTracker();
+		UpdateParallaxTracker(mousePosition);
+	}
+
+	private void ResetParallaxOffset()
+	{
+		if (_parallaxOffset == Vector2.Zero)
+		{
+			return;
+		}
+
+		_parallaxOffset = Vector2.Zero;
+		_backgroundLeaf?.SetParallaxScrollOffset(Vector2.Zero);
+	}
+
+	private void EnsureParallaxTracker()
+	{
+		if (_parallaxTracker != null || _stem == null)
+		{
+			return;
+		}
+
+		_parallaxTracker = _stem.GetNodeOrNull<ColorRect>("CanvasLayer/ParallaxTracker");
+		if (_parallaxTracker != null)
+		{
+			return;
+		}
+
+		var canvasLayer = _stem.GetNodeOrNull<CanvasLayer>("CanvasLayer");
+		if (canvasLayer == null)
+		{
+			return;
+		}
+
+		_parallaxTracker = new ColorRect
+		{
+			Name = "ParallaxTracker",
+			Color = new Color(1f, 0.95f, 0.2f, 0.9f),
+			Size = new Vector2(ParallaxTrackerSize, ParallaxTrackerSize),
+			MouseFilter = Control.MouseFilterEnum.Ignore,
+			Visible = false,
+			ZIndex = 100
+		};
+		canvasLayer.AddChild(_parallaxTracker);
+	}
+
+	private void UpdateParallaxTracker(Vector2 mousePosition)
+	{
+		if (_parallaxTracker == null)
+		{
+			return;
+		}
+
+		_parallaxTracker.Visible = true;
+		_parallaxTracker.Position = mousePosition - new Vector2(ParallaxTrackerSize * 0.5f, ParallaxTrackerSize * 0.5f);
+	}
+
+	private void HideParallaxTracker()
+	{
+		if (_parallaxTracker == null)
+		{
+			return;
+		}
+
+		_parallaxTracker.Visible = false;
 	}
 }

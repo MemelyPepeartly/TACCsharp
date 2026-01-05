@@ -12,6 +12,7 @@ public partial class BackgroundLeaf : Node2D, ILeafStateSource
 
 	public string StateKey => LeafStateKeys.Background;
 	public event Action<LeafStateSnapshot> StateChanged;
+	public bool IsParallaxActive => _activeMode == BackgroundMode.Parallax;
 
 	private const int BackgroundZIndex = -100;
 
