@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://taccsharp.local/schemas/background.schema.json",
+  "title": "Background",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "mode": {
+      "type": "string",
+      "enum": ["static", "parallax"]
+    },
+    "imagePath": {
+      "type": "string"
+    },
+    "scaleMode": {
+      "type": "string",
+      "enum": ["cover", "stretch", "contain"]
+    },
+    "layers": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/layer" }
+    },
+    "scrollOffset": { "$ref": "#/$defs/vector2" },
+    "scrollBaseOffset": { "$ref": "#/$defs/vector2" },
+    "scrollBaseScale": { "$ref": "#/$defs/vector2" },
+    "ignoreCameraZoom": {
+      "type": "boolean"
+    }
+  },
+  "oneOf": [
+    { "required": ["imagePath"] },
+    { "required": ["layers"] }
+  ],
+  "$defs": {
+    "vector2": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      },
+      "required": ["x", "y"]
+    },
+    "layer": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": { "type": "string" },
+        "imagePath": { "type": "string" },
+        "motionScale": { "$ref": "#/$defs/vector2" },
+        "motionOffset": { "$ref": "#/$defs/vector2" },
+        "motionMirroring": { "$ref": "#/$defs/vector2" },
+        "scale": { "$ref": "#/$defs/vector2" },
+        "zIndex": { "type": "integer" }
+      },
+      "required": ["imagePath"]
+    }
+  }
+}

@@ -86,3 +86,41 @@ Notes:
 - The demo JSON uses `cutscene_name` and the model maps it via `JsonProperty`.
 - `background` updates the cutscene background texture in the demo scripts.
 - `portrait_width` and `portrait_height` set an explicit render box for the portrait; if omitted, the dialog uses its default size.
+
+## Background (BackgroundLeaf)
+Schema: `docs/schemas/background.schema.json`  
+Used by: `BackgroundLeaf.LoadBackground(jsonPath)`
+
+Static example:
+```json
+{
+  "mode": "static",
+  "imagePath": "res://Demos/Assets/Backgrounds/astillon.jpg",
+  "scaleMode": "cover"
+}
+```
+
+Parallax example:
+```json
+{
+  "mode": "parallax",
+  "scrollBaseScale": { "x": 1, "y": 1 },
+  "layers": [
+    {
+      "name": "Sky",
+      "imagePath": "res://Demos/Assets/Backgrounds/astillon.jpg",
+      "motionScale": { "x": 0.2, "y": 0.2 }
+    },
+    {
+      "name": "Midground",
+      "imagePath": "res://Demos/Assets/Backgrounds/crimin-isle.png",
+      "motionScale": { "x": 0.5, "y": 0.5 }
+    }
+  ]
+}
+```
+
+Notes:
+- `mode` defaults to static unless `layers` is present.
+- `motionScale` controls how fast each layer scrolls relative to the camera or `ScrollOffset`.
+- `motionMirroring` repeats a layer when set to the texture size in pixels.
