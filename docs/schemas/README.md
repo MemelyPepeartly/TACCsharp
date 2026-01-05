@@ -124,3 +124,4 @@ Notes:
 - `mode` defaults to static unless `layers` is present.
 - `motionScale` controls how fast each layer scrolls relative to the camera or `ScrollOffset`.
 - `motionMirroring` repeats a layer when set to the texture size in pixels.
+- `repeatX` and `repeatY` auto-set `motionMirroring` to the (scaled) texture size so layers tile as they scroll.

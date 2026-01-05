@@ -50,6 +50,8 @@
         "motionScale": { "$ref": "#/$defs/vector2" },
         "motionOffset": { "$ref": "#/$defs/vector2" },
         "motionMirroring": { "$ref": "#/$defs/vector2" },
+        "repeatX": { "type": "boolean" },
+        "repeatY": { "type": "boolean" },
         "scale": { "$ref": "#/$defs/vector2" },
         "zIndex": { "type": "integer" }
       },
