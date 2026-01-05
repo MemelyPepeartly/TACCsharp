@@ -17,6 +17,10 @@
 	  "action": "start_hud_demo"
 	},
 	{
+	  "text": "Background Tests",
+	  "action": "start_background_demo"
+	},
+	{
 	  "text": "Exit",
 	  "action": "exit_game"
 	}

@@ -1,0 +1,24 @@
+{
+  "buttons": [
+	{
+	  "text": "Static Background",
+	  "action": "test_background_static"
+	},
+	{
+	  "text": "Parallax: Clouds 1",
+	  "action": "test_parallax_clouds_1"
+	},
+	{
+	  "text": "Parallax: Clouds 2",
+	  "action": "test_parallax_clouds_2"
+	},
+	{
+	  "text": "Parallax: Clouds 3",
+	  "action": "test_parallax_clouds_3"
+	},
+	{
+	  "text": "Back",
+	  "action": "back_to_main_menu"
+	}
+  ]
+}
