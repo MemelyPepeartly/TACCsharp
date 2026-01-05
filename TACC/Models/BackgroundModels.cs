@@ -48,6 +48,12 @@ namespace TACCsharp.TACC.Models
 		[JsonProperty("motionMirroring")]
 		public Vector2Data MotionMirroring { get; set; }
 
+		[JsonProperty("repeatX")]
+		public bool? RepeatX { get; set; }
+
+		[JsonProperty("repeatY")]
+		public bool? RepeatY { get; set; }
+
 		[JsonProperty("scale")]
 		public Vector2Data Scale { get; set; }
 

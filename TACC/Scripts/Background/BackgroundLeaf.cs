@@ -202,6 +202,13 @@ public partial class BackgroundLeaf : Node2D, ILeafStateSource
 			{
 				layer.MotionMirroring = layerData.MotionMirroring.ToVector2();
 			}
+			else if (layerData.RepeatX == true || layerData.RepeatY == true)
+			{
+				var textureSize = texture.GetSize();
+				layer.MotionMirroring = new Vector2(
+					layerData.RepeatX == true ? textureSize.X : 0f,
+					layerData.RepeatY == true ? textureSize.Y : 0f);
+			}
 
 			var sprite = new Sprite2D
 			{
@@ -429,6 +436,16 @@ public partial class BackgroundLeaf : Node2D, ILeafStateSource
 			var scaleOverride = entry.Data?.Scale?.ToVector2() ?? Vector2.One;
 			entry.Sprite.Scale = new Vector2(scale.X * scaleOverride.X, scale.Y * scaleOverride.Y);
 			entry.Sprite.Position = viewportSize / 2.0f;
+
+			if (entry.Data?.MotionMirroring == null && (entry.Data?.RepeatX == true || entry.Data?.RepeatY == true))
+			{
+				Vector2 scaledSize = new Vector2(
+					textureSize.X * entry.Sprite.Scale.X,
+					textureSize.Y * entry.Sprite.Scale.Y);
+				entry.Layer.MotionMirroring = new Vector2(
+					entry.Data.RepeatX == true ? scaledSize.X : 0f,
+					entry.Data.RepeatY == true ? scaledSize.Y : 0f);
+			}
 		}
 	}
 
