@@ -1,0 +1,25 @@
+{
+  "mode": "parallax",
+  "layers": [
+    {
+      "name": "Clouds 3 - Layer 1",
+      "imagePath": "res://Demos/Assets/Parallax/Clouds 3/1.png",
+      "motionScale": { "x": 0.2, "y": 0.2 }
+    },
+    {
+      "name": "Clouds 3 - Layer 2",
+      "imagePath": "res://Demos/Assets/Parallax/Clouds 3/2.png",
+      "motionScale": { "x": 0.4, "y": 0.4 }
+    },
+    {
+      "name": "Clouds 3 - Layer 3",
+      "imagePath": "res://Demos/Assets/Parallax/Clouds 3/3.png",
+      "motionScale": { "x": 0.6, "y": 0.6 }
+    },
+    {
+      "name": "Clouds 3 - Layer 4",
+      "imagePath": "res://Demos/Assets/Parallax/Clouds 3/4.png",
+      "motionScale": { "x": 0.8, "y": 0.8 }
+    }
+  ]
+}
