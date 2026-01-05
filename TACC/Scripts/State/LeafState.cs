@@ -15,6 +15,7 @@ namespace TACCsharp.TACC.State
 		public const string Hud = "hud";
 		public const string Cutscene = "cutscene";
 		public const string Map = "map";
+		public const string Background = "background";
 	}
 
 	public abstract class LeafStateSnapshot
@@ -91,5 +92,31 @@ namespace TACCsharp.TACC.State
 		public string LastWaypointId { get; set; }
 		public float ZoomLevel { get; set; }
 		public Vector2 MapPosition { get; set; }
+	}
+
+	public sealed class BackgroundLayerSnapshot
+	{
+		public int Index { get; set; }
+		public string Name { get; set; }
+		public string ImagePath { get; set; }
+		public Vector2 MotionScale { get; set; }
+		public Vector2 MotionOffset { get; set; }
+		public Vector2 MotionMirroring { get; set; }
+		public Vector2 Scale { get; set; }
+		public int ZIndex { get; set; }
+	}
+
+	public sealed class BackgroundStateSnapshot : LeafStateSnapshot
+	{
+		public BackgroundStateSnapshot() : base(LeafStateKeys.Background) { }
+
+		public string BackgroundPath { get; set; }
+		public string Mode { get; set; }
+		public string StaticImagePath { get; set; }
+		public Vector2 ScrollOffset { get; set; }
+		public Vector2 ScrollBaseOffset { get; set; }
+		public Vector2 ScrollBaseScale { get; set; } = Vector2.One;
+		public bool IgnoreCameraZoom { get; set; }
+		public List<BackgroundLayerSnapshot> Layers { get; } = new List<BackgroundLayerSnapshot>();
 	}
 }
