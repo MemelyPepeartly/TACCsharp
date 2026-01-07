@@ -16,6 +16,7 @@ namespace TACCsharp.TACC.State
 		public const string Cutscene = "cutscene";
 		public const string Map = "map";
 		public const string Background = "background";
+		public const string Music = "music";
 	}
 
 	public abstract class LeafStateSnapshot
@@ -118,5 +119,20 @@ namespace TACCsharp.TACC.State
 		public Vector2 ScrollBaseScale { get; set; } = Vector2.One;
 		public bool IgnoreCameraZoom { get; set; }
 		public List<BackgroundLayerSnapshot> Layers { get; } = new List<BackgroundLayerSnapshot>();
+	}
+
+	public sealed class MusicStateSnapshot : LeafStateSnapshot
+	{
+		public MusicStateSnapshot() : base(LeafStateKeys.Music) { }
+
+		public string MusicPath { get; set; }
+		public string TrackPath { get; set; }
+		public bool IsPlaying { get; set; }
+		public bool IsPaused { get; set; }
+		public bool Loop { get; set; }
+		public float VolumeDb { get; set; }
+		public float PitchScale { get; set; }
+		public string Bus { get; set; }
+		public double PlaybackPosition { get; set; }
 	}
 }

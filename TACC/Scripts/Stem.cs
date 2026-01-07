@@ -8,6 +8,7 @@ public partial class Stem : Node
 		GD.Print("Stem is ready!");
 
 		AddLeaf("res://TACC/Leaves/BackgroundLeaf.tscn");
+		AddLeaf("res://TACC/Leaves/MusicLeaf.tscn");
 		AddLeaf("res://TACC/Leaves/CutsceneLeaf.tscn");
 		AddLeaf("res://TACC/Leaves/MapLeaf.tscn");
 		AddLeafAsUI("res://TACC/Leaves/HudOverlayLeaf.tscn");
