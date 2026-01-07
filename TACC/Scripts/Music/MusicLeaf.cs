@@ -15,6 +15,8 @@ public partial class MusicLeaf : AudioStreamPlayer, ILeafStateSource
 	private string _loadedMusicPath;
 	private string _trackPath;
 	private bool _loopEnabled = true;
+	private const double PlaybackUpdateInterval = 0.25;
+	private double _playbackUpdateTimer;
 
 	public override void _Ready()
 	{
@@ -30,6 +32,22 @@ public partial class MusicLeaf : AudioStreamPlayer, ILeafStateSource
 	public override void _ExitTree()
 	{
 		Finished -= OnFinished;
+	}
+
+	public override void _Process(double delta)
+	{
+		if (Stream == null || StreamPaused || !Playing)
+		{
+			_playbackUpdateTimer = 0.0;
+			return;
+		}
+
+		_playbackUpdateTimer += delta;
+		if (_playbackUpdateTimer >= PlaybackUpdateInterval)
+		{
+			_playbackUpdateTimer = 0.0;
+			EmitStateChanged();
+		}
 	}
 
 	public void LoadMusic(string jsonPath)
