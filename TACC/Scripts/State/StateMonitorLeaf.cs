@@ -122,7 +122,17 @@ public partial class StateMonitorLeaf : Node
 		}
 
 		source.StateChanged -= OnSourceStateChanged;
+
+		LeafStateSnapshot snapshot = null;
+		_stateByLeaf.TryGetValue(source.StateKey, out snapshot);
 		_stateByLeaf.Remove(source.StateKey);
+
+		if (snapshot == null)
+		{
+			snapshot = source.GetStateSnapshot();
+		}
+
+		StateUpdated?.Invoke(snapshot);
 	}
 
 	private void OnSourceStateChanged(LeafStateSnapshot snapshot)
