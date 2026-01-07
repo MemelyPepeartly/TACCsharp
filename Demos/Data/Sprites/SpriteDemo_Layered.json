@@ -1,0 +1,130 @@
+{
+  "sprites": [
+	{
+	  "id": "layer_behind",
+	  "sheet": {
+		"path": "res://Demos/Assets/Sprites/walkcycle/BEHIND_quiver.png",
+		"frameSize": { "x": 64, "y": 64 },
+		"row": 0,
+		"start": 0,
+		"count": 1
+	  },
+	  "playing": false,
+	  "position": { "x": 480, "y": 300 },
+	  "scale": { "x": 2.0, "y": 2.0 },
+	  "zIndex": 0
+	},
+	{
+	  "id": "layer_body",
+	  "sheet": {
+		"path": "res://Demos/Assets/Sprites/walkcycle/BODY_male.png",
+		"frameSize": { "x": 64, "y": 64 },
+		"row": 0,
+		"start": 0,
+		"count": 1
+	  },
+	  "playing": false,
+	  "position": { "x": 480, "y": 300 },
+	  "scale": { "x": 2.0, "y": 2.0 },
+	  "zIndex": 10
+	},
+	{
+	  "id": "layer_feet",
+	  "sheet": {
+		"path": "res://Demos/Assets/Sprites/walkcycle/FEET_shoes_brown.png",
+		"frameSize": { "x": 64, "y": 64 },
+		"row": 0,
+		"start": 0,
+		"count": 1
+	  },
+	  "playing": false,
+	  "position": { "x": 480, "y": 300 },
+	  "scale": { "x": 2.0, "y": 2.0 },
+	  "zIndex": 20
+	},
+	{
+	  "id": "layer_legs",
+	  "sheet": {
+		"path": "res://Demos/Assets/Sprites/walkcycle/LEGS_pants_greenish.png",
+		"frameSize": { "x": 64, "y": 64 },
+		"row": 0,
+		"start": 0,
+		"count": 1
+	  },
+	  "playing": false,
+	  "position": { "x": 480, "y": 300 },
+	  "scale": { "x": 2.0, "y": 2.0 },
+	  "zIndex": 30
+	},
+	{
+	  "id": "layer_torso",
+	  "sheet": {
+		"path": "res://Demos/Assets/Sprites/walkcycle/TORSO_leather_armor_torso.png",
+		"frameSize": { "x": 64, "y": 64 },
+		"row": 0,
+		"start": 0,
+		"count": 1
+	  },
+	  "playing": false,
+	  "position": { "x": 480, "y": 300 },
+	  "scale": { "x": 2.0, "y": 2.0 },
+	  "zIndex": 40
+	},
+	{
+	  "id": "layer_belt",
+	  "sheet": {
+		"path": "res://Demos/Assets/Sprites/walkcycle/BELT_leather.png",
+		"frameSize": { "x": 64, "y": 64 },
+		"row": 0,
+		"start": 0,
+		"count": 1
+	  },
+	  "playing": false,
+	  "position": { "x": 480, "y": 300 },
+	  "scale": { "x": 2.0, "y": 2.0 },
+	  "zIndex": 50
+	},
+	{
+	  "id": "layer_head",
+	  "sheet": {
+		"path": "res://Demos/Assets/Sprites/walkcycle/HEAD_hair_blonde.png",
+		"frameSize": { "x": 64, "y": 64 },
+		"row": 0,
+		"start": 0,
+		"count": 1
+	  },
+	  "playing": false,
+	  "position": { "x": 480, "y": 300 },
+	  "scale": { "x": 2.0, "y": 2.0 },
+	  "zIndex": 60
+	},
+	{
+	  "id": "layer_hands",
+	  "sheet": {
+		"path": "res://Demos/Assets/Sprites/walkcycle/HANDS_plate_armor_gloves.png",
+		"frameSize": { "x": 64, "y": 64 },
+		"row": 0,
+		"start": 0,
+		"count": 1
+	  },
+	  "playing": false,
+	  "position": { "x": 480, "y": 300 },
+	  "scale": { "x": 2.0, "y": 2.0 },
+	  "zIndex": 70
+	},
+	{
+	  "id": "layer_weapon",
+	  "sheet": {
+		"path": "res://Demos/Assets/Sprites/walkcycle/WEAPON_shield_cutout_body.png",
+		"frameSize": { "x": 64, "y": 64 },
+		"row": 0,
+		"start": 0,
+		"count": 1
+	  },
+	  "playing": false,
+	  "position": { "x": 480, "y": 300 },
+	  "scale": { "x": 2.0, "y": 2.0 },
+	  "zIndex": 80
+	}
+  ]
+}

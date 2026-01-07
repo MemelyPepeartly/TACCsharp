@@ -1,0 +1,32 @@
+{
+  "buttons": [
+	{
+	  "text": "Static Sprite (Sheet Frame)",
+	  "action": "sprite_demo_static"
+	},
+	{
+	  "text": "Layered Outfit",
+	  "action": "sprite_demo_layered"
+	},
+	{
+	  "text": "Walkcycle Animation",
+	  "action": "sprite_demo_walk"
+	},
+	{
+	  "text": "Bow Animation",
+	  "action": "sprite_demo_bow"
+	},
+	{
+	  "text": "Thrust Animation",
+	  "action": "sprite_demo_thrust"
+	},
+	{
+	  "text": "Tint + Flip",
+	  "action": "sprite_demo_tint"
+	},
+	{
+	  "text": "Back to Main Menu",
+	  "action": "back_to_main_menu"
+	}
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "sprites": [
+	{
+	  "id": "skeleton_normal",
+	  "sheet": {
+		"path": "res://Demos/Assets/Sprites/walkcycle/BODY_skeleton.png",
+		"frameSize": { "x": 64, "y": 64 },
+		"row": 0,
+		"start": 0,
+		"count": 1
+	  },
+	  "playing": false,
+	  "position": { "x": 360, "y": 300 },
+	  "scale": { "x": 2.0, "y": 2.0 }
+	},
+	{
+	  "id": "skeleton_tinted",
+	  "sheet": {
+		"path": "res://Demos/Assets/Sprites/walkcycle/BODY_skeleton.png",
+		"frameSize": { "x": 64, "y": 64 },
+		"row": 0,
+		"start": 0,
+		"count": 1
+	  },
+	  "playing": false,
+	  "position": { "x": 600, "y": 300 },
+	  "scale": { "x": 2.0, "y": 2.0 },
+	  "flipH": true,
+	  "modulate": { "r": 0.6, "g": 1.0, "b": 0.6, "a": 1.0 }
+	}
+  ]
+}

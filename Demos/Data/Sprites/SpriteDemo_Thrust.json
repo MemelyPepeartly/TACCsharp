@@ -1,0 +1,20 @@
+{
+  "sprites": [
+	{
+	  "id": "thrust_body",
+	  "sheet": {
+		"path": "res://Demos/Assets/Sprites/thrust/BODY_animation.png",
+		"frameSize": { "x": 64, "y": 64 },
+		"row": 0,
+		"start": 0,
+		"count": 8,
+		"loop": true,
+		"fps": 9
+	  },
+	  "animation": "thrust",
+	  "playing": true,
+	  "position": { "x": 480, "y": 300 },
+	  "scale": { "x": 2.0, "y": 2.0 }
+	}
+  ]
+}

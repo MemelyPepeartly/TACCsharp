@@ -25,6 +25,10 @@
 	  "action": "start_music_demo"
 	},
 	{
+	  "text": "Sprite Tests",
+	  "action": "start_sprite_demo"
+	},
+	{
 	  "text": "Exit",
 	  "action": "exit_game"
 	}
