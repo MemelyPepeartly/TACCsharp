@@ -421,12 +421,21 @@ public partial class MenuDemo : Node
 
 	private void StopActiveDemo()
 	{
+		bool wasMusicDemo = _activeDemo == DemoState.Music;
+
 		_mapHelper?.SetMapActive(false);
 		_cutsceneHelper?.SetCutsceneActive(false);
 		_hudHelper?.SetHudActive(false);
 		_backgroundLeaf?.SetBackgroundVisible(false);
 		_backgroundLeaf?.ClearBackground();
-		_musicLeaf?.StopMusic();
+		if (wasMusicDemo)
+		{
+			_musicLeaf?.ClearMusic();
+		}
+		else
+		{
+			_musicLeaf?.StopMusic();
+		}
 		ResetParallaxOffset();
 		HideParallaxTracker();
 		_activeDemo = DemoState.None;
