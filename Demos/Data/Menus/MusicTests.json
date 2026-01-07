@@ -1,0 +1,44 @@
+{
+  "buttons": [
+    {
+      "text": "Load Demo Track 1",
+      "action": "music_load_demo_1"
+    },
+    {
+      "text": "Load Demo Track 2",
+      "action": "music_load_demo_2"
+    },
+    {
+      "text": "Play/Resume",
+      "action": "music_play"
+    },
+    {
+      "text": "Pause",
+      "action": "music_pause"
+    },
+    {
+      "text": "Stop",
+      "action": "music_stop"
+    },
+    {
+      "text": "Loop On",
+      "action": "music_loop_on"
+    },
+    {
+      "text": "Loop Off",
+      "action": "music_loop_off"
+    },
+    {
+      "text": "Volume -6 dB",
+      "action": "music_volume_low"
+    },
+    {
+      "text": "Volume 0 dB",
+      "action": "music_volume_normal"
+    },
+    {
+      "text": "Back to Main Menu",
+      "action": "back_to_main_menu"
+    }
+  ]
+}

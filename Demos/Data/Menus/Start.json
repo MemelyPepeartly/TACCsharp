@@ -21,6 +21,10 @@
 	  "action": "start_background_demo"
 	},
 	{
+	  "text": "Music Tests",
+	  "action": "start_music_demo"
+	},
+	{
 	  "text": "Exit",
 	  "action": "exit_game"
 	}
