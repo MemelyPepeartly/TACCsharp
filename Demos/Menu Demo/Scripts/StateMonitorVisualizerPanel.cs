@@ -18,6 +18,7 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 	private TextEdit _backgroundReport;
 	private TextEdit _musicReport;
 	private TextEdit _mapReport;
+	private TextEdit _spriteReport;
 	private Label _status;
 	private StateMonitorLeaf _monitor;
 
@@ -71,6 +72,7 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 			_backgroundReport = GetNodeOrNull<TextEdit>("Layout/Tabs/Background/Report");
 			_musicReport = GetNodeOrNull<TextEdit>("Layout/Tabs/Music/Report");
 			_mapReport = GetNodeOrNull<TextEdit>("Layout/Tabs/Map/Report");
+			_spriteReport = GetNodeOrNull<TextEdit>("Layout/Tabs/Sprite/Report");
 			return;
 		}
 
@@ -124,6 +126,7 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 		_backgroundReport = CreateTab(_tabs, "Background", "Background");
 		_musicReport = CreateTab(_tabs, "Music", "Music");
 		_mapReport = CreateTab(_tabs, "Map", "Map");
+		_spriteReport = CreateTab(_tabs, "Sprite", "Sprite");
 	}
 
 	private TextEdit CreateTab(TabContainer tabs, string title, string name)
@@ -194,6 +197,7 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 			SetReportText(_backgroundReport, missing);
 			SetReportText(_musicReport, missing);
 			SetReportText(_mapReport, missing);
+			SetReportText(_spriteReport, missing);
 			return;
 		}
 
@@ -202,6 +206,7 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 		SetReportText(_backgroundReport, BuildSectionReport<BackgroundStateSnapshot>(LeafStateKeys.Background, "Background", AppendBackgroundState));
 		SetReportText(_musicReport, BuildSectionReport<MusicStateSnapshot>(LeafStateKeys.Music, "Music", AppendMusicState));
 		SetReportText(_mapReport, BuildSectionReport<MapStateSnapshot>(LeafStateKeys.Map, "Map", AppendMapState));
+		SetReportText(_spriteReport, BuildSectionReport<SpriteStateSnapshot>(LeafStateKeys.Sprite, "Sprite", AppendSpriteState));
 	}
 
 	private string BuildSectionReport<T>(string leafKey, string title, Action<StringBuilder, T> append)
@@ -326,6 +331,33 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 		sb.AppendLine($"  PitchScale: {state.PitchScale:0.00}");
 		sb.AppendLine($"  Bus: {state.Bus ?? "(none)"}");
 		sb.AppendLine($"  Playback: {state.PlaybackPosition:0.00}s");
+	}
+
+	private void AppendSpriteState(StringBuilder sb, SpriteStateSnapshot state)
+	{
+		sb.AppendLine("Sprite:");
+		sb.AppendLine($"  Config: {state.SpritePath ?? "(none)"}");
+		sb.AppendLine($"  Sprites: {state.Sprites.Count}");
+
+		foreach (var sprite in state.Sprites)
+		{
+			sb.AppendLine($"  - {sprite.Id} animated={sprite.IsAnimated} visible={sprite.Visible}");
+			if (sprite.IsAnimated)
+			{
+				sb.AppendLine($"      frames: {sprite.FramesPath ?? "(none)"}");
+				sb.AppendLine($"      animation: {sprite.Animation ?? "(none)"} playing={sprite.IsPlaying} frame={sprite.Frame}");
+				sb.AppendLine($"      speedScale: {sprite.SpeedScale:0.00}");
+			}
+			else
+			{
+				sb.AppendLine($"      texture: {sprite.TexturePath ?? "(none)"}");
+			}
+
+			sb.AppendLine($"      position: {sprite.Position} scale: {sprite.Scale} rotation: {sprite.RotationDegrees:0.00}");
+			sb.AppendLine($"      zIndex: {sprite.ZIndex} relative={sprite.ZAsRelative} centered={sprite.Centered}");
+			sb.AppendLine($"      flipH: {sprite.FlipH} flipV: {sprite.FlipV} offset: {sprite.Offset}");
+			sb.AppendLine($"      modulate: {sprite.Modulate}");
+		}
 	}
 }
 }
