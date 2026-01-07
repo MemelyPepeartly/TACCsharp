@@ -17,6 +17,7 @@ namespace TACCsharp.TACC.State
 		public const string Map = "map";
 		public const string Background = "background";
 		public const string Music = "music";
+		public const string Sprite = "sprite";
 	}
 
 	public abstract class LeafStateSnapshot
@@ -134,5 +135,36 @@ namespace TACCsharp.TACC.State
 		public float PitchScale { get; set; }
 		public string Bus { get; set; }
 		public double PlaybackPosition { get; set; }
+	}
+
+	public sealed class SpriteSnapshot
+	{
+		public string Id { get; set; }
+		public string TexturePath { get; set; }
+		public string FramesPath { get; set; }
+		public string Animation { get; set; }
+		public bool IsAnimated { get; set; }
+		public bool IsPlaying { get; set; }
+		public int Frame { get; set; }
+		public float SpeedScale { get; set; }
+		public Vector2 Position { get; set; }
+		public Vector2 Scale { get; set; }
+		public float RotationDegrees { get; set; }
+		public Vector2 Offset { get; set; }
+		public bool Centered { get; set; }
+		public bool FlipH { get; set; }
+		public bool FlipV { get; set; }
+		public bool Visible { get; set; }
+		public int ZIndex { get; set; }
+		public bool ZAsRelative { get; set; }
+		public Color Modulate { get; set; }
+	}
+
+	public sealed class SpriteStateSnapshot : LeafStateSnapshot
+	{
+		public SpriteStateSnapshot() : base(LeafStateKeys.Sprite) { }
+
+		public string SpritePath { get; set; }
+		public List<SpriteSnapshot> Sprites { get; } = new List<SpriteSnapshot>();
 	}
 }
