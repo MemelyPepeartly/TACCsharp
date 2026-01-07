@@ -47,6 +47,7 @@ public partial class MenuDemo : Node
 	private MapHelper _mapHelper;
 	private CutsceneHelper _cutsceneHelper;
 	private HudHelper _hudHelper;
+	private SpriteHelper _spriteHelper;
 	private BackgroundLeaf _backgroundLeaf;
 	private MusicLeaf _musicLeaf;
 	private SpriteLeaf _spriteLeaf;
@@ -221,6 +222,7 @@ public partial class MenuDemo : Node
 		_menuFactory.RegisterAction("sprite_demo_static", () => StartSpriteDemo(SpriteDemoStaticPath));
 		_menuFactory.RegisterAction("sprite_demo_layered", () => StartSpriteDemo(SpriteDemoLayeredPath));
 		_menuFactory.RegisterAction("sprite_demo_walk", () => StartSpriteDemo(SpriteDemoWalkPath));
+		_menuFactory.RegisterAction("sprite_demo_walk_control", StartSpriteWalkDemo);
 		_menuFactory.RegisterAction("sprite_demo_bow", () => StartSpriteDemo(SpriteDemoBowPath));
 		_menuFactory.RegisterAction("sprite_demo_thrust", () => StartSpriteDemo(SpriteDemoThrustPath));
 		_menuFactory.RegisterAction("sprite_demo_tint", () => StartSpriteDemo(SpriteDemoTintPath));
@@ -370,7 +372,35 @@ public partial class MenuDemo : Node
 		ResetParallaxOffset();
 		HideParallaxTracker();
 
+		_spriteHelper?.SetActive(false);
 		SetSpriteActive(true, spritePath);
+		_activeDemo = DemoState.Sprite;
+	}
+
+	private void StartSpriteWalkDemo()
+	{
+		GD.Print("Initializing Sprite Walk Demo...");
+
+		if (_menuFactory != null)
+		{
+			_menuFactory.Visible = false;
+		}
+
+		_mapHelper?.SetMapActive(false);
+		_cutsceneHelper?.SetCutsceneActive(false);
+		_hudHelper?.SetHudActive(false);
+		_backgroundLeaf?.SetBackgroundVisible(false);
+		_backgroundLeaf?.ClearBackground();
+		ResetParallaxOffset();
+		HideParallaxTracker();
+
+		if (_spriteHelper == null)
+		{
+			_spriteHelper = new SpriteHelper(_stem);
+			AddChild(_spriteHelper);
+		}
+
+		_spriteHelper.StartWalkDemo();
 		_activeDemo = DemoState.Sprite;
 	}
 
@@ -493,6 +523,7 @@ public partial class MenuDemo : Node
 		_mapHelper?.SetMapActive(false);
 		_cutsceneHelper?.SetCutsceneActive(false);
 		_hudHelper?.SetHudActive(false);
+		_spriteHelper?.SetActive(false);
 		SetSpriteActive(false);
 		_backgroundLeaf?.SetBackgroundVisible(false);
 		_backgroundLeaf?.ClearBackground();

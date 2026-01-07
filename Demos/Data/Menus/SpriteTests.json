@@ -13,6 +13,10 @@
 	  "action": "sprite_demo_walk"
 	},
 	{
+	  "text": "WASD Walk Demo",
+	  "action": "sprite_demo_walk_control"
+	},
+	{
 	  "text": "Bow Animation",
 	  "action": "sprite_demo_bow"
 	},
