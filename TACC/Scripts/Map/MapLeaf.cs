@@ -90,7 +90,12 @@ public partial class MapLeaf : Node2D, ILeafStateSource
 		else if (@event is InputEventMouseMotion mouseMotionEvent && isDragging)
 		{
 			Vector2 dragOffset = mouseMotionEvent.Position - dragStartPosition;
-			Position = mapStartPosition + dragOffset;
+			Vector2 nextPosition = mapStartPosition + dragOffset;
+			if (Position != nextPosition)
+			{
+				Position = nextPosition;
+				EmitStateChanged();
+			}
 		}
 	}
 
@@ -118,10 +123,16 @@ public partial class MapLeaf : Node2D, ILeafStateSource
 
 	private void AdjustZoom(Vector2 zoomCenter, float newZoomLevel)
 	{
+		if (Math.Abs(newZoomLevel - zoomLevel) < 0.001f)
+		{
+			return;
+		}
+
 		Vector2 offset = (zoomCenter - Position) / zoomLevel;
 		zoomLevel = newZoomLevel;
 		Scale = new Vector2(zoomLevel, zoomLevel);
 		Position = zoomCenter - offset * zoomLevel;
+		EmitStateChanged();
 	}
 
 	public void LoadMap(string path)
