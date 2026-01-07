@@ -1,5 +1,5 @@
 # TACCsharp
-Toolkit for Assembling Custom Content (TACC) for Godot 4.3 (C#).
+Toolkit for Assembling Custom Content (TACC) for Godot 4.5.1 (C#).
 
 ## What this is
 - Data-driven toolkit that composes content modules ("Leaves") under a runtime root ("Stem").
@@ -7,7 +7,7 @@ Toolkit for Assembling Custom Content (TACC) for Godot 4.3 (C#).
 - Demos show menu-driven map and cutscene flows.
 
 ## Quick start
-1. Open the folder in Godot 4.3 with C# support.
+1. Open the folder in Godot 4.5.1 with C# support.
 2. Run the project. The main scene is `Demos/Menu Demo/Scenes/MenuDemo.tscn`.
 3. Use the menu to launch map or cutscene demos.
 
