@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://b6c3f4y6n5qsp"]
+
+[ext_resource type="Script" path="res://TACC/Scripts/Music/MusicLeaf.cs" id="1_kj4ct"]
+
+[node name="MusicLeaf" type="AudioStreamPlayer"]
+script = ExtResource("1_kj4ct")
