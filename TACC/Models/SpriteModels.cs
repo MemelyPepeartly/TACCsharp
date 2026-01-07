@@ -21,6 +21,9 @@ namespace TACCsharp.TACC.Models
 		[JsonProperty("framesPath")]
 		public string FramesPath { get; set; }
 
+		[JsonProperty("sheet")]
+		public SpriteSheetData Sheet { get; set; }
+
 		[JsonProperty("animation")]
 		public string Animation { get; set; }
 
@@ -65,6 +68,30 @@ namespace TACCsharp.TACC.Models
 
 		[JsonProperty("modulate")]
 		public ColorData Modulate { get; set; }
+	}
+
+	public class SpriteSheetData
+	{
+		[JsonProperty("path")]
+		public string Path { get; set; }
+
+		[JsonProperty("frameSize")]
+		public Vector2Data FrameSize { get; set; }
+
+		[JsonProperty("row")]
+		public int? Row { get; set; }
+
+		[JsonProperty("start")]
+		public int? Start { get; set; }
+
+		[JsonProperty("count")]
+		public int? Count { get; set; }
+
+		[JsonProperty("loop")]
+		public bool? Loop { get; set; }
+
+		[JsonProperty("fps")]
+		public float? Fps { get; set; }
 	}
 
 	public class ColorData

@@ -8,6 +8,8 @@ using FileAccess = Godot.FileAccess;
 
 public partial class SpriteLeaf : Node2D, ILeafStateSource
 {
+	private const string DefaultAnimationName = "default";
+
 	[Export] public string JsonPath { get; set; }
 
 	public string StateKey => LeafStateKeys.Sprite;
@@ -191,9 +193,9 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 			return false;
 		}
 
-		if (string.IsNullOrWhiteSpace(data.FramesPath) && string.IsNullOrWhiteSpace(data.TexturePath))
+		if (!HasSheet(data) && string.IsNullOrWhiteSpace(data.FramesPath) && string.IsNullOrWhiteSpace(data.TexturePath))
 		{
-			GD.PrintErr($"Sprite '{data.Id}' needs a texturePath or framesPath.");
+			GD.PrintErr($"Sprite '{data.Id}' needs a texturePath, framesPath, or sheet.");
 			return false;
 		}
 
@@ -202,11 +204,11 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 
 	private Node2D CreateSpriteNode(SpriteData data)
 	{
-		bool isAnimated = !string.IsNullOrWhiteSpace(data.FramesPath);
+		bool isAnimated = HasSheet(data) || !string.IsNullOrWhiteSpace(data.FramesPath);
 
 		if (isAnimated)
 		{
-			var frames = LoadFrames(data.FramesPath);
+			var frames = LoadAnimatedFrames(data, out string animationName);
 			if (frames == null)
 			{
 				return null;
@@ -217,6 +219,11 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 				Name = data.Id,
 				SpriteFrames = frames
 			};
+
+			if (!string.IsNullOrWhiteSpace(animationName))
+			{
+				animated.Animation = animationName;
+			}
 
 			ApplySpriteTransforms(animated, data);
 			ApplySpriteVisuals(animated, data);
@@ -243,7 +250,7 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 
 	private bool UpdateSpriteNode(SpriteData data, Node2D existing)
 	{
-		bool wantsAnimated = !string.IsNullOrWhiteSpace(data.FramesPath);
+		bool wantsAnimated = HasSheet(data) || !string.IsNullOrWhiteSpace(data.FramesPath);
 		bool isAnimated = existing is AnimatedSprite2D;
 
 		if (wantsAnimated != isAnimated)
@@ -288,13 +295,15 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 
 	private void UpdateAnimatedSprite(AnimatedSprite2D animated, SpriteData data)
 	{
-		if (!string.IsNullOrWhiteSpace(data.FramesPath))
+		var frames = LoadAnimatedFrames(data, out string animationName);
+		if (frames != null)
 		{
-			var frames = LoadFrames(data.FramesPath);
-			if (frames != null)
-			{
-				animated.SpriteFrames = frames;
-			}
+			animated.SpriteFrames = frames;
+		}
+
+		if (!string.IsNullOrWhiteSpace(animationName))
+		{
+			animated.Animation = animationName;
 		}
 
 		ApplyAnimationSettings(animated, data);
@@ -450,6 +459,130 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 		}
 	}
 
+	private bool HasSheet(SpriteData data)
+	{
+		return data?.Sheet != null && !string.IsNullOrWhiteSpace(data.Sheet.Path);
+	}
+
+	private string ResolveAnimationName(SpriteData data)
+	{
+		return string.IsNullOrWhiteSpace(data?.Animation) ? DefaultAnimationName : data.Animation.Trim();
+	}
+
+	private SpriteFrames LoadAnimatedFrames(SpriteData data, out string animationName)
+	{
+		animationName = null;
+
+		if (HasSheet(data))
+		{
+			var frames = BuildSpriteFramesFromSheet(data, out animationName);
+			if (frames == null)
+			{
+				animationName = null;
+			}
+			return frames;
+		}
+
+		if (!string.IsNullOrWhiteSpace(data?.FramesPath))
+		{
+			animationName = data.Animation;
+			var frames = LoadFrames(data.FramesPath);
+			if (frames == null)
+			{
+				animationName = null;
+			}
+			return frames;
+		}
+
+		return null;
+	}
+
+	private SpriteFrames BuildSpriteFramesFromSheet(SpriteData data, out string animationName)
+	{
+		animationName = ResolveAnimationName(data);
+
+		var sheet = data.Sheet;
+		if (sheet == null || string.IsNullOrWhiteSpace(sheet.Path))
+		{
+			return null;
+		}
+
+		var texture = LoadTexture(sheet.Path);
+		if (texture == null)
+		{
+			return null;
+		}
+
+		Vector2 frameSize = sheet.FrameSize?.ToVector2() ?? new Vector2(64, 64);
+		if (frameSize.X <= 0 || frameSize.Y <= 0)
+		{
+			GD.PrintErr($"Sprite '{data.Id}' has invalid frameSize.");
+			return null;
+		}
+
+		Vector2 textureSize = texture.GetSize();
+		int columns = (int)(textureSize.X / frameSize.X);
+		int rows = (int)(textureSize.Y / frameSize.Y);
+		if (columns <= 0 || rows <= 0)
+		{
+			GD.PrintErr($"Sprite '{data.Id}' sheet has invalid grid size.");
+			return null;
+		}
+
+		int row = sheet.Row ?? 0;
+		if (row < 0 || row >= rows)
+		{
+			GD.PrintErr($"Sprite '{data.Id}' sheet row {row} is out of range.");
+			return null;
+		}
+
+		int start = Math.Max(sheet.Start ?? 0, 0);
+		if (start >= columns)
+		{
+			GD.PrintErr($"Sprite '{data.Id}' sheet start {start} is out of range.");
+			return null;
+		}
+
+		int requestedCount = sheet.Count ?? (columns - start);
+		if (requestedCount <= 0)
+		{
+			GD.PrintErr($"Sprite '{data.Id}' sheet count must be greater than zero.");
+			return null;
+		}
+
+		int count = Math.Min(requestedCount, columns - start);
+
+		var frames = new SpriteFrames();
+		frames.AddAnimation(animationName);
+
+		bool loop = sheet.Loop ?? true;
+		frames.SetAnimationLoop(animationName, loop);
+
+		if (sheet.Fps.HasValue && sheet.Fps.Value > 0f)
+		{
+			frames.SetAnimationSpeed(animationName, sheet.Fps.Value);
+		}
+
+		for (int i = 0; i < count; i++)
+		{
+			int column = start + i;
+			var region = new Rect2(
+				column * frameSize.X,
+				row * frameSize.Y,
+				frameSize.X,
+				frameSize.Y);
+			var atlas = new AtlasTexture
+			{
+				Atlas = texture,
+				Region = region
+			};
+
+			frames.AddFrame(animationName, atlas);
+		}
+
+		return frames;
+	}
+
 	private Texture2D LoadTexture(string texturePath)
 	{
 		if (string.IsNullOrWhiteSpace(texturePath))
@@ -563,7 +696,7 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 			snapshot.IsAnimated = true;
 			snapshot.FramesPath = animated.SpriteFrames?.ResourcePath;
 			snapshot.Animation = animated.Animation;
-			snapshot.IsPlaying = animated.Playing;
+			snapshot.IsPlaying = animated.IsPlaying();
 			snapshot.Frame = animated.Frame;
 			snapshot.SpeedScale = animated.SpeedScale;
 			snapshot.Centered = animated.Centered;
