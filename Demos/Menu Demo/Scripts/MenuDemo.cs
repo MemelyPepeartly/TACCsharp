@@ -237,6 +237,7 @@ public partial class MenuDemo : Node
 		_activeDemo = DemoState.Map;
 		_hudHelper?.SetHudActive(false);
 		_backgroundLeaf?.SetBackgroundVisible(false);
+		_backgroundLeaf?.ClearBackground();
 		_cutsceneHelper?.SetCutsceneActive(false);
 		_mapHelper.SetMapActive(true);
 	}
@@ -254,6 +255,7 @@ public partial class MenuDemo : Node
 		_mapHelper?.SetMapActive(false);
 		_hudHelper?.SetHudActive(false);
 		_backgroundLeaf?.SetBackgroundVisible(false);
+		_backgroundLeaf?.ClearBackground();
 
 		// Ensure only one instance of CutsceneHelper is created
 		if (_cutsceneHelper == null)
@@ -280,6 +282,7 @@ public partial class MenuDemo : Node
 		_mapHelper?.SetMapActive(false);
 		_cutsceneHelper?.SetCutsceneActive(false);
 		_backgroundLeaf?.SetBackgroundVisible(false);
+		_backgroundLeaf?.ClearBackground();
 
 		if (_hudHelper == null)
 		{

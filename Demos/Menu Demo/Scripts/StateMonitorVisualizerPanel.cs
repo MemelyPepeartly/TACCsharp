@@ -7,11 +7,17 @@ namespace TACCsharp.Demos.Menu_Demo.Scripts
 {
 public partial class StateMonitorVisualizerPanel : PanelContainer
 {
-	private const float PanelWidth = 420f;
-	private const float PanelHeight = 520f;
-	private const float PanelMargin = 16f;
+	private const float PanelWidth = 360f;
+	private const float PanelHeight = 480f;
+	private const float PanelMargin = 12f;
+	private const int TabPadding = 8;
 
-	private TextEdit _report;
+	private TabContainer _tabs;
+	private TextEdit _hudReport;
+	private TextEdit _cutsceneReport;
+	private TextEdit _backgroundReport;
+	private TextEdit _musicReport;
+	private TextEdit _mapReport;
 	private Label _status;
 	private StateMonitorLeaf _monitor;
 
@@ -58,8 +64,13 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 	{
 		if (GetNodeOrNull<VBoxContainer>("Layout") != null)
 		{
-			_report = GetNodeOrNull<TextEdit>("Layout/Report");
 			_status = GetNodeOrNull<Label>("Layout/Header/Status");
+			_tabs = GetNodeOrNull<TabContainer>("Layout/Tabs");
+			_hudReport = GetNodeOrNull<TextEdit>("Layout/Tabs/Hud/Report");
+			_cutsceneReport = GetNodeOrNull<TextEdit>("Layout/Tabs/Cutscene/Report");
+			_backgroundReport = GetNodeOrNull<TextEdit>("Layout/Tabs/Background/Report");
+			_musicReport = GetNodeOrNull<TextEdit>("Layout/Tabs/Music/Report");
+			_mapReport = GetNodeOrNull<TextEdit>("Layout/Tabs/Map/Report");
 			return;
 		}
 
@@ -100,14 +111,47 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 		closeButton.Pressed += OnClosePressed;
 		header.AddChild(closeButton);
 
-		_report = new TextEdit
+		_tabs = new TabContainer
+		{
+			Name = "Tabs",
+			SizeFlagsHorizontal = SizeFlags.ExpandFill,
+			SizeFlagsVertical = SizeFlags.ExpandFill
+		};
+		layout.AddChild(_tabs);
+
+		_hudReport = CreateTab(_tabs, "HUD", "Hud");
+		_cutsceneReport = CreateTab(_tabs, "Cutscene", "Cutscene");
+		_backgroundReport = CreateTab(_tabs, "Background", "Background");
+		_musicReport = CreateTab(_tabs, "Music", "Music");
+		_mapReport = CreateTab(_tabs, "Map", "Map");
+	}
+
+	private TextEdit CreateTab(TabContainer tabs, string title, string name)
+	{
+		var container = new MarginContainer
+		{
+			Name = name,
+			SizeFlagsHorizontal = SizeFlags.ExpandFill,
+			SizeFlagsVertical = SizeFlags.ExpandFill
+		};
+		container.AddThemeConstantOverride("margin_left", TabPadding);
+		container.AddThemeConstantOverride("margin_top", TabPadding);
+		container.AddThemeConstantOverride("margin_right", TabPadding);
+		container.AddThemeConstantOverride("margin_bottom", TabPadding);
+
+		var report = new TextEdit
 		{
 			Name = "Report",
 			Editable = false,
 			SizeFlagsHorizontal = SizeFlags.ExpandFill,
 			SizeFlagsVertical = SizeFlags.ExpandFill
 		};
-		layout.AddChild(_report);
+		container.AddChild(report);
+
+		tabs.AddChild(container);
+		tabs.SetTabTitle(tabs.GetChildCount() - 1, title);
+
+		return report;
 	}
 
 	private void ApplyDefaultLayout()
@@ -135,94 +179,60 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 
 	private void RefreshReport()
 	{
-		if (_report == null || _status == null)
+		if (_status == null)
 		{
 			return;
 		}
 
 		_status.Text = DateTime.Now.ToString("HH:mm:ss");
 
-		var sb = new StringBuilder();
 		if (_monitor == null)
 		{
-			sb.AppendLine("StateMonitorLeaf not found.");
-			SetReportText(sb.ToString());
+			const string missing = "StateMonitorLeaf not found.";
+			SetReportText(_hudReport, missing);
+			SetReportText(_cutsceneReport, missing);
+			SetReportText(_backgroundReport, missing);
+			SetReportText(_musicReport, missing);
+			SetReportText(_mapReport, missing);
 			return;
 		}
 
-		if (_monitor.TryGetState<HudStateSnapshot>(LeafStateKeys.Hud, out var hudState))
-		{
-			AppendHudState(sb, hudState);
-		}
-		else
-		{
-			sb.AppendLine("HUD:");
-			sb.AppendLine("  (no data)");
-		}
-
-		sb.AppendLine();
-
-		if (_monitor.TryGetState<CutsceneStateSnapshot>(LeafStateKeys.Cutscene, out var cutsceneState))
-		{
-			AppendCutsceneState(sb, cutsceneState);
-		}
-		else
-		{
-			sb.AppendLine("Cutscene:");
-			sb.AppendLine("  (no data)");
-		}
-
-		sb.AppendLine();
-
-		if (_monitor.TryGetState<BackgroundStateSnapshot>(LeafStateKeys.Background, out var backgroundState))
-		{
-			AppendBackgroundState(sb, backgroundState);
-		}
-		else
-		{
-			sb.AppendLine("Background:");
-			sb.AppendLine("  (no data)");
-		}
-
-		sb.AppendLine();
-
-		if (_monitor.TryGetState<MusicStateSnapshot>(LeafStateKeys.Music, out var musicState))
-		{
-			AppendMusicState(sb, musicState);
-		}
-		else
-		{
-			sb.AppendLine("Music:");
-			sb.AppendLine("  (no data)");
-		}
-
-		sb.AppendLine();
-
-		if (_monitor.TryGetState<MapStateSnapshot>(LeafStateKeys.Map, out var mapState))
-		{
-			AppendMapState(sb, mapState);
-		}
-		else
-		{
-			sb.AppendLine("Map:");
-			sb.AppendLine("  (no data)");
-		}
-
-		SetReportText(sb.ToString());
+		SetReportText(_hudReport, BuildSectionReport<HudStateSnapshot>(LeafStateKeys.Hud, "HUD", AppendHudState));
+		SetReportText(_cutsceneReport, BuildSectionReport<CutsceneStateSnapshot>(LeafStateKeys.Cutscene, "Cutscene", AppendCutsceneState));
+		SetReportText(_backgroundReport, BuildSectionReport<BackgroundStateSnapshot>(LeafStateKeys.Background, "Background", AppendBackgroundState));
+		SetReportText(_musicReport, BuildSectionReport<MusicStateSnapshot>(LeafStateKeys.Music, "Music", AppendMusicState));
+		SetReportText(_mapReport, BuildSectionReport<MapStateSnapshot>(LeafStateKeys.Map, "Map", AppendMapState));
 	}
 
-	private void SetReportText(string text)
+	private string BuildSectionReport<T>(string leafKey, string title, Action<StringBuilder, T> append)
+		where T : LeafStateSnapshot
 	{
-		if (_report == null)
+		var sb = new StringBuilder();
+		if (_monitor != null && _monitor.TryGetState<T>(leafKey, out var state))
+		{
+			append(sb, state);
+		}
+		else
+		{
+			sb.AppendLine($"{title}:");
+			sb.AppendLine("  (no data)");
+		}
+
+		return sb.ToString();
+	}
+
+	private void SetReportText(TextEdit report, string text)
+	{
+		if (report == null)
 		{
 			return;
 		}
 
-		double scroll = _report.ScrollVertical;
-		_report.Text = text;
+		double scroll = report.ScrollVertical;
+		report.Text = text;
 
-		double maxScroll = Math.Max(0, _report.GetLineCount() - 1);
-		_report.ScrollVertical = Math.Min(scroll, maxScroll);
+		double maxScroll = Math.Max(0, report.GetLineCount() - 1);
+		report.ScrollVertical = Math.Min(scroll, maxScroll);
 	}
 
 	private void AppendHudState(StringBuilder sb, HudStateSnapshot state)
