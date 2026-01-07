@@ -9,6 +9,7 @@ public partial class MenuDemo : Node
 	private const string StateMonitorMenuPath = "res://Demos/Data/Menus/StateMonitorDemos.json";
 	private const string BackgroundMenuPath = "res://Demos/Data/Menus/BackgroundTests.json";
 	private const string MusicMenuPath = "res://Demos/Data/Menus/MusicTests.json";
+	private const string SpriteMenuPath = "res://Demos/Data/Menus/SpriteTests.json";
 	private const string InDemoMenuPath = "res://Demos/Data/Menus/InDemo.json";
 	private const string CutsceneProloguePath = "res://Demos/Data/Cutscenes/Prologue.json";
 	private const string CutsceneInterludePath = "res://Demos/Data/Cutscenes/Interlude.json";
@@ -19,6 +20,12 @@ public partial class MenuDemo : Node
 	private const string ParallaxClouds3Path = "res://Demos/Data/Backgrounds/ParallaxClouds3.json";
 	private const string MusicDemo1Path = "res://Demos/Data/Music/DemoTrack1.json";
 	private const string MusicDemo2Path = "res://Demos/Data/Music/DemoTrack2.json";
+	private const string SpriteDemoStaticPath = "res://Demos/Data/Sprites/SpriteDemo_Static.json";
+	private const string SpriteDemoLayeredPath = "res://Demos/Data/Sprites/SpriteDemo_Layered.json";
+	private const string SpriteDemoWalkPath = "res://Demos/Data/Sprites/SpriteDemo_Walkcycle.json";
+	private const string SpriteDemoBowPath = "res://Demos/Data/Sprites/SpriteDemo_Bow.json";
+	private const string SpriteDemoThrustPath = "res://Demos/Data/Sprites/SpriteDemo_Thrust.json";
+	private const string SpriteDemoTintPath = "res://Demos/Data/Sprites/SpriteDemo_TintFlip.json";
 	private const float ParallaxMouseMaxOffsetX = 200f;
 	private const float ParallaxMouseMaxOffsetY = 0f;
 	private const float ParallaxMouseSmoothing = 8f;
@@ -31,7 +38,8 @@ public partial class MenuDemo : Node
 		Cutscene,
 		Hud,
 		Background,
-		Music
+		Music,
+		Sprite
 	}
 
 	private Stem _stem;
@@ -41,6 +49,7 @@ public partial class MenuDemo : Node
 	private HudHelper _hudHelper;
 	private BackgroundLeaf _backgroundLeaf;
 	private MusicLeaf _musicLeaf;
+	private SpriteLeaf _spriteLeaf;
 	private ColorRect _parallaxTracker;
 	private Vector2 _parallaxOffset = Vector2.Zero;
 	private StateMonitorVisualizerPanel _stateMonitorVisualizer;
@@ -97,6 +106,16 @@ public partial class MenuDemo : Node
 		}
 	}
 
+	private void ConfigureSpriteLeaf()
+	{
+		_spriteLeaf = _stem.GetNodeOrNull<SpriteLeaf>("SpriteLeaf");
+
+		if (_spriteLeaf == null)
+		{
+			GD.PrintErr("ERROR: SpriteLeaf not found in Stem.");
+		}
+	}
+
 	private void ShowMainMenu()
 	{
 		if (_menuFactory == null)
@@ -110,6 +129,7 @@ public partial class MenuDemo : Node
 		_menuFactory.RegisterAction("start_hud_demo", StartHudDemo);
 		_menuFactory.RegisterAction("start_background_demo", ShowBackgroundMenu);
 		_menuFactory.RegisterAction("start_music_demo", StartMusicDemo);
+		_menuFactory.RegisterAction("start_sprite_demo", ShowSpriteMenu);
 		_menuFactory.RegisterAction("start_state_monitor_demo", ShowStateMonitorMenu);
 		_menuFactory.RegisterAction("exit_game", ExitGame);
 		_menuFactory.Visible = true;
@@ -181,6 +201,29 @@ public partial class MenuDemo : Node
 		_menuFactory.RegisterAction("music_loop_off", () => _musicLeaf?.SetLoop(false));
 		_menuFactory.RegisterAction("music_volume_low", () => _musicLeaf?.SetVolumeDb(-6f));
 		_menuFactory.RegisterAction("music_volume_normal", () => _musicLeaf?.SetVolumeDb(0f));
+		_menuFactory.RegisterAction("back_to_main_menu", ReturnToMainMenu);
+		_menuFactory.Visible = true;
+	}
+
+	private void ShowSpriteMenu()
+	{
+		if (_menuFactory == null)
+		{
+			return;
+		}
+
+		if (_spriteLeaf == null)
+		{
+			ConfigureSpriteLeaf();
+		}
+
+		_menuFactory.LoadMenu(SpriteMenuPath);
+		_menuFactory.RegisterAction("sprite_demo_static", () => StartSpriteDemo(SpriteDemoStaticPath));
+		_menuFactory.RegisterAction("sprite_demo_layered", () => StartSpriteDemo(SpriteDemoLayeredPath));
+		_menuFactory.RegisterAction("sprite_demo_walk", () => StartSpriteDemo(SpriteDemoWalkPath));
+		_menuFactory.RegisterAction("sprite_demo_bow", () => StartSpriteDemo(SpriteDemoBowPath));
+		_menuFactory.RegisterAction("sprite_demo_thrust", () => StartSpriteDemo(SpriteDemoThrustPath));
+		_menuFactory.RegisterAction("sprite_demo_tint", () => StartSpriteDemo(SpriteDemoTintPath));
 		_menuFactory.RegisterAction("back_to_main_menu", ReturnToMainMenu);
 		_menuFactory.Visible = true;
 	}
@@ -310,6 +353,27 @@ public partial class MenuDemo : Node
 		ShowMusicMenu();
 	}
 
+	private void StartSpriteDemo(string spritePath)
+	{
+		GD.Print("Initializing Sprite Demo...");
+
+		if (_menuFactory != null)
+		{
+			_menuFactory.Visible = false;
+		}
+
+		_mapHelper?.SetMapActive(false);
+		_cutsceneHelper?.SetCutsceneActive(false);
+		_hudHelper?.SetHudActive(false);
+		_backgroundLeaf?.SetBackgroundVisible(false);
+		_backgroundLeaf?.ClearBackground();
+		ResetParallaxOffset();
+		HideParallaxTracker();
+
+		SetSpriteActive(true, spritePath);
+		_activeDemo = DemoState.Sprite;
+	}
+
 	private void StartStaticBackgroundTest()
 	{
 		StartBackgroundTest(StaticBackgroundPath);
@@ -429,6 +493,7 @@ public partial class MenuDemo : Node
 		_mapHelper?.SetMapActive(false);
 		_cutsceneHelper?.SetCutsceneActive(false);
 		_hudHelper?.SetHudActive(false);
+		SetSpriteActive(false);
 		_backgroundLeaf?.SetBackgroundVisible(false);
 		_backgroundLeaf?.ClearBackground();
 		if (wasMusicDemo)
@@ -461,10 +526,44 @@ public partial class MenuDemo : Node
 		{
 			ShowMusicMenu();
 		}
+		else if (_activeDemo == DemoState.Sprite)
+		{
+			ShowSpriteMenu();
+		}
 		else
 		{
 			ShowInDemoMenu();
 		}
+	}
+
+	private void SetSpriteActive(bool isActive, string spritePath = null)
+	{
+		if (_spriteLeaf == null)
+		{
+			if (!isActive)
+			{
+				return;
+			}
+
+			ConfigureSpriteLeaf();
+		}
+
+		if (_spriteLeaf == null)
+		{
+			return;
+		}
+
+		if (isActive && !string.IsNullOrWhiteSpace(spritePath))
+		{
+			_spriteLeaf.LoadSprites(spritePath);
+		}
+		else if (!isActive)
+		{
+			_spriteLeaf.ClearSprites();
+		}
+
+		_spriteLeaf.Visible = isActive;
+		_spriteLeaf.ProcessMode = isActive ? Node.ProcessModeEnum.Inherit : Node.ProcessModeEnum.Disabled;
 	}
 
 	private void ToggleMenu()
