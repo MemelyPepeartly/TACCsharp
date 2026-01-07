@@ -9,7 +9,7 @@ TACCsharp uses a "Stem + Leaves" composition model.
 ## Runtime flow
 1. A demo scene loads (for example, `Demos/Menu Demo/Scenes/MenuDemo.tscn`).
 2. The scene instances `TACC/Core/Stem.tscn`.
-3. `Stem._Ready` loads leaf scenes (cutscene, map, HUD, menu UI).
+3. `Stem._Ready` loads leaf scenes (background, music, cutscene, map, HUD, menu UI, state monitor).
 4. Demo scripts find leaves and wire signals/events.
 5. Leaves load JSON and emit signals as the user interacts.
 
@@ -22,6 +22,8 @@ Typical node tree in the menu demo:
 ```text
 MenuDemo (Node)
 - Stem (Node)
+  - BackgroundLeaf (Node2D)
+  - MusicLeaf (AudioStreamPlayer)
   - CutsceneLeaf (Node2D)
   - MapLeaf (Node2D)
   - StateMonitorLeaf (Node)
@@ -40,6 +42,14 @@ HudOverlayLeaf (`TACC/Leaves/HudOverlayLeaf.tscn`, `TACC/Scripts/Hud/HudOverlayL
 - `LoadHud(jsonPath)` builds a persistent HUD from JSON.
 - `SetText`, `SetValue`, and `SetIcon` update elements by id.
 - Anchors elements to top/bottom slots (left, center, right).
+
+BackgroundLeaf (`TACC/Leaves/BackgroundLeaf.tscn`, `TACC/Scripts/Background/BackgroundLeaf.cs`):
+- `LoadBackground(jsonPath)` loads static or parallax backgrounds from JSON.
+- `SetStaticBackground` and `SetParallaxBackground` switch modes programmatically.
+
+MusicLeaf (`TACC/Leaves/MusicLeaf.tscn`, `TACC/Scripts/Music/MusicLeaf.cs`):
+- `LoadMusic(jsonPath)` loads a track definition from JSON.
+- `PlayMusic`, `PauseMusic`, and `StopMusic` control playback.
 
 MapLeaf (`TACC/Leaves/MapLeaf.tscn`, `TACC/Scripts/Map/MapLeaf.cs`):
 - `LoadMap(jsonPath)` loads a background image and waypoints.

@@ -125,3 +125,18 @@ Notes:
 - `motionScale` controls how fast each layer scrolls relative to the camera or `ScrollOffset`.
 - `motionMirroring` repeats a layer when set to the texture size in pixels.
 - `repeatX` and `repeatY` auto-set `motionMirroring` to the (scaled) texture size so layers tile as they scroll.
+
+## Music (MusicLeaf)
+Schema: `docs/schemas/music.schema.json`  
+Used by: `MusicLeaf.LoadMusic(jsonPath)`
+
+Example:
+```json
+{
+  "trackPath": "res://Demos/Assets/Audio/overworld-theme.ogg",
+  "volumeDb": -6,
+  "loop": true,
+  "bus": "Music",
+  "autoplay": true
+}
+```
