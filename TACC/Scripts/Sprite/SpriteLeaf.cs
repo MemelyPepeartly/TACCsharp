@@ -9,6 +9,8 @@ using FileAccess = Godot.FileAccess;
 public partial class SpriteLeaf : Node2D, ILeafStateSource
 {
 	private const string DefaultAnimationName = "default";
+	private const string MetaFramesPath = "sprite_frames_path";
+	private const double AnimationUpdateInterval = 0.1;
 
 	[Export] public string JsonPath { get; set; }
 
@@ -20,6 +22,8 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 	private readonly Dictionary<string, SpriteFrames> _framesCache = new();
 
 	private string _loadedSpritePath;
+	private double _animationUpdateTimer;
+	private bool _hasAnimatedSprites;
 
 	public override void _Ready()
 	{
@@ -28,6 +32,22 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 		if (!string.IsNullOrWhiteSpace(JsonPath))
 		{
 			LoadSprites(JsonPath);
+		}
+	}
+
+	public override void _Process(double delta)
+	{
+		if (!_hasAnimatedSprites)
+		{
+			_animationUpdateTimer = 0.0;
+			return;
+		}
+
+		_animationUpdateTimer += delta;
+		if (_animationUpdateTimer >= AnimationUpdateInterval)
+		{
+			_animationUpdateTimer = 0.0;
+			EmitStateChanged();
 		}
 	}
 
@@ -87,6 +107,7 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 			AddChild(node);
 		}
 
+		UpdateAnimatedStateFlag();
 		EmitStateChanged();
 		return true;
 	}
@@ -106,6 +127,7 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 		}
 
 		RemoveSpriteNode(id, node);
+		UpdateAnimatedStateFlag();
 		EmitStateChanged();
 		return true;
 	}
@@ -114,6 +136,7 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 	{
 		_loadedSpritePath = null;
 		ClearSpritesInternal();
+		UpdateAnimatedStateFlag();
 		EmitStateChanged();
 	}
 
@@ -160,6 +183,7 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 			AddChild(node);
 		}
 
+		UpdateAnimatedStateFlag();
 		EmitStateChanged();
 	}
 
@@ -177,6 +201,8 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 		}
 
 		_spritesById.Clear();
+		_hasAnimatedSprites = false;
+		_animationUpdateTimer = 0.0;
 	}
 
 	private bool ValidateSpriteData(SpriteData data)
@@ -219,6 +245,8 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 				Name = data.Id,
 				SpriteFrames = frames
 			};
+
+			SetAnimatedSourceMeta(animated, data);
 
 			if (!string.IsNullOrWhiteSpace(animationName))
 			{
@@ -300,6 +328,8 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 		{
 			animated.SpriteFrames = frames;
 		}
+
+		SetAnimatedSourceMeta(animated, data);
 
 		if (!string.IsNullOrWhiteSpace(animationName))
 		{
@@ -583,6 +613,39 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 		return frames;
 	}
 
+	private void SetAnimatedSourceMeta(AnimatedSprite2D animated, SpriteData data)
+	{
+		if (animated == null || data == null)
+		{
+			return;
+		}
+
+		string framesPath = !string.IsNullOrWhiteSpace(data.FramesPath) ? data.FramesPath : data.Sheet?.Path;
+		if (!string.IsNullOrWhiteSpace(framesPath))
+		{
+			animated.SetMeta(MetaFramesPath, framesPath);
+		}
+	}
+
+	private void UpdateAnimatedStateFlag()
+	{
+		bool hasAnimated = false;
+		foreach (var node in _spritesById.Values)
+		{
+			if (node is AnimatedSprite2D)
+			{
+				hasAnimated = true;
+				break;
+			}
+		}
+
+		_hasAnimatedSprites = hasAnimated;
+		if (!hasAnimated)
+		{
+			_animationUpdateTimer = 0.0;
+		}
+	}
+
 	private Texture2D LoadTexture(string texturePath)
 	{
 		if (string.IsNullOrWhiteSpace(texturePath))
@@ -695,6 +758,10 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 		{
 			snapshot.IsAnimated = true;
 			snapshot.FramesPath = animated.SpriteFrames?.ResourcePath;
+			if (string.IsNullOrWhiteSpace(snapshot.FramesPath) && animated.HasMeta(MetaFramesPath))
+			{
+				snapshot.FramesPath = animated.GetMeta(MetaFramesPath).AsString();
+			}
 			snapshot.Animation = animated.Animation;
 			snapshot.IsPlaying = animated.IsPlaying();
 			snapshot.Frame = animated.Frame;
