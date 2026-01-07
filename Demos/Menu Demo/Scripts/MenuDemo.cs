@@ -8,6 +8,7 @@ public partial class MenuDemo : Node
 	private const string CutsceneMenuPath = "res://Demos/Data/Menus/CutsceneSelect.json";
 	private const string StateMonitorMenuPath = "res://Demos/Data/Menus/StateMonitorDemos.json";
 	private const string BackgroundMenuPath = "res://Demos/Data/Menus/BackgroundTests.json";
+	private const string MusicMenuPath = "res://Demos/Data/Menus/MusicTests.json";
 	private const string InDemoMenuPath = "res://Demos/Data/Menus/InDemo.json";
 	private const string CutsceneProloguePath = "res://Demos/Data/Cutscenes/Prologue.json";
 	private const string CutsceneInterludePath = "res://Demos/Data/Cutscenes/Interlude.json";
@@ -16,6 +17,8 @@ public partial class MenuDemo : Node
 	private const string ParallaxClouds1Path = "res://Demos/Data/Backgrounds/ParallaxClouds1.json";
 	private const string ParallaxClouds2Path = "res://Demos/Data/Backgrounds/ParallaxClouds2.json";
 	private const string ParallaxClouds3Path = "res://Demos/Data/Backgrounds/ParallaxClouds3.json";
+	private const string MusicDemo1Path = "res://Demos/Data/Music/DemoTrack1.json";
+	private const string MusicDemo2Path = "res://Demos/Data/Music/DemoTrack2.json";
 	private const float ParallaxMouseMaxOffsetX = 200f;
 	private const float ParallaxMouseMaxOffsetY = 0f;
 	private const float ParallaxMouseSmoothing = 8f;
@@ -27,7 +30,8 @@ public partial class MenuDemo : Node
 		Map,
 		Cutscene,
 		Hud,
-		Background
+		Background,
+		Music
 	}
 
 	private Stem _stem;
@@ -36,6 +40,7 @@ public partial class MenuDemo : Node
 	private CutsceneHelper _cutsceneHelper;
 	private HudHelper _hudHelper;
 	private BackgroundLeaf _backgroundLeaf;
+	private MusicLeaf _musicLeaf;
 	private ColorRect _parallaxTracker;
 	private Vector2 _parallaxOffset = Vector2.Zero;
 	private StateMonitorVisualizerPanel _stateMonitorVisualizer;
@@ -57,6 +62,7 @@ public partial class MenuDemo : Node
 		// Retrieve and configure the MenuFactoryLeaf
 		ConfigureMenuFactory();
 		ConfigureBackgroundLeaf();
+		ConfigureMusicLeaf();
 		ShowMainMenu();
 	}
 
@@ -81,6 +87,16 @@ public partial class MenuDemo : Node
 		}
 	}
 
+	private void ConfigureMusicLeaf()
+	{
+		_musicLeaf = _stem.GetNodeOrNull<MusicLeaf>("MusicLeaf");
+
+		if (_musicLeaf == null)
+		{
+			GD.PrintErr("ERROR: MusicLeaf not found in Stem.");
+		}
+	}
+
 	private void ShowMainMenu()
 	{
 		if (_menuFactory == null)
@@ -93,6 +109,7 @@ public partial class MenuDemo : Node
 		_menuFactory.RegisterAction("start_cutscene_demo", ShowCutsceneMenu);
 		_menuFactory.RegisterAction("start_hud_demo", StartHudDemo);
 		_menuFactory.RegisterAction("start_background_demo", ShowBackgroundMenu);
+		_menuFactory.RegisterAction("start_music_demo", StartMusicDemo);
 		_menuFactory.RegisterAction("start_state_monitor_demo", ShowStateMonitorMenu);
 		_menuFactory.RegisterAction("exit_game", ExitGame);
 		_menuFactory.Visible = true;
@@ -139,6 +156,32 @@ public partial class MenuDemo : Node
 		_menuFactory.LoadMenu(StateMonitorMenuPath);
 		_menuFactory.RegisterAction("open_state_visualizer", OpenStateMonitorVisualizer);
 		_menuFactory.RegisterAction("back_to_main_menu", ShowMainMenu);
+		_menuFactory.Visible = true;
+	}
+
+	private void ShowMusicMenu()
+	{
+		if (_menuFactory == null)
+		{
+			return;
+		}
+
+		if (_musicLeaf == null)
+		{
+			ConfigureMusicLeaf();
+		}
+
+		_menuFactory.LoadMenu(MusicMenuPath);
+		_menuFactory.RegisterAction("music_load_demo_1", () => LoadMusicConfig(MusicDemo1Path));
+		_menuFactory.RegisterAction("music_load_demo_2", () => LoadMusicConfig(MusicDemo2Path));
+		_menuFactory.RegisterAction("music_play", () => _musicLeaf?.PlayMusic());
+		_menuFactory.RegisterAction("music_pause", () => _musicLeaf?.PauseMusic());
+		_menuFactory.RegisterAction("music_stop", () => _musicLeaf?.StopMusic());
+		_menuFactory.RegisterAction("music_loop_on", () => _musicLeaf?.SetLoop(true));
+		_menuFactory.RegisterAction("music_loop_off", () => _musicLeaf?.SetLoop(false));
+		_menuFactory.RegisterAction("music_volume_low", () => _musicLeaf?.SetVolumeDb(-6f));
+		_menuFactory.RegisterAction("music_volume_normal", () => _musicLeaf?.SetVolumeDb(0f));
+		_menuFactory.RegisterAction("back_to_main_menu", ReturnToMainMenu);
 		_menuFactory.Visible = true;
 	}
 
@@ -248,6 +291,22 @@ public partial class MenuDemo : Node
 		_hudHelper.SetHudActive(true);
 	}
 
+	private void StartMusicDemo()
+	{
+		GD.Print("Initializing Music Demo...");
+
+		_mapHelper?.SetMapActive(false);
+		_cutsceneHelper?.SetCutsceneActive(false);
+		_hudHelper?.SetHudActive(false);
+		_backgroundLeaf?.SetBackgroundVisible(false);
+		_backgroundLeaf?.ClearBackground();
+		ResetParallaxOffset();
+		HideParallaxTracker();
+
+		_activeDemo = DemoState.Music;
+		ShowMusicMenu();
+	}
+
 	private void StartStaticBackgroundTest()
 	{
 		StartBackgroundTest(StaticBackgroundPath);
@@ -296,6 +355,16 @@ public partial class MenuDemo : Node
 		ResetParallaxOffset();
 		HideParallaxTracker();
 		_activeDemo = DemoState.Background;
+	}
+
+	private void LoadMusicConfig(string musicPath)
+	{
+		if (_musicLeaf == null)
+		{
+			ConfigureMusicLeaf();
+		}
+
+		_musicLeaf?.LoadMusic(musicPath);
 	}
 
 	private void OnCutsceneDemoEnded()
@@ -357,6 +426,7 @@ public partial class MenuDemo : Node
 		_hudHelper?.SetHudActive(false);
 		_backgroundLeaf?.SetBackgroundVisible(false);
 		_backgroundLeaf?.ClearBackground();
+		_musicLeaf?.StopMusic();
 		ResetParallaxOffset();
 		HideParallaxTracker();
 		_activeDemo = DemoState.None;
@@ -375,7 +445,14 @@ public partial class MenuDemo : Node
 			return;
 		}
 
-		ShowInDemoMenu();
+		if (_activeDemo == DemoState.Music)
+		{
+			ShowMusicMenu();
+		}
+		else
+		{
+			ShowInDemoMenu();
+		}
 	}
 
 	private void ToggleMenu()

@@ -186,6 +186,18 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 
 		sb.AppendLine();
 
+		if (_monitor.TryGetState<MusicStateSnapshot>(LeafStateKeys.Music, out var musicState))
+		{
+			AppendMusicState(sb, musicState);
+		}
+		else
+		{
+			sb.AppendLine("Music:");
+			sb.AppendLine("  (no data)");
+		}
+
+		sb.AppendLine();
+
 		if (_monitor.TryGetState<MapStateSnapshot>(LeafStateKeys.Map, out var mapState))
 		{
 			AppendMapState(sb, mapState);
@@ -290,6 +302,20 @@ public partial class StateMonitorVisualizerPanel : PanelContainer
 			sb.AppendLine($"      scale: {layer.Scale}");
 			sb.AppendLine($"      zIndex: {layer.ZIndex}");
 		}
+	}
+
+	private void AppendMusicState(StringBuilder sb, MusicStateSnapshot state)
+	{
+		sb.AppendLine("Music:");
+		sb.AppendLine($"  Config: {state.MusicPath ?? "(none)"}");
+		sb.AppendLine($"  Track: {state.TrackPath ?? "(none)"}");
+		sb.AppendLine($"  Playing: {state.IsPlaying}");
+		sb.AppendLine($"  Paused: {state.IsPaused}");
+		sb.AppendLine($"  Loop: {state.Loop}");
+		sb.AppendLine($"  VolumeDb: {state.VolumeDb:0.00}");
+		sb.AppendLine($"  PitchScale: {state.PitchScale:0.00}");
+		sb.AppendLine($"  Bus: {state.Bus ?? "(none)"}");
+		sb.AppendLine($"  Playback: {state.PlaybackPosition:0.00}s");
 	}
 }
 }
