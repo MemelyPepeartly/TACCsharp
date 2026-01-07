@@ -11,6 +11,7 @@ public partial class Stem : Node
 		AddLeaf("res://TACC/Leaves/MusicLeaf.tscn");
 		AddLeaf("res://TACC/Leaves/CutsceneLeaf.tscn");
 		AddLeaf("res://TACC/Leaves/MapLeaf.tscn");
+		AddLeaf("res://TACC/Leaves/SpriteLeaf.tscn");
 		AddLeafAsUI("res://TACC/Leaves/HudOverlayLeaf.tscn");
 		AddLeafAsUI("res://TACC/Leaves/MenuFactoryLeaf.tscn");
 		AddLeaf("res://TACC/Leaves/StateMonitorLeaf.tscn");
