@@ -1,7 +1,8 @@
 using Godot;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using TACCsharp.TACC.Serialization;
+using GodotDictionary = Godot.Collections.Dictionary;
 
 public partial class MenuFactoryLeaf : Control
 {
@@ -38,7 +39,13 @@ public partial class MenuFactoryLeaf : Control
 			using var file = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Read);
 			string jsonContent = file.GetAsText();
 
-			var menuData = JsonConvert.DeserializeObject<MenuData>(jsonContent);
+			if (!TaccJson.TryParseDictionary(jsonContent, out var root, out var error))
+			{
+				GD.PrintErr($"ERROR: Failed to parse menu JSON: {error}");
+				return;
+			}
+
+			var menuData = MenuData.FromDictionary(root);
 
 			if (menuData?.Buttons == null || menuData.Buttons.Count == 0)
 			{
@@ -103,14 +110,51 @@ public partial class MenuFactoryLeaf : Control
 // Data Classes
 public class MenuData
 {
-	[JsonProperty("buttons")]
 	public List<ButtonData> Buttons { get; set; }
+
+	public static MenuData FromDictionary(GodotDictionary dictionary)
+	{
+		if (dictionary == null)
+		{
+			return null;
+		}
+
+		var data = new MenuData();
+		if (TaccJson.TryGetArray(dictionary, "buttons", out var buttonsArray))
+		{
+			var buttons = new List<ButtonData>();
+			foreach (Variant entry in buttonsArray)
+			{
+				if (entry.VariantType != Variant.Type.Dictionary)
+				{
+					continue;
+				}
+
+				buttons.Add(ButtonData.FromDictionary(entry.AsGodotDictionary()));
+			}
+
+			data.Buttons = buttons;
+		}
+
+		return data;
+	}
 }
 
 public class ButtonData
 {
-	[JsonProperty("text")]
 	public string Text { get; set; }
-	[JsonProperty("action")]
 	public string Action { get; set; }
+
+	public static ButtonData FromDictionary(GodotDictionary dictionary)
+	{
+		var data = new ButtonData();
+		if (dictionary == null)
+		{
+			return data;
+		}
+
+		data.Text = TaccJson.GetString(dictionary, "text");
+		data.Action = TaccJson.GetString(dictionary, "action");
+		return data;
+	}
 }

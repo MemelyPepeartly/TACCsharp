@@ -18,7 +18,4 @@
     <None Include="Demos\Data\Maps\Ove8F8A.tmp" />
     <None Include="Demos\Data\Maps\OveE188.tmp" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-  </ItemGroup>
 </Project>

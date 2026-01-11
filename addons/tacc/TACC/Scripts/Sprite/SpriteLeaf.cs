@@ -1,8 +1,8 @@
 using Godot;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using TACCsharp.TACC.Models;
+using TACCsharp.TACC.Serialization;
 using TACCsharp.TACC.State;
 using FileAccess = Godot.FileAccess;
 
@@ -65,7 +65,13 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 		{
 			using var file = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Read);
 			string jsonContent = file.GetAsText();
-			var data = JsonConvert.DeserializeObject<SpriteSetData>(jsonContent);
+			if (!TaccJson.TryParseDictionary(jsonContent, out var root, out var error))
+			{
+				GD.PrintErr($"ERROR: Failed to parse sprite JSON: {error}");
+				return;
+			}
+
+			var data = SpriteSetData.FromDictionary(root);
 
 			if (data?.Sprites == null || data.Sprites.Count == 0)
 			{

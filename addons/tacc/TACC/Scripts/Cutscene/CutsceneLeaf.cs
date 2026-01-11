@@ -1,7 +1,7 @@
 using Godot;
 using System;
-using Newtonsoft.Json;
 using TACCsharp.TACC.Models;
+using TACCsharp.TACC.Serialization;
 using TACCsharp.TACC.State;
 
 public partial class CutsceneLeaf : Node, ILeafStateSource
@@ -25,8 +25,20 @@ public partial class CutsceneLeaf : Node, ILeafStateSource
 
 	public void LoadCutscene(string jsonPath)
 	{
+		if (!FileAccess.FileExists(jsonPath))
+		{
+			GD.PrintErr($"Cutscene JSON file not found: {jsonPath}");
+			return;
+		}
+
 		string jsonText = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Read).GetAsText();
-		CutsceneData cutscene = JsonConvert.DeserializeObject<CutsceneData>(jsonText);
+		if (!TaccJson.TryParseDictionary(jsonText, out var root, out var error))
+		{
+			GD.PrintErr($"ERROR: Failed to parse cutscene JSON: {error}");
+			return;
+		}
+
+		CutsceneData cutscene = CutsceneData.FromDictionary(root);
 
 		_cutsceneName = cutscene.CutsceneName;
 		_cutsceneEnded = false;

@@ -74,5 +74,5 @@ StateMonitorLeaf (`addons/tacc/TACC/Leaves/StateMonitorLeaf.tscn`, `addons/tacc/
 JSON -> `addons/tacc/TACC/Models/*` -> Leaf logic -> signals/events -> demo or game code -> UI updates.
 
 ## Notes
-- The demo cutscene JSON uses `cutscene_name` and the model maps it via `JsonProperty`.
+- The demo cutscene JSON uses `cutscene_name`, which maps to `CutsceneName` in the parsed data.
 - Asset paths are `res://` and must exist in the project.

@@ -1,8 +1,8 @@
 using Godot;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using TACCsharp.TACC.Models;
+using TACCsharp.TACC.Serialization;
 using TACCsharp.TACC.State;
 using FileAccess = Godot.FileAccess;
 
@@ -92,7 +92,13 @@ public partial class BackgroundLeaf : Node2D, ILeafStateSource
 		{
 			using var file = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Read);
 			string jsonContent = file.GetAsText();
-			var data = JsonConvert.DeserializeObject<BackgroundData>(jsonContent);
+			if (!TaccJson.TryParseDictionary(jsonContent, out var root, out var error))
+			{
+				GD.PrintErr($"ERROR: Failed to parse background JSON: {error}");
+				return;
+			}
+
+			var data = BackgroundData.FromDictionary(root);
 
 			if (data == null)
 			{
