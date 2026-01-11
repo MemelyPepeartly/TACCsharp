@@ -15,6 +15,8 @@ Toolkit for Assembling Custom Content (TACC) for Godot 4.5.1 (C#).
 - `addons/tacc/` plugin root (plugin.cfg and editor plugin stub)
 - `addons/tacc/TACC/` core toolkit (Stem, Leaves, models)
 - `Demos/` example scenes, data, assets
+- `docs/Demos.md` demo-only paths and assets
+- `docs/distribution.md` addon distribution workflow
 - `addons/tacc/TACC/Docs/architecture.md` architecture and wiring
 - `addons/tacc/TACC/Docs/schemas/README.md` JSON formats and examples
 - `addons/tacc/TACC/Docs/schemas/*.schema.json` machine-readable schemas
