@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://bebje2ncbyips"]
 
 [ext_resource type="Script" path="res://Demos/Cutscene Demo/Scripts/CutsceneDemo.cs" id="1_qdw8k"]
-[ext_resource type="PackedScene" uid="uid://cbhaeng8o8ol8" path="res://TACC/Leaves/CutsceneLeaf.tscn" id="2_wrewv"]
+[ext_resource type="PackedScene" uid="uid://cbhaeng8o8ol8" path="res://addons/tacc/TACC/Leaves/CutsceneLeaf.tscn" id="2_wrewv"]
 [ext_resource type="Texture2D" uid="uid://dh5anuj2spkwv" path="res://Demos/Assets/Backgrounds/astillon.jpg" id="3_etcw1"]
 [ext_resource type="PackedScene" uid="uid://dksyx48gytc75" path="res://Demos/Cutscene Demo/UI/DialogBox.tscn" id="4_c0h1u"]
 

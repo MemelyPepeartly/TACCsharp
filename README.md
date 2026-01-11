@@ -12,11 +12,15 @@ Toolkit for Assembling Custom Content (TACC) for Godot 4.5.1 (C#).
 3. Use the menu to launch map or cutscene demos.
 
 ## Folder map
-- `TACC/` core toolkit (Stem, Leaves, models)
+- `addons/tacc/` plugin root (plugin.cfg and editor plugin stub)
+- `addons/tacc/TACC/` core toolkit (Stem, Leaves, models)
 - `Demos/` example scenes, data, assets
 - `docs/architecture.md` architecture and wiring
 - `docs/schemas/README.md` JSON formats and examples
 - `docs/schemas/*.schema.json` machine-readable schemas
+
+## Addon
+TACC is packaged as a Godot addon under `addons/tacc/`. Copy that folder into another project to reuse it.
 
 ## Leaves
 - `MenuFactoryLeaf` builds a menu UI from JSON and maps button actions to registered callbacks.
