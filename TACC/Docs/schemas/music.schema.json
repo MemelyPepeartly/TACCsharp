@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://taccsharp.local/schemas/music.schema.json",
+  "title": "Music",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "trackPath": {
+      "type": "string"
+    },
+    "volumeDb": {
+      "type": "number"
+    },
+    "pitchScale": {
+      "type": "number",
+      "exclusiveMinimum": 0
+    },
+    "bus": {
+      "type": "string"
+    },
+    "loop": {
+      "type": "boolean"
+    },
+    "autoplay": {
+      "type": "boolean"
+    }
+  },
+  "required": ["trackPath"]
+}
