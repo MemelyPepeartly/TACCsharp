@@ -15,7 +15,7 @@ namespace TACCsharp.TACC.Serialization
 			Variant parsed;
 			try
 			{
-				parsed = Json.ParseString(json);
+				parsed = Godot.Json.ParseString(json);
 			}
 			catch (Exception ex)
 			{

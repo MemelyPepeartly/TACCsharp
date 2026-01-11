@@ -60,7 +60,13 @@ namespace TACCsharp.TACC.Models
 				return data;
 			}
 
-			data.CutsceneName = TaccJson.GetString(dictionary, "cutscene_name");
+			string cutsceneName = TaccJson.GetString(dictionary, "cutscene_name");
+			if (string.IsNullOrWhiteSpace(cutsceneName))
+			{
+				cutsceneName = TaccJson.GetString(dictionary, "cutsceneName");
+			}
+
+			data.CutsceneName = cutsceneName;
 
 			if (TaccJson.TryGetArray(dictionary, "scenes", out var scenesArray))
 			{

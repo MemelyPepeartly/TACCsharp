@@ -92,6 +92,13 @@ public partial class BackgroundLeaf : Node2D, ILeafStateSource
 		{
 			using var file = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Read);
 			string jsonContent = file.GetAsText();
+
+			if (!TaccSchemaValidator.TryValidate(TaccSchemaPaths.Background, jsonContent, out var schemaError))
+			{
+				GD.PrintErr($"ERROR: Background JSON failed schema validation: {schemaError}");
+				return;
+			}
+
 			if (!TaccJson.TryParseDictionary(jsonContent, out var root, out var error))
 			{
 				GD.PrintErr($"ERROR: Failed to parse background JSON: {error}");

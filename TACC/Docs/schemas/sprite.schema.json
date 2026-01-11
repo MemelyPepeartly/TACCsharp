@@ -1,0 +1,81 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Sprite",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["sprites"],
+  "properties": {
+    "sprites": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/sprite" }
+    }
+  },
+  "$defs": {
+    "vector2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["x", "y"],
+      "properties": {
+        "x": { "type": "number" },
+        "y": { "type": "number" }
+      }
+    },
+    "color": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["r", "g", "b", "a"],
+      "properties": {
+        "r": { "type": "number", "minimum": 0, "maximum": 1 },
+        "g": { "type": "number", "minimum": 0, "maximum": 1 },
+        "b": { "type": "number", "minimum": 0, "maximum": 1 },
+        "a": { "type": "number", "minimum": 0, "maximum": 1 }
+      }
+    },
+    "sheet": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "frameSize": { "$ref": "#/$defs/vector2" },
+        "row": { "type": "integer", "minimum": 0 },
+        "start": { "type": "integer", "minimum": 0 },
+        "count": { "type": "integer", "minimum": 1 },
+        "loop": { "type": "boolean" },
+        "fps": { "type": "number", "exclusiveMinimum": 0 }
+      }
+    },
+    "sprite": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id"],
+      "anyOf": [
+        { "required": ["texturePath"] },
+        { "required": ["framesPath"] },
+        { "required": ["sheet"] }
+      ],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "texturePath": { "type": "string", "minLength": 1 },
+        "framesPath": { "type": "string", "minLength": 1 },
+        "sheet": { "$ref": "#/$defs/sheet" },
+        "animation": { "type": "string" },
+        "playing": { "type": "boolean" },
+        "speedScale": { "type": "number", "exclusiveMinimum": 0 },
+        "frame": { "type": "integer", "minimum": 0 },
+        "position": { "$ref": "#/$defs/vector2" },
+        "rotationDegrees": { "type": "number" },
+        "scale": { "$ref": "#/$defs/vector2" },
+        "offset": { "$ref": "#/$defs/vector2" },
+        "centered": { "type": "boolean" },
+        "flipH": { "type": "boolean" },
+        "flipV": { "type": "boolean" },
+        "visible": { "type": "boolean" },
+        "zIndex": { "type": "integer" },
+        "zAsRelative": { "type": "boolean" },
+        "modulate": { "$ref": "#/$defs/color" }
+      }
+    }
+  }
+}
