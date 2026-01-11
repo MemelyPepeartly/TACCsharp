@@ -7,10 +7,10 @@ TACCsharp uses a "Stem + Leaves" composition model.
 - Content is data-driven via JSON, which the leaves deserialize into models.
 
 ## Runtime flow
-1. A demo scene loads (for example, `Demos/Menu Demo/Scenes/MenuDemo.tscn`).
+1. A game scene loads (for example, your main scene).
 2. The scene instances `addons/tacc/TACC/Core/Stem.tscn`.
 3. `Stem._Ready` loads leaf scenes (background, music, cutscene, map, HUD, menu UI, state monitor).
-4. Demo scripts find leaves and wire signals/events.
+4. Game scripts find leaves and wire signals/events.
 5. Leaves load JSON and emit signals as the user interacts.
 
 ## Stem
@@ -18,9 +18,9 @@ TACCsharp uses a "Stem + Leaves" composition model.
 - `AddLeaf` instantiates a leaf scene and adds it as a child.
 - `AddLeafAsUI` wraps a leaf inside a `CanvasLayer` for UI.
 
-Typical node tree in the menu demo:
+Typical node tree (example):
 ```text
-MenuDemo (Node)
+MainScene (Node)
 - Stem (Node)
   - BackgroundLeaf (Node2D)
   - MusicLeaf (AudioStreamPlayer)
@@ -65,18 +65,10 @@ StateMonitorLeaf (`addons/tacc/TACC/Leaves/StateMonitorLeaf.tscn`, `addons/tacc/
 - Aggregates state snapshots from leaves implementing `ILeafStateSource`.
 - Emits `StateUpdated` when any leaf state changes.
 
-## Demos and wiring
-Menu demo (`Demos/Menu Demo/Scenes/MenuDemo.tscn`, `Demos/Menu Demo/Scripts/MenuDemo.cs`):
-- Loads menu JSON and registers actions.
-- Uses helpers to start map or cutscene demos.
-- ESC toggles the menu.
-
-Map demo (`Demos/Map Demo/Scenes/MapDemo.tscn`, `Demos/Map Demo/Scripts/MapDemo.cs`):
-- Connects MapLeaf signals and loads `Overworld.json`.
-
-Cutscene demo (`Demos/Cutscene Demo/Scenes/CutsceneDemo.tscn`, `Demos/Cutscene Demo/Scripts/CutsceneDemo.cs`):
-- Uses `DialogBox` UI to display dialogue.
-- Enter advances the cutscene.
+## Example wiring
+- A menu scene loads menu JSON and registers actions for map/cutscene flows.
+- A map scene connects `MapLeaf` signals and loads map data.
+- A cutscene scene displays dialogue UI and advances on input.
 
 ## Data flow
 JSON -> `addons/tacc/TACC/Models/*` -> Leaf logic -> signals/events -> demo or game code -> UI updates.

@@ -1,23 +1,22 @@
 # JSON formats
-TACCsharp uses JSON files to drive menus, maps, and cutscenes. Schemas live in `docs/schemas/*.schema.json` and are written for JSON Schema draft 2020-12.
+TACCsharp uses JSON files to drive menus, maps, and cutscenes. Schemas live in `addons/tacc/TACC/Docs/schemas/*.schema.json` and are written for JSON Schema draft 2020-12.
 
 ## Menu (MenuFactoryLeaf)
-Schema: `docs/schemas/menu.schema.json`  
+Schema: `addons/tacc/TACC/Docs/schemas/menu.schema.json`  
 Used by: `MenuFactoryLeaf.LoadMenu(jsonPath)`
 
 Example:
 ```json
 {
   "buttons": [
-    { "text": "Start Map Demo", "action": "start_map_demo" },
+    { "text": "Start Map", "action": "start_map" },
     { "text": "Exit", "action": "exit_game" }
   ]
 }
 ```
-Full example: `Demos/Data/Menus/Start.json`
 
 ## HUD (HudOverlayLeaf)
-Schema: `docs/schemas/hud.schema.json`  
+Schema: `addons/tacc/TACC/Docs/schemas/hud.schema.json`  
 Used by: `HudOverlayLeaf.LoadHud(jsonPath)`
 
 Example:
@@ -35,32 +34,31 @@ Notes:
 - Anchors supported: `top_left`, `top_center`, `top_right`, `bottom_left`, `bottom_center`, `bottom_right`.
 
 ## Map (MapLeaf)
-Schema: `docs/schemas/map.schema.json`  
+Schema: `addons/tacc/TACC/Docs/schemas/map.schema.json`  
 Used by: `MapLeaf.LoadMap(path)`
 
 Example:
 ```json
 {
-  "imagePath": "res://Demos/Assets/Backgrounds/astillon.jpg",
+  "imagePath": "res://Assets/Backgrounds/world-map.png",
   "waypoints": [
     {
       "id": "snippstone",
       "x": -361,
       "y": 1200,
       "description": "All the holiday deer live here!",
-      "iconPath": "res://Demos/Assets/Icons/Snippstone.png"
+      "iconPath": "res://Assets/Icons/waypoint.png"
     }
   ]
 }
 ```
-Full example: `Demos/Data/Maps/Overworld.json`
 
 Notes:
 - `imagePath` and `iconPath` are Godot resource paths (typically `res://`).
 - Waypoint coordinates are in the map node's local space.
 
 ## Cutscene (CutsceneLeaf)
-Schema: `docs/schemas/cutscene.schema.json`  
+Schema: `addons/tacc/TACC/Docs/schemas/cutscene.schema.json`  
 Used by: `CutsceneLeaf.LoadCutscene(jsonPath)`
 
 Example:
@@ -71,31 +69,30 @@ Example:
     {
       "character": "Swift Sail",
       "dialogue": "Fortuna...",
-      "portrait": "res://Demos/Assets/Portraits/sleepy-swift.png",
+      "portrait": "res://Assets/Portraits/character.png",
       "portrait_width": 256,
       "portrait_height": 256,
-      "background": "res://Demos/Assets/Backgrounds/astillon.jpg",
+      "background": "res://Assets/Backgrounds/scene.png",
       "duration": 3.5
     }
   ]
 }
 ```
-Full example: `Demos/Data/Cutscenes/Prologue.json`
 
 Notes:
-- The demo JSON uses `cutscene_name` and the model maps it via `JsonProperty`.
-- `background` updates the cutscene background texture in the demo scripts.
+- The model maps `cutscene_name` via `JsonProperty`.
+- `background` can be used by your UI script to update the background texture.
 - `portrait_width` and `portrait_height` set an explicit render box for the portrait; if omitted, the dialog uses its default size.
 
 ## Background (BackgroundLeaf)
-Schema: `docs/schemas/background.schema.json`  
+Schema: `addons/tacc/TACC/Docs/schemas/background.schema.json`  
 Used by: `BackgroundLeaf.LoadBackground(jsonPath)`
 
 Static example:
 ```json
 {
   "mode": "static",
-  "imagePath": "res://Demos/Assets/Backgrounds/astillon.jpg",
+  "imagePath": "res://Assets/Backgrounds/scene.png",
   "scaleMode": "cover"
 }
 ```
@@ -108,12 +105,12 @@ Parallax example:
   "layers": [
     {
       "name": "Sky",
-      "imagePath": "res://Demos/Assets/Backgrounds/astillon.jpg",
+      "imagePath": "res://Assets/Backgrounds/sky.png",
       "motionScale": { "x": 0.2, "y": 0.2 }
     },
     {
       "name": "Midground",
-      "imagePath": "res://Demos/Assets/Backgrounds/crimin-isle.png",
+      "imagePath": "res://Assets/Backgrounds/midground.png",
       "motionScale": { "x": 0.5, "y": 0.5 }
     }
   ]
@@ -127,13 +124,13 @@ Notes:
 - `repeatX` and `repeatY` auto-set `motionMirroring` to the (scaled) texture size so layers tile as they scroll.
 
 ## Music (MusicLeaf)
-Schema: `docs/schemas/music.schema.json`  
+Schema: `addons/tacc/TACC/Docs/schemas/music.schema.json`  
 Used by: `MusicLeaf.LoadMusic(jsonPath)`
 
 Example:
 ```json
 {
-  "trackPath": "res://Demos/Assets/Audio/overworld-theme.ogg",
+  "trackPath": "res://Assets/Audio/theme.ogg",
   "volumeDb": -6,
   "loop": true,
   "bus": "Music",
