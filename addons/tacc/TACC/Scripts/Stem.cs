@@ -1,0 +1,62 @@
+using Godot;
+using System;
+
+public partial class Stem : Node
+{
+	public override void _Ready()
+	{
+		GD.Print("Stem is ready!");
+
+		AddLeaf("res://addons/tacc/TACC/Leaves/BackgroundLeaf.tscn");
+		AddLeaf("res://addons/tacc/TACC/Leaves/MusicLeaf.tscn");
+		AddLeaf("res://addons/tacc/TACC/Leaves/CutsceneLeaf.tscn");
+		AddLeaf("res://addons/tacc/TACC/Leaves/MapLeaf.tscn");
+		AddLeaf("res://addons/tacc/TACC/Leaves/SpriteLeaf.tscn");
+		AddLeafAsUI("res://addons/tacc/TACC/Leaves/HudOverlayLeaf.tscn");
+		AddLeafAsUI("res://addons/tacc/TACC/Leaves/MenuFactoryLeaf.tscn");
+		AddLeaf("res://addons/tacc/TACC/Leaves/StateMonitorLeaf.tscn");
+	}
+
+	public void AddLeaf(string leafPath)
+	{
+		PackedScene leafScene = GD.Load<PackedScene>(leafPath);
+		if (leafScene != null)
+		{
+			Node leafInstance = leafScene.Instantiate();
+			AddChild(leafInstance);
+			GD.Print($"Leaf {leafInstance.Name} added to Stem.");
+		}
+		else
+		{
+			GD.PrintErr($"Failed to load leaf: {leafPath}");
+		}
+	}
+
+	// Method to add UI leaves inside a CanvasLayer
+	public void AddLeafAsUI(string leafPath, string canvasLayerName = "CanvasLayer", int layer = 1)
+	{
+		PackedScene leafScene = GD.Load<PackedScene>(leafPath);
+		if (leafScene != null)
+		{
+			Node leafInstance = leafScene.Instantiate();
+			var canvasLayer = GetNodeOrNull<CanvasLayer>(canvasLayerName);
+			if (canvasLayer == null)
+			{
+				canvasLayer = new CanvasLayer
+				{
+					Name = canvasLayerName,
+					Layer = layer
+				};
+				AddChild(canvasLayer);
+			}
+
+			canvasLayer.AddChild(leafInstance);
+
+			GD.Print($"UI Leaf {leafInstance.Name} added to Stem inside {canvasLayer.Name}.");
+		}
+		else
+		{
+			GD.PrintErr($"Failed to load leaf: {leafPath}");
+		}
+	}
+}
