@@ -1,25 +1,38 @@
-using Newtonsoft.Json;
+using TACCsharp.TACC.Serialization;
+using GodotDictionary = Godot.Collections.Dictionary;
 
 namespace TACCsharp.TACC.Models
 {
 	public class MusicData
 	{
-		[JsonProperty("trackPath")]
 		public string TrackPath { get; set; }
 
-		[JsonProperty("volumeDb")]
 		public float? VolumeDb { get; set; }
 
-		[JsonProperty("pitchScale")]
 		public float? PitchScale { get; set; }
 
-		[JsonProperty("bus")]
 		public string Bus { get; set; }
 
-		[JsonProperty("loop")]
 		public bool? Loop { get; set; }
 
-		[JsonProperty("autoplay")]
 		public bool? Autoplay { get; set; }
+
+		public static MusicData FromDictionary(GodotDictionary dictionary)
+		{
+			if (dictionary == null)
+			{
+				return null;
+			}
+
+			return new MusicData
+			{
+				TrackPath = TaccJson.GetString(dictionary, "trackPath"),
+				VolumeDb = TaccJson.GetFloat(dictionary, "volumeDb"),
+				PitchScale = TaccJson.GetFloat(dictionary, "pitchScale"),
+				Bus = TaccJson.GetString(dictionary, "bus"),
+				Loop = TaccJson.GetBool(dictionary, "loop"),
+				Autoplay = TaccJson.GetBool(dictionary, "autoplay")
+			};
+		}
 	}
 }

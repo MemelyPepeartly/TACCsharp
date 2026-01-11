@@ -1,9 +1,9 @@
 using Godot;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using TACCsharp.TACC.Models;
+using TACCsharp.TACC.Serialization;
 using TACCsharp.TACC.State;
 using FileAccess = Godot.FileAccess;
 
@@ -154,7 +154,18 @@ public partial class MapLeaf : Node2D, ILeafStateSource
 			string jsonContent = file.GetAsText();
 			file.Close();
 
-			mapData = JsonConvert.DeserializeObject<MapData>(jsonContent);
+			if (!TaccJson.TryParseDictionary(jsonContent, out var root, out var error))
+			{
+				GD.PrintErr($"Failed to parse map JSON: {error}");
+				return;
+			}
+
+			mapData = MapData.FromDictionary(root);
+			if (mapData == null)
+			{
+				GD.PrintErr("Map JSON parsed to null.");
+				return;
+			}
 			_waypointCount = mapData?.Waypoints?.Count ?? 0;
 
 			// Load map texture

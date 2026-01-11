@@ -1,47 +1,87 @@
+using Godot;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using TACCsharp.TACC.Serialization;
+using GodotDictionary = Godot.Collections.Dictionary;
 
 namespace TACCsharp.TACC.Models
 {
     public class HudData
     {
-        [JsonProperty("elements")]
         public List<HudElementData> Elements { get; set; }
+
+        public static HudData FromDictionary(GodotDictionary dictionary)
+        {
+            if (dictionary == null)
+            {
+                return null;
+            }
+
+            var data = new HudData();
+            if (TaccJson.TryGetArray(dictionary, "elements", out var elementsArray))
+            {
+                var elements = new List<HudElementData>();
+                foreach (Variant entry in elementsArray)
+                {
+                    if (entry.VariantType != Variant.Type.Dictionary)
+                    {
+                        continue;
+                    }
+
+                    elements.Add(HudElementData.FromDictionary(entry.AsGodotDictionary()));
+                }
+
+                data.Elements = elements;
+            }
+
+            return data;
+        }
     }
 
     public class HudElementData
     {
-        [JsonProperty("id")]
         public string Id { get; set; }
 
-        [JsonProperty("type")]
         public string Type { get; set; }
 
-        [JsonProperty("anchor")]
         public string Anchor { get; set; }
 
-        [JsonProperty("text")]
         public string Text { get; set; }
 
-        [JsonProperty("iconPath")]
         public string IconPath { get; set; }
 
-        [JsonProperty("min")]
         public float? Min { get; set; }
 
-        [JsonProperty("max")]
         public float? Max { get; set; }
 
-        [JsonProperty("value")]
         public float? Value { get; set; }
 
-        [JsonProperty("minWidth")]
         public float? MinWidth { get; set; }
 
-        [JsonProperty("minHeight")]
         public float? MinHeight { get; set; }
 
-        [JsonProperty("visible")]
         public bool? Visible { get; set; }
+
+        public static HudElementData FromDictionary(GodotDictionary dictionary)
+        {
+            var data = new HudElementData();
+            if (dictionary == null)
+            {
+                return data;
+            }
+
+            data.Id = TaccJson.GetString(dictionary, "id");
+            data.Type = TaccJson.GetString(dictionary, "type");
+            data.Anchor = TaccJson.GetString(dictionary, "anchor");
+            data.Text = TaccJson.GetString(dictionary, "text");
+            data.IconPath = TaccJson.GetString(dictionary, "iconPath");
+            data.Min = TaccJson.GetFloat(dictionary, "min");
+            data.Max = TaccJson.GetFloat(dictionary, "max");
+            data.Value = TaccJson.GetFloat(dictionary, "value");
+            data.MinWidth = TaccJson.GetFloat(dictionary, "minWidth");
+            data.MinHeight = TaccJson.GetFloat(dictionary, "minHeight");
+            data.Visible = TaccJson.GetBool(dictionary, "visible");
+
+            return data;
+        }
     }
 }

@@ -1,7 +1,7 @@
 using Godot;
-using Newtonsoft.Json;
 using System;
 using TACCsharp.TACC.Models;
+using TACCsharp.TACC.Serialization;
 using TACCsharp.TACC.State;
 using FileAccess = Godot.FileAccess;
 
@@ -64,7 +64,13 @@ public partial class MusicLeaf : AudioStreamPlayer, ILeafStateSource
 		{
 			using var file = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Read);
 			string jsonContent = file.GetAsText();
-			var data = JsonConvert.DeserializeObject<MusicData>(jsonContent);
+			if (!TaccJson.TryParseDictionary(jsonContent, out var root, out var error))
+			{
+				GD.PrintErr($"ERROR: Failed to parse music JSON: {error}");
+				return;
+			}
+
+			var data = MusicData.FromDictionary(root);
 
 			if (data == null)
 			{

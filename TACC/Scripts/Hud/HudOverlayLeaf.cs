@@ -1,8 +1,8 @@
 using Godot;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using TACCsharp.TACC.Models;
+using TACCsharp.TACC.Serialization;
 using TACCsharp.TACC.State;
 using FileAccess = Godot.FileAccess;
 
@@ -52,7 +52,13 @@ public partial class HudOverlayLeaf : Control, ILeafStateSource
 			using var file = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Read);
 			string jsonContent = file.GetAsText();
 
-			var hudData = JsonConvert.DeserializeObject<HudData>(jsonContent);
+			if (!TaccJson.TryParseDictionary(jsonContent, out var root, out var error))
+			{
+				GD.PrintErr($"ERROR: Failed to parse HUD JSON: {error}");
+				return;
+			}
+
+			var hudData = HudData.FromDictionary(root);
 
 			if (hudData?.Elements == null || hudData.Elements.Count == 0)
 			{

@@ -80,7 +80,7 @@ Example:
 ```
 
 Notes:
-- The model maps `cutscene_name` via `JsonProperty`.
+- `cutscene_name` maps to `CutsceneName` in the parsed data.
 - `background` can be used by your UI script to update the background texture.
 - `portrait_width` and `portrait_height` set an explicit render box for the portrait; if omitted, the dialog uses its default size.
 
