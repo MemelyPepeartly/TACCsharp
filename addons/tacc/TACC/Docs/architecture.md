@@ -11,7 +11,7 @@ TACCsharp uses a "Stem + Leaves" composition model.
 2. The scene instances `addons/tacc/TACC/Core/Stem.tscn`.
 3. `Stem._Ready` loads leaf scenes (background, music, cutscene, map, HUD, menu UI, state monitor).
 4. Game scripts find leaves and wire signals/events.
-5. Leaves load JSON and emit signals as the user interacts.
+5. Leaves validate JSON against schemas, load it into models, and emit signals as the user interacts.
 
 ## Stem
 `addons/tacc/TACC/Scripts/Stem.cs`:

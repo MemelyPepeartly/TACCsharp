@@ -64,6 +64,13 @@ public partial class MusicLeaf : AudioStreamPlayer, ILeafStateSource
 		{
 			using var file = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Read);
 			string jsonContent = file.GetAsText();
+
+			if (!TaccSchemaValidator.TryValidate(TaccSchemaPaths.Music, jsonContent, out var schemaError))
+			{
+				GD.PrintErr($"ERROR: Music JSON failed schema validation: {schemaError}");
+				return;
+			}
+
 			if (!TaccJson.TryParseDictionary(jsonContent, out var root, out var error))
 			{
 				GD.PrintErr($"ERROR: Failed to parse music JSON: {error}");

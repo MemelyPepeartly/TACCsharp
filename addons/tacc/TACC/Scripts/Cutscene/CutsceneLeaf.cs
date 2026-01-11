@@ -32,6 +32,12 @@ public partial class CutsceneLeaf : Node, ILeafStateSource
 		}
 
 		string jsonText = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Read).GetAsText();
+		if (!TaccSchemaValidator.TryValidate(TaccSchemaPaths.Cutscene, jsonText, out var schemaError))
+		{
+			GD.PrintErr($"ERROR: Cutscene JSON failed schema validation: {schemaError}");
+			return;
+		}
+
 		if (!TaccJson.TryParseDictionary(jsonText, out var root, out var error))
 		{
 			GD.PrintErr($"ERROR: Failed to parse cutscene JSON: {error}");

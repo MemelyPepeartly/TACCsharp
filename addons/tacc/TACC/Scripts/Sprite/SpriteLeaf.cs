@@ -65,6 +65,13 @@ public partial class SpriteLeaf : Node2D, ILeafStateSource
 		{
 			using var file = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Read);
 			string jsonContent = file.GetAsText();
+
+			if (!TaccSchemaValidator.TryValidate(TaccSchemaPaths.Sprite, jsonContent, out var schemaError))
+			{
+				GD.PrintErr($"ERROR: Sprite JSON failed schema validation: {schemaError}");
+				return;
+			}
+
 			if (!TaccJson.TryParseDictionary(jsonContent, out var root, out var error))
 			{
 				GD.PrintErr($"ERROR: Failed to parse sprite JSON: {error}");

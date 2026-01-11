@@ -39,6 +39,12 @@ public partial class MenuFactoryLeaf : Control
 			using var file = FileAccess.Open(jsonPath, FileAccess.ModeFlags.Read);
 			string jsonContent = file.GetAsText();
 
+			if (!TaccSchemaValidator.TryValidate(TaccSchemaPaths.Menu, jsonContent, out var schemaError))
+			{
+				GD.PrintErr($"ERROR: Menu JSON failed schema validation: {schemaError}");
+				return;
+			}
+
 			if (!TaccJson.TryParseDictionary(jsonContent, out var root, out var error))
 			{
 				GD.PrintErr($"ERROR: Failed to parse menu JSON: {error}");

@@ -154,6 +154,12 @@ public partial class MapLeaf : Node2D, ILeafStateSource
 			string jsonContent = file.GetAsText();
 			file.Close();
 
+			if (!TaccSchemaValidator.TryValidate(TaccSchemaPaths.Map, jsonContent, out var schemaError))
+			{
+				GD.PrintErr($"Map JSON failed schema validation: {schemaError}");
+				return;
+			}
+
 			if (!TaccJson.TryParseDictionary(jsonContent, out var root, out var error))
 			{
 				GD.PrintErr($"Failed to parse map JSON: {error}");

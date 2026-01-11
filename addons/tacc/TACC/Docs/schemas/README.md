@@ -1,5 +1,6 @@
 # JSON formats
 TACCsharp uses JSON files to drive menus, maps, and cutscenes. Schemas live in `addons/tacc/TACC/Docs/schemas/*.schema.json` and are written for JSON Schema draft 2020-12.
+Leaf loaders validate JSON against these schemas at load time; invalid data logs errors and aborts the load.
 
 ## Menu (MenuFactoryLeaf)
 Schema: `addons/tacc/TACC/Docs/schemas/menu.schema.json`  
@@ -135,5 +136,33 @@ Example:
   "loop": true,
   "bus": "Music",
   "autoplay": true
+}
+```
+
+## Sprites (SpriteLeaf)
+Schema: `addons/tacc/TACC/Docs/schemas/sprite.schema.json`  
+Used by: `SpriteLeaf.LoadSprites(jsonPath)`
+
+Example:
+```json
+{
+  "sprites": [
+    {
+      "id": "hero_idle",
+      "sheet": {
+        "path": "res://Assets/Sprites/hero.png",
+        "frameSize": { "x": 64, "y": 64 },
+        "row": 0,
+        "start": 0,
+        "count": 4,
+        "loop": true,
+        "fps": 8
+      },
+      "animation": "idle",
+      "playing": true,
+      "position": { "x": 320, "y": 180 },
+      "scale": { "x": 2, "y": 2 }
+    }
+  ]
 }
 ```
