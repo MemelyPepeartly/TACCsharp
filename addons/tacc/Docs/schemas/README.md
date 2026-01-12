@@ -1,9 +1,9 @@
 # JSON formats
-TACCsharp uses JSON files to drive menus, maps, and cutscenes. Schemas live in `addons/tacc/TACC/Docs/schemas/*.schema.json` and are written for JSON Schema draft 2020-12.
+TACCsharp uses JSON files to drive menus, maps, and cutscenes. Schemas live in `addons/tacc/Docs/schemas/*.schema.json` and are written for JSON Schema draft 2020-12.
 Leaf loaders validate JSON against these schemas at load time; invalid data logs errors and aborts the load.
 
 ## Menu (MenuFactoryLeaf)
-Schema: `addons/tacc/TACC/Docs/schemas/menu.schema.json`  
+Schema: `addons/tacc/Docs/schemas/menu.schema.json`  
 Used by: `MenuFactoryLeaf.LoadMenu(jsonPath)`
 
 Example:
@@ -17,7 +17,7 @@ Example:
 ```
 
 ## HUD (HudOverlayLeaf)
-Schema: `addons/tacc/TACC/Docs/schemas/hud.schema.json`  
+Schema: `addons/tacc/Docs/schemas/hud.schema.json`  
 Used by: `HudOverlayLeaf.LoadHud(jsonPath)`
 
 Example:
@@ -35,7 +35,7 @@ Notes:
 - Anchors supported: `top_left`, `top_center`, `top_right`, `bottom_left`, `bottom_center`, `bottom_right`.
 
 ## Map (MapLeaf)
-Schema: `addons/tacc/TACC/Docs/schemas/map.schema.json`  
+Schema: `addons/tacc/Docs/schemas/map.schema.json`  
 Used by: `MapLeaf.LoadMap(path)`
 
 Example:
@@ -59,7 +59,7 @@ Notes:
 - Waypoint coordinates are in the map node's local space.
 
 ## Cutscene (CutsceneLeaf)
-Schema: `addons/tacc/TACC/Docs/schemas/cutscene.schema.json`  
+Schema: `addons/tacc/Docs/schemas/cutscene.schema.json`  
 Used by: `CutsceneLeaf.LoadCutscene(jsonPath)`
 
 Example:
@@ -86,7 +86,7 @@ Notes:
 - `portrait_width` and `portrait_height` set an explicit render box for the portrait; if omitted, the dialog uses its default size.
 
 ## Background (BackgroundLeaf)
-Schema: `addons/tacc/TACC/Docs/schemas/background.schema.json`  
+Schema: `addons/tacc/Docs/schemas/background.schema.json`  
 Used by: `BackgroundLeaf.LoadBackground(jsonPath)`
 
 Static example:
@@ -125,7 +125,7 @@ Notes:
 - `repeatX` and `repeatY` auto-set `motionMirroring` to the (scaled) texture size so layers tile as they scroll.
 
 ## Music (MusicLeaf)
-Schema: `addons/tacc/TACC/Docs/schemas/music.schema.json`  
+Schema: `addons/tacc/Docs/schemas/music.schema.json`  
 Used by: `MusicLeaf.LoadMusic(jsonPath)`
 
 Example:
@@ -140,7 +140,7 @@ Example:
 ```
 
 ## Sprites (SpriteLeaf)
-Schema: `addons/tacc/TACC/Docs/schemas/sprite.schema.json`  
+Schema: `addons/tacc/Docs/schemas/sprite.schema.json`  
 Used by: `SpriteLeaf.LoadSprites(jsonPath)`
 
 Example:

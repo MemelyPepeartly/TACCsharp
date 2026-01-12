@@ -7,14 +7,14 @@ public partial class Stem : Node
 	{
 		GD.Print("Stem is ready!");
 
-		AddLeaf("res://addons/tacc/TACC/Leaves/BackgroundLeaf.tscn");
-		AddLeaf("res://addons/tacc/TACC/Leaves/MusicLeaf.tscn");
-		AddLeaf("res://addons/tacc/TACC/Leaves/CutsceneLeaf.tscn");
-		AddLeaf("res://addons/tacc/TACC/Leaves/MapLeaf.tscn");
-		AddLeaf("res://addons/tacc/TACC/Leaves/SpriteLeaf.tscn");
-		AddLeafAsUI("res://addons/tacc/TACC/Leaves/HudOverlayLeaf.tscn");
-		AddLeafAsUI("res://addons/tacc/TACC/Leaves/MenuFactoryLeaf.tscn");
-		AddLeaf("res://addons/tacc/TACC/Leaves/StateMonitorLeaf.tscn");
+		AddLeaf("res://addons/tacc/Leaves/BackgroundLeaf.tscn");
+		AddLeaf("res://addons/tacc/Leaves/MusicLeaf.tscn");
+		AddLeaf("res://addons/tacc/Leaves/CutsceneLeaf.tscn");
+		AddLeaf("res://addons/tacc/Leaves/MapLeaf.tscn");
+		AddLeaf("res://addons/tacc/Leaves/SpriteLeaf.tscn");
+		AddLeafAsUI("res://addons/tacc/Leaves/HudOverlayLeaf.tscn");
+		AddLeafAsUI("res://addons/tacc/Leaves/MenuFactoryLeaf.tscn");
+		AddLeaf("res://addons/tacc/Leaves/StateMonitorLeaf.tscn");
 	}
 
 	public void AddLeaf(string leafPath)

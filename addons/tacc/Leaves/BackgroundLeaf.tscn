@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://c2v6v8v5s2gfe"]
 
-[ext_resource type="Script" path="res://addons/tacc/TACC/Scripts/Background/BackgroundLeaf.cs" id="1_f6fco"]
+[ext_resource type="Script" path="res://addons/tacc/Scripts/Background/BackgroundLeaf.cs" id="1_f6fco"]
 
 [node name="BackgroundLeaf" type="Node2D"]
 script = ExtResource("1_f6fco")

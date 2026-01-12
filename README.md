@@ -12,14 +12,13 @@ Toolkit for Assembling Custom Content (TACC) for Godot 4.5.1 (C#).
 3. Use the menu to launch map or cutscene demos.
 
 ## Folder map
-- `addons/tacc/` plugin root (plugin.cfg and editor plugin stub)
-- `addons/tacc/TACC/` core toolkit (Stem, Leaves, models)
+- `addons/tacc/` plugin root and core toolkit (`Core/`, `Leaves/`, `Models/`, `Scripts/`, `Serialization/`, `Docs/`)
 - `Demos/` example scenes, data, assets
 - `docs/Demos.md` demo-only paths and assets
 - `docs/distribution.md` addon distribution workflow
-- `addons/tacc/TACC/Docs/architecture.md` architecture and wiring
-- `addons/tacc/TACC/Docs/schemas/README.md` JSON formats and examples
-- `addons/tacc/TACC/Docs/schemas/*.schema.json` machine-readable schemas
+- `addons/tacc/Docs/architecture.md` architecture and wiring
+- `addons/tacc/Docs/schemas/README.md` JSON formats and examples
+- `addons/tacc/Docs/schemas/*.schema.json` machine-readable schemas
 
 ## Addon
 TACC is packaged as a Godot addon under `addons/tacc/`. Copy that folder into another project to reuse it.

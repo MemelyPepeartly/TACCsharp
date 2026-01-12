@@ -8,13 +8,13 @@ TACCsharp uses a "Stem + Leaves" composition model.
 
 ## Runtime flow
 1. A game scene loads (for example, your main scene).
-2. The scene instances `addons/tacc/TACC/Core/Stem.tscn`.
+2. The scene instances `addons/tacc/Core/Stem.tscn`.
 3. `Stem._Ready` loads leaf scenes (background, music, cutscene, map, HUD, menu UI, state monitor).
 4. Game scripts find leaves and wire signals/events.
 5. Leaves validate JSON against schemas, load it into models, and emit signals as the user interacts.
 
 ## Stem
-`addons/tacc/TACC/Scripts/Stem.cs`:
+`addons/tacc/Scripts/Stem.cs`:
 - `AddLeaf` instantiates a leaf scene and adds it as a child.
 - `AddLeafAsUI` wraps a leaf inside a `CanvasLayer` for UI.
 
@@ -33,35 +33,35 @@ MainScene (Node)
 ```
 
 ## Leaves
-MenuFactoryLeaf (`addons/tacc/TACC/Leaves/MenuFactoryLeaf.tscn`, `addons/tacc/TACC/Scripts/Menu/MenuFactoryLeaf.cs`):
+MenuFactoryLeaf (`addons/tacc/Leaves/MenuFactoryLeaf.tscn`, `addons/tacc/Scripts/Menu/MenuFactoryLeaf.cs`):
 - `LoadMenu(jsonPath)` builds buttons from JSON.
 - `RegisterAction(actionName, Action)` binds button actions.
 - Expects `CenterContainer/VBoxContainer` in the leaf scene.
 
-HudOverlayLeaf (`addons/tacc/TACC/Leaves/HudOverlayLeaf.tscn`, `addons/tacc/TACC/Scripts/Hud/HudOverlayLeaf.cs`):
+HudOverlayLeaf (`addons/tacc/Leaves/HudOverlayLeaf.tscn`, `addons/tacc/Scripts/Hud/HudOverlayLeaf.cs`):
 - `LoadHud(jsonPath)` builds a persistent HUD from JSON.
 - `SetText`, `SetValue`, and `SetIcon` update elements by id.
 - Anchors elements to top/bottom slots (left, center, right).
 
-BackgroundLeaf (`addons/tacc/TACC/Leaves/BackgroundLeaf.tscn`, `addons/tacc/TACC/Scripts/Background/BackgroundLeaf.cs`):
+BackgroundLeaf (`addons/tacc/Leaves/BackgroundLeaf.tscn`, `addons/tacc/Scripts/Background/BackgroundLeaf.cs`):
 - `LoadBackground(jsonPath)` loads static or parallax backgrounds from JSON.
 - `SetStaticBackground` and `SetParallaxBackground` switch modes programmatically.
 
-MusicLeaf (`addons/tacc/TACC/Leaves/MusicLeaf.tscn`, `addons/tacc/TACC/Scripts/Music/MusicLeaf.cs`):
+MusicLeaf (`addons/tacc/Leaves/MusicLeaf.tscn`, `addons/tacc/Scripts/Music/MusicLeaf.cs`):
 - `LoadMusic(jsonPath)` loads a track definition from JSON.
 - `PlayMusic`, `PauseMusic`, and `StopMusic` control playback.
 
-MapLeaf (`addons/tacc/TACC/Leaves/MapLeaf.tscn`, `addons/tacc/TACC/Scripts/Map/MapLeaf.cs`):
+MapLeaf (`addons/tacc/Leaves/MapLeaf.tscn`, `addons/tacc/Scripts/Map/MapLeaf.cs`):
 - `LoadMap(jsonPath)` loads a background image and waypoints.
 - Emits `MapLoaded` and `WaypointClicked` signals.
 - Supports drag-to-pan, mouse wheel zoom, and hover tooltips.
 
-CutsceneLeaf (`addons/tacc/TACC/Leaves/CutsceneLeaf.tscn`, `addons/tacc/TACC/Scripts/Cutscene/CutsceneLeaf.cs`):
+CutsceneLeaf (`addons/tacc/Leaves/CutsceneLeaf.tscn`, `addons/tacc/Scripts/Cutscene/CutsceneLeaf.cs`):
 - `LoadCutscene(jsonPath)` loads a scene list.
 - `AdvanceScene()` progresses and fires `OnSceneChanged`.
 - `OnCutsceneEnded` fires when scenes are exhausted.
 
-StateMonitorLeaf (`addons/tacc/TACC/Leaves/StateMonitorLeaf.tscn`, `addons/tacc/TACC/Scripts/State/StateMonitorLeaf.cs`):
+StateMonitorLeaf (`addons/tacc/Leaves/StateMonitorLeaf.tscn`, `addons/tacc/Scripts/State/StateMonitorLeaf.cs`):
 - Aggregates state snapshots from leaves implementing `ILeafStateSource`.
 - Emits `StateUpdated` when any leaf state changes.
 
@@ -71,7 +71,7 @@ StateMonitorLeaf (`addons/tacc/TACC/Leaves/StateMonitorLeaf.tscn`, `addons/tacc/
 - A cutscene scene displays dialogue UI and advances on input.
 
 ## Data flow
-JSON -> `addons/tacc/TACC/Models/*` -> Leaf logic -> signals/events -> demo or game code -> UI updates.
+JSON -> `addons/tacc/Models/*` -> Leaf logic -> signals/events -> demo or game code -> UI updates.
 
 ## Notes
 - The demo cutscene JSON uses `cutscene_name`, which maps to `CutsceneName` in the parsed data.
