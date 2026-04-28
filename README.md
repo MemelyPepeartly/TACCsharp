@@ -4,6 +4,7 @@ Toolkit for Assembling Custom Content (TACC) for Godot 4.5.1 (C#).
 ## What this is
 - Data-driven toolkit that composes content modules ("Leaves") under a runtime root ("Stem").
 - Leaves are Godot scenes with C# scripts that load JSON and emit events.
+- Grafts let a game register its own project-specific leaves without editing TACC core.
 - Demos show menu-driven map and cutscene flows.
 
 ## Quick start
@@ -30,6 +31,26 @@ TACC is packaged as a Godot addon under `addons/tacc/`. Copy that folder into an
 - `CutsceneLeaf` loads a sequence of scenes and emits scene-changed and end events.
 - `BackgroundLeaf` loads static or parallax backgrounds from JSON.
 - `MusicLeaf` plays background music tracks and exposes playback controls.
+
+## Grafts
+A graft is a game-specific extension bundle that registers extra leaves with the Stem:
+
+```csharp
+using Godot;
+using TACCsharp.TACC.Grafting;
+
+public partial class GameGraft : Node, ITaccGraft
+{
+	public string GraftId => "my-game";
+
+	public void RegisterLeaves(TaccLeafRegistry registry)
+	{
+		registry.RegisterUiLeaf("my-game:inventory", "res://grafts/InventoryLeaf.tscn", sourceGraftId: GraftId);
+	}
+}
+```
+
+Register grafts by calling `Stem.RegisterGraft`, `Stem.AddGraftScene`, adding a graft node under the Stem scene, or filling `Stem.GraftScenePaths` in the inspector.
 
 ## Data entry points
 - `Demos/Data/Menus/Start.json`
