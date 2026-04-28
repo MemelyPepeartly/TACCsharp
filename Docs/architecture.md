@@ -4,12 +4,13 @@
 TACCsharp uses a "Stem + Leaves" composition model.
 - Stem is the runtime root that instantiates leaf scenes.
 - Leaves are feature modules implemented as scenes with C# scripts.
+- Grafts are project-specific extension points that register additional leaf scenes with the Stem.
 - Content is data-driven via JSON, which the leaves deserialize into models.
 
 ## Runtime flow
 1. A game scene loads (for example, your main scene).
 2. The scene instances `addons/tacc/Core/Stem.tscn`.
-3. `Stem._Ready` loads leaf scenes (background, music, cutscene, map, HUD, menu UI, state monitor).
+3. `Stem._Ready` registers default TACC leaves, discovers grafts, then loads registered leaf scenes.
 4. Game scripts find leaves and wire signals/events.
 5. Leaves validate JSON against schemas, load it into models, and emit signals as the user interacts.
 
@@ -17,6 +18,22 @@ TACCsharp uses a "Stem + Leaves" composition model.
 `addons/tacc/Scripts/Stem.cs`:
 - `AddLeaf` instantiates a leaf scene and adds it as a child.
 - `AddLeafAsUI` wraps a leaf inside a `CanvasLayer` for UI.
+- `RegisterGraft` lets code register project-specific leaves.
+- `GraftScenePaths` lets a scene configure graft scenes in the inspector.
+- `TryGetLeaf` and `GetLeafOrNull<T>` retrieve leaves by namespaced registry key.
+
+Default leaves are registered with these keys:
+
+```text
+tacc:background
+tacc:music
+tacc:cutscene
+tacc:map
+tacc:sprite
+tacc:hud
+tacc:menu
+tacc:state-monitor
+```
 
 Typical node tree (example):
 ```text
@@ -64,6 +81,40 @@ CutsceneLeaf (`addons/tacc/Leaves/CutsceneLeaf.tscn`, `addons/tacc/Scripts/Cutsc
 StateMonitorLeaf (`addons/tacc/Leaves/StateMonitorLeaf.tscn`, `addons/tacc/Scripts/State/StateMonitorLeaf.cs`):
 - Aggregates state snapshots from leaves implementing `ILeafStateSource`.
 - Emits `StateUpdated` when any leaf state changes.
+
+## Grafts
+Grafts are game-specific extension bundles. A graft does not run gameplay by itself; it registers extra leaves that belong to a specific game.
+
+Implement `ITaccGraft` in a game script:
+
+```csharp
+using Godot;
+using TACCsharp.TACC.Grafting;
+
+public partial class PonyConGraft : Node, ITaccGraft
+{
+	public string GraftId => "ponycon";
+
+	public void RegisterLeaves(TaccLeafRegistry registry)
+	{
+		registry.RegisterUiLeaf(
+			"ponycon:planning",
+			"res://scripts/UI/Planning/PlanningScreenLeaf.tscn",
+			sourceGraftId: GraftId);
+	}
+}
+```
+
+Attach a graft in one of three ways:
+
+```csharp
+stem.RegisterGraft(new PonyConGraft());
+stem.AddGraftScene("res://grafts/PonyConGraft.tscn");
+```
+
+Or add a graft scene path to `Stem.GraftScenePaths` in the inspector. A graft scene may expose `ITaccGraft` on its root node or on one of its children.
+
+Use namespaced leaf keys such as `ponycon:planning` to avoid collisions with core `tacc:*` leaves or other grafts.
 
 ## Example wiring
 - A menu scene loads menu JSON and registers actions for map/cutscene flows.
