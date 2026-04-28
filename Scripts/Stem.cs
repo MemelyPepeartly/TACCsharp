@@ -1,3 +1,5 @@
+#nullable enable
+
 using Godot;
 using System;
 using System.Collections.Generic;
@@ -79,7 +81,7 @@ public partial class Stem : Node
 		return true;
 	}
 
-	public Node AddGraftScene(string graftScenePath)
+	public Node? AddGraftScene(string graftScenePath)
 	{
 		if (string.IsNullOrWhiteSpace(graftScenePath))
 		{
@@ -105,12 +107,12 @@ public partial class Stem : Node
 		return graftNode;
 	}
 
-	public bool TryGetLeaf(string key, out Node leaf)
+	public bool TryGetLeaf(string key, out Node? leaf)
 	{
 		return _leavesByKey.TryGetValue(key, out leaf);
 	}
 
-	public T GetLeafOrNull<T>(string key) where T : Node
+	public T? GetLeafOrNull<T>(string key) where T : Node
 	{
 		return _leavesByKey.TryGetValue(key, out var leaf) ? leaf as T : null;
 	}
@@ -192,7 +194,7 @@ public partial class Stem : Node
 		}
 	}
 
-	private Node InstantiateLeaf(string leafPath, string key)
+	private Node? InstantiateLeaf(string leafPath, string? key)
 	{
 		var leafScene = GD.Load<PackedScene>(leafPath);
 		if (leafScene == null)
@@ -209,7 +211,7 @@ public partial class Stem : Node
 		return leafInstance;
 	}
 
-	private Node InstantiateUiLeaf(string leafPath, string canvasLayerName, int layer, string key)
+	private Node? InstantiateUiLeaf(string leafPath, string canvasLayerName, int layer, string? key)
 	{
 		var leafScene = GD.Load<PackedScene>(leafPath);
 		if (leafScene == null)
